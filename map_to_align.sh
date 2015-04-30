@@ -2,25 +2,55 @@
 #!/bin/bash
 #inputs: an alignment, a tree, and whole genome reads 
 
+#do do set up paired end vs not flags
+#determine how to try differnet alignments
+#deal with possibility of multiple samples?
+#HOw to deal with single mapping to multiple alignements??!?
+
+#DEFAULT ARGS
+PE=0
+outdir=EPAome_run
+
+while getopts ":a:t:p:s:o:" opt; do
+  case $opt in
+    a) align="$OPTARG"
+    ;;
+    t) tree="$OPTARG"
+    ;;
+    p) PE=1
+    ;;
+    s) read_stub="$OPTARG"
+    ;;
+    o) outdir="$OPTARG"
+	;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+printf "Argument alightis %s\n" "$align"
+printf "Argument tree is %s\n" "$tree"
+printf "Argument PE is %s\n" "$PE"
+printf "Argument stub is %s\n" "$read_stub"
+printf "Argument out is %s\n" "$outdir"
 
 
-align=$1
-tree=tree.tre
 #read_stub=~/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374
 #fasta = ~/projects/Exelixis/SISRS/fasta/SRR610375.fasta
-echo "alignment is "$align
-read_stub=SRR1019272
-outdir=analyses_new
+
+
 mkdir -p $outdir
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
+
 bowtie2-build $outdir/ref_nogap.fas $outdir/ref
-#bowtie2 -x $outdir/ref -1 ${read_stub}_R1.fastq -2 ${read_stub}_R2.fastq -S $outdir/full_alignment.sam --no-unal
-bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal
+if [ $PE -eq 1 ];
+	then 
+	    echo "PAIRED ENDS"
+	    bowtie2 -x $outdir/ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/full_alignment.sam --no-unal;
+    else 
+    	bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal;
+fi
 
-#fastq_to_fasta -in ${read_stub}_R1.fastq -out analyses ${read_stub}_R1.fasta
-#fastq_to_fasta -in ${read_stub}_R2.fastq -out analyses ${read_stub}_R2.fasta
-
-#cat analyses ${read_stub}_R1.fasta analyses ${read_stub}_R2.fasta > analyses ${read_stub}_R1.fasta
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
 samtools sort $outdir/full_alignment.bam $outdir/full_sorted
 samtools index $outdir/full_sorted.bam 
@@ -38,32 +68,37 @@ echo 'The best reference found in your alignment was '$nam
 echo 'mapping reads to '$nam
 
 bowtie2-build $outdir/best_ref.fas $outdir/best_ref
-#bowtie2 -x $outdir/best_ref -1 ${read_stub}_R1.fastq -2 ${read_stub}_R2.fastq -S $outdir/best_map.sam --no-unal
-bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal
+
+if [ $PE -eq 1 ];
+	then 
+	    echo "PAIRED ENDS"
+	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_R1.fastq -2 ${read_stub}_R2.fastq -S $outdir/best_map.sam --no-unal
+    else 
+    	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal;
+fi
+
+#
 
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
 samtools sort $outdir/best_map.bam $outdir/best_sorted
 samtools index $outdir/best_sorted.bam 
-
-##RISKKKK!!! need to make sure goes in N's in case of no alignment/poor quality
 samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
 
-#need better fq to FA solution!!
+#need better fq to FA solution!!!!
 
 ~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/cns.fa  --outfile $outdir/contig_alignment
-
 
 
 #run RAXML EPA on the alignments
 raxmlHPC -m GTRCAT -f v -s $outdir/contig_alignment.fas -t tree.tre -n $runname_consensusEPA
 
 
-
-#run full raxml
-raxmlHPC ­-s $outdir/contig_alignment -m GTRGAMMA -t $tree -p 12345 -n consensusFULL
-#raxmlHPC -m GTRCAT ­­-f v ­-s $outdir/contig_alignment ­-t $tree ­--n contigs
+#run full raxml? tooo sloooo
+#raxmlHPC ­-s $outdir/contig_alignment -m GTRGAMMA -t $tree -p 12345 -n consensusFULL
 
 
+
+#----------playing with denovo locus assmbly, doesn't work RN-------------------------------------------------------
 #grep SRR $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches
 
 #python matchgrabber.py analyses/matches $fasta

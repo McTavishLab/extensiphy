@@ -10,19 +10,23 @@
 #DEFAULT ARGS
 PE=0
 outdir=EPAome_run
+nam=QUERY
 
-while getopts ":a:t:p:s:o:" opt; do
+while getopts ":a:t:p:s:o:n:" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
     t) tree="$OPTARG"
     ;;
-    p) PE=1
+    p) PE=1;
+       read_stub="$OPTARG"
     ;;
     s) read_stub="$OPTARG"
     ;;
     o) outdir="$OPTARG"
 	;;
+	n) nam="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
@@ -33,7 +37,7 @@ printf "Argument tree is %s\n" "$tree"
 printf "Argument PE is %s\n" "$PE"
 printf "Argument stub is %s\n" "$read_stub"
 printf "Argument out is %s\n" "$outdir"
-
+printf "Argument name is %s\n" "$nam"
 
 #read_stub=~/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374
 #fasta = ~/projects/Exelixis/SISRS/fasta/SRR610375.fasta
@@ -69,10 +73,12 @@ echo 'mapping reads to '$nam
 
 bowtie2-build $outdir/best_ref.fas $outdir/best_ref
 
+#TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
+
 if [ $PE -eq 1 ];
 	then 
 	    echo "PAIRED ENDS"
-	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_R1.fastq -2 ${read_stub}_R2.fastq -S $outdir/best_map.sam --no-unal
+	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/best_map.sam --no-unal
     else 
     	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal;
 fi
@@ -84,17 +90,20 @@ samtools sort $outdir/best_map.bam $outdir/best_sorted
 samtools index $outdir/best_sorted.bam 
 samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
 
+#uhh works better twice?
+samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
 #need better fq to FA solution!!!!
+
+python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
 
 ~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/cns.fa  --outfile $outdir/contig_alignment
 
-
 #run RAXML EPA on the alignments
-raxmlHPC -m GTRCAT -f v -s $outdir/contig_alignment.fas -t tree.tre -n $runname_consensusEPA
 
+raxmlHPC -m GTRCAT -f v -s $outdir/contig_alignment.fas -t $tree -n $nam_consensusEPA
 
 #run full raxml? tooo sloooo
-#raxmlHPC ­-s $outdir/contig_alignment -m GTRGAMMA -t $tree -p 12345 -n consensusFULL
+raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
 
 
 

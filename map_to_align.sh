@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #inputs: an alignment, a tree, and whole genome reads 
 
@@ -6,13 +5,18 @@
 #determine how to try differnet alignments
 #deal with possibility of multiple samples?
 #HOw to deal with single mapping to multiple alignements??!?
-
+#./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o lunchbreak -n unk_query#
 #DEFAULT ARGS
+papara=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
 PE=0
 outdir=EPAome_run
 nam=QUERY
+read_align=1
+remap=1
+map=1
 
-while getopts ":a:t:p:s:o:n:" opt; do
+WD=`pwd`
+while getopts ":a:t:p:s:o:n:r:m:b:" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -27,6 +31,12 @@ while getopts ":a:t:p:s:o:n:" opt; do
 	;;
 	n) nam="$OPTARG"
     ;;
+    r) read_align="$OPTARG"
+    ;;
+    m) map="$OPTARG"
+    ;;
+    b) re_map="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
@@ -38,73 +48,101 @@ printf "Argument PE is %s\n" "$PE"
 printf "Argument stub is %s\n" "$read_stub"
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
-
-#read_stub=~/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374
-#fasta = ~/projects/Exelixis/SISRS/fasta/SRR610375.fasta
-
+printf "Argument read_align is %s\n" "$read_align"
+printf "Argument map is %s\n" "$map"
+printf "Argument re_mapis %s\n" "$re_map"
 
 mkdir -p $outdir
-sed 's/-//g' <$align >$outdir/ref_nogap.fas
+if [ $map -eq 1 ];
+    then
+    sed 's/-//g' <$align >$outdir/ref_nogap.fas
+    bowtie2-build $outdir/ref_nogap.fas $outdir/ref
+    if [ $PE -eq 1 ];
+    	then 
+    	    echo "PAIRED ENDS"
+    	    bowtie2 -x $outdir/ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/full_alignment.sam --no-unal;
+        else 
+        	bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal;
+    fi
 
-bowtie2-build $outdir/ref_nogap.fas $outdir/ref
-if [ $PE -eq 1 ];
-	then 
-	    echo "PAIRED ENDS"
-	    bowtie2 -x $outdir/ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/full_alignment.sam --no-unal;
-    else 
-    	bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal;
+    samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
+    samtools sort $outdir/full_alignment.bam $outdir/full_sorted
+    samtools index $outdir/full_sorted.bam 
+    samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
+    nam=`sort -rnk3 $outdir/mapping_info | head -1 | cut -f1`
+    if ((`sort -rnk3 $outdir/mapping_info | head -1 | cut -f3`<10)); then
+        echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?'
+        exit
+    fi
+    #assert at least some reads mapped!! 
 fi
 
-samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
-samtools sort $outdir/full_alignment.bam $outdir/full_sorted
-samtools index $outdir/full_sorted.bam 
-samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
-nam=`sort -rnk3 $outdir/mapping_info | head -1 | cut -f1`
-if ((`sort -rnk3 $outdir/mapping_info | head -1 | cut -f3`<10)); then
-    echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?'
-    exit
+if [ $read_align -eq 1 ];
+    then 
+        echo " grep 'SRR' $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches"
+        grep 'SRR' $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches
+        if ((`wc -l $outdir/matches | cut -f1 -d' '` < 10)); 
+            then
+               echo 'error in matched read grepping'
+               exit
+        fi
+        if [ $PE -eq 1 ];
+            then 
+                seqtk subseq ${read_stub}_1.fastq $outdir/matches > $outdir/matches.fq
+                seqtk subseq ${read_stub}_2.fastq $outdir/matches >> $outdir/matches.fq
+            else 
+                seqtk subseq ${read_stub}.fastq $outdir/matches > $outdir/matches.fq
+        fi
+        fastq_to_fasta -i $outdir/matches.fq -o $outdir/matches.fa
+        aln_stub=$(echo $align | cut -f1 -d.)
+        python fasta_to_phylip.py $align ${outdir}/${aln}_stub.phy
+        cd $outdir
+            $papara -t ${WD}/${tree} -s ${align}.phy -q matches.fa -n reads
+            raxmlHPC -m GTRCAT -f v -s papara_alignment.reads -t ${WD}/${tree} -n ${nam}reads_EPA
+        cd $WD
+fi    
+
+
+if [ $re_map -eq 1 ];
+    then 
+        grep -Pzo '(?s)>'$nam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref.fas
+        echo 'The best reference found in your alignment was '$nam
+        echo 'mapping reads to '$nam
+
+        bowtie2-build $outdir/best_ref.fas $outdir/best_ref
+
+        #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
+        if [ $PE -eq 1 ];
+        	then 
+        	    echo "PAIRED ENDS"
+        	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/best_map.sam --no-unal
+            else 
+            	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal;
+        fi
+
+        #
+
+        samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
+        samtools sort $outdir/best_map.bam $outdir/best_sorted
+        samtools index $outdir/best_sorted.bam 
+        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
+
+        #uhh works better twice?
+        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
+        #need better fq to FA solution!!!!
+
+        python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
+
+        ~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/cns.fa  --outfile $outdir/contig_alignment
+
+        #run RAXML EPA on the alignments
+
+        raxmlHPC -m GTRCAT -f v -s $outdir/contig_alignment.fas -t $tree -n $nam_consensusEPA
+
+        #run full raxml? tooo sloooo
+        raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
+
 fi
-#assert at least some reads mapped!! 
-
-grep -Pzo '(?s)>'$nam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref.fas
-
-echo 'The best reference found in your alignment was '$nam
-echo 'mapping reads to '$nam
-
-bowtie2-build $outdir/best_ref.fas $outdir/best_ref
-
-#TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
-
-if [ $PE -eq 1 ];
-	then 
-	    echo "PAIRED ENDS"
-	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/best_map.sam --no-unal
-    else 
-    	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal;
-fi
-
-#
-
-samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
-samtools sort $outdir/best_map.bam $outdir/best_sorted
-samtools index $outdir/best_sorted.bam 
-samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
-
-#uhh works better twice?
-samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
-#need better fq to FA solution!!!!
-
-python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
-
-~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/cns.fa  --outfile $outdir/contig_alignment
-
-#run RAXML EPA on the alignments
-
-raxmlHPC -m GTRCAT -f v -s $outdir/contig_alignment.fas -t $tree -n $nam_consensusEPA
-
-#run full raxml? tooo sloooo
-raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
-
 
 
 #----------playing with denovo locus assmbly, doesn't work RN-------------------------------------------------------

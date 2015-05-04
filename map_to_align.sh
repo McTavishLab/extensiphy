@@ -8,6 +8,8 @@
 #./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o lunchbreak -n unk_query#
 #DEFAULT ARGS
 papara=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
+EPAOME=/home/ejmctavish/projects/Exelixis/EPAome
+
 PE=0
 outdir=EPAome_run
 nam=QUERY
@@ -89,15 +91,17 @@ if [ $read_align -eq 1 ];
         if [ $PE -eq 1 ];
             then 
                 seqtk subseq ${read_stub}_1.fastq $outdir/matches > $outdir/matches.fq
-                seqtk subseq ${read_stub}_2.fastq $outdir/matches >> $outdir/matches.fq
+                seqtk subseq ${read_stub}_2.fastq $outdir/matches > $outdir/matches2.fq
+                sed 's/@/@R2/' $outdir/matches2.fq > $outdir/matches.fq
             else 
                 seqtk subseq ${read_stub}.fastq $outdir/matches > $outdir/matches.fq
         fi
         fastq_to_fasta -i $outdir/matches.fq -o $outdir/matches.fa
         aln_stub=$(echo $align | cut -f1 -d.)
-        python fasta_to_phylip.py $align ${outdir}/${aln}_stub.phy
+        python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
         cd $outdir
-            $papara -t ${WD}/${tree} -s ${align}.phy -q matches.fa -n reads
+            echo "$papara -t ${WD}/${tree} -s ${align}.phy -q matches.fa -n reads"
+            $papara -t ${WD}/${tree} -s ${align}.phy -q matches.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
             raxmlHPC -m GTRCAT -f v -s papara_alignment.reads -t ${WD}/${tree} -n ${nam}reads_EPA
         cd $WD
 fi    

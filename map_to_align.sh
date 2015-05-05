@@ -5,7 +5,7 @@
 #determine how to try differnet alignments
 #deal with possibility of multiple samples?
 #HOw to deal with single mapping to multiple alignements??!?
-#./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o lunchbreak -n unk_query#
+#./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o fulltest -n fulltest #
 #DEFAULT ARGS
 papara=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
 EPAOME=/home/ejmctavish/projects/Exelixis/EPAome
@@ -62,16 +62,16 @@ if [ $map -eq 1 ];
     if [ $PE -eq 1 ];
     	then 
     	    echo "PAIRED ENDS"
-    	    bowtie2 -x $outdir/ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/full_alignment.sam --no-unal --local
+    	    bowtie2 -x $outdir/ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/full_alignment.sam --no-unal
         else 
-        	bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal --local
+        	bowtie2 -x $outdir/ref -U ${read_stub}.fastq -S $outdir/full_alignment.sam --no-unal
     fi
 
     samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
     samtools sort $outdir/full_alignment.bam $outdir/full_sorted
     samtools index $outdir/full_sorted.bam 
     samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
-    if ((`sort -rnk3 $outdir/mapping_info | head -1 | cut -f3`<10)); then
+    if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) < 10 ]; then
         echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?'
         exit
     fi
@@ -82,7 +82,7 @@ if [ $read_align -eq 1 ]
     then 
         echo " grep 'SRR' $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches"
         grep 'SRR' $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches #ToDo this relies on read names starting with SRR. Need better approach
-        if ((`wc -l $outdir/matches | cut -f1 -d' '` < 10)); 
+        if [ $(wc -l $outdir/matches | cut -f1 -d' ') < 10 ]; 
             then
                echo 'error in matched read grepping'
                exit
@@ -108,10 +108,9 @@ if [ $read_align -eq 1 ]
         cd $WD
 fi    
 
-
 if [ $re_map -eq 1 ];
     then 
-        refnam=`sort -rnk3 $outdir/mapping_info | head -1 | cut -f1`
+        refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
         grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref.fas
         echo 'The best reference found in your alignment was '$refnam
         echo 'mapping reads to '$refnam

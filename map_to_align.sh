@@ -130,7 +130,7 @@ if [ $re_map -eq 1 ]
         samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
         samtools sort $outdir/best_map.bam $outdir/best_sorted
         samtools index $outdir/best_sorted.bam 
-        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/cns.fq  
+        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools call -c  | vcfutils.pl vcf2fq > $outdir/cns.fq  
         python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
         if [ $wre_map -eq 1 ]
             then
@@ -153,7 +153,7 @@ if [ $re_map -eq 1 ]
                 samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
                 samtools sort $outdir/worse_map.bam $outdir/worse_sorted
                 samtools index $outdir/worse_sorted.bam 
-                samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam | bcftools view -cg - | vcfutils.pl vcf2fq > $outdir/worse_cns.fq  
+                samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam | bcftools call -c  | vcfutils.pl vcf2fq > $outdir/worse_cns.fq  
                 python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
                 cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
                 aln_stub=$(echo $align | cut -f1 -d.)

@@ -11,13 +11,15 @@ EPAOME=/home/ejmctavish/projects/Exelixis/EPAome
 PE=0
 outdir=EPAome_run
 nam=QUERY
-read_align=1
+read_align=0
 re_map=1
 map=1
-wre_map=1
+read_name_prefix=SRR
+
+wre_map=0
 
 WD=$(pwd)
-while getopts ":a:t:p:s:o:n:r:m:b:" opt; do
+while getopts ":a:t:p:s:o:n:r:m:b:w:" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -37,6 +39,8 @@ while getopts ":a:t:p:s:o:n:r:m:b:" opt; do
     m) map="$OPTARG"
     ;;
     b) re_map="$OPTARG"
+    ;;
+    w) wre_map="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -58,7 +62,7 @@ if [ $map -eq 1 ];
     then
     echo 'Performing full mapping of reads to all sequences in alignment'
     sed 's/-//g' <$align >$outdir/ref_nogap.fas
-    bowtie2-build $outdir/ref_nogap.fas $outdir/ref
+    bowtie2-build $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
     if [ $PE -eq 1 ];
     	then 
     	    echo "PAIRED ENDS"
@@ -81,7 +85,7 @@ fi
 if [ $read_align -eq 1 ]
     then 
         echo 'Attempting to align and place all mapped reads'
-        grep 'SRR' $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches #ToDo this relies on read names starting with SRR. Need better approach
+        grep $read_name_prefix $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches #ToDo this relies on read names starting with SRR. Need better approach
         if [ $(wc -l $outdir/matches | cut -f1 -d' ') -lt  10 ]; 
             then
                echo 'error in matched read grepping'
@@ -111,11 +115,12 @@ if [ $re_map -eq 1 ]
     then 
         echo 'Refining mapping and calling consensus sequence'
         refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
-        grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref.fas
+        grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
+        python fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas
         echo 'The best reference found in your alignment was '$refnam
         echo 'mapping reads to '$refnam
 
-        bowtie2-build $outdir/best_ref.fas $outdir/best_ref
+        bowtie2-build $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
         #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
         if [ $PE -eq 1 ]
@@ -123,42 +128,46 @@ if [ $re_map -eq 1 ]
         	    echo "PAIRED ENDS"
         	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/best_map.sam --no-unal --local
             else 
-            	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal --local:q
+            	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal --local
         fi
 
-
+        samtools faidx $outdir/best_ref.fas
         samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
         samtools sort $outdir/best_map.bam $outdir/best_sorted
         samtools index $outdir/best_sorted.bam 
-        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam | bcftools call -c  | vcfutils.pl vcf2fq > $outdir/cns.fq  
+        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq 
         python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
         if [ $wre_map -eq 1 ]
             then
                 #generate consensus mapped to second best locus to assuage some ref dependence
                 wrefnam=$(sort -rnk3 $outdir/mapping_info | head -2 | tail -1| cut -f1)
-                grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref.fas
+                grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref_uneven.fas
+                python fastafixer.py $outdir/worse_ref_uneven.fas $outdir/worse_ref.fas
                 echo 'The second best reference found in your alignment was '$refnam
                 echo 'mapping reads to '$refnam
 
-                bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref
+                bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref >> $outdir/bowtiebuild.log
 
                 if [ $PE -eq 1 ];
                     then 
                         echo "PAIRED ENDS"
                         bowtie2 -x $outdir/worse_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/worse_map.sam --no-unal --local
                     else 
-                        bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local:q
+                        bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local
                 fi
-
+                samtools faidx $outdir/worse_ref.fas 
                 samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
                 samtools sort $outdir/worse_map.bam $outdir/worse_sorted
                 samtools index $outdir/worse_sorted.bam 
-                samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam | bcftools call -c  | vcfutils.pl vcf2fq > $outdir/worse_cns.fq  
+                samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
+
                 python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
                 cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
+                fastx_collapser < $outdir/mappings.fa > $outdir/mappings_unique.fa
                 aln_stub=$(echo $align | cut -f1 -d.)
+                python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
                 cd $outdir
-                  $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n consensus 
+                  $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings_unique.fa -n consensus 
                   #run RAXML EPA on the alignments
                   raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                 cd $WD

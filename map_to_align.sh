@@ -141,10 +141,10 @@ if [ $re_map -eq 1 ]
             then
                 #generate consensus mapped to second best locus to assuage some ref dependence
                 wrefnam=$(sort -rnk3 $outdir/mapping_info | head -2 | tail -1| cut -f1)
-                grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref_uneven.fas
+                grep -Pzo '(?s)>'$wrefnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref_uneven.fas
                 python fastafixer.py $outdir/worse_ref_uneven.fas $outdir/worse_ref.fas
-                echo 'The second best reference found in your alignment was '$refnam
-                echo 'mapping reads to '$refnam
+                echo 'The second best reference found in your alignment was '$wrefnam
+                echo 'mapping reads to '$wrefnam
 
                 bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref >> $outdir/bowtiebuild.log
 
@@ -162,15 +162,22 @@ if [ $re_map -eq 1 ]
                 samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
 
                 python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
-                cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
-                fastx_collapser < $outdir/mappings.fa > $outdir/mappings_unique.fa
-                aln_stub=$(echo $align | cut -f1 -d.)
-                python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
-                cd $outdir
-                  $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings_unique.fa -n consensus 
-                  #run RAXML EPA on the alignments
-                  raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
-                cd $WD
+                if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
+                     then 
+                        echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
+                        cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
+                        aln_stub=$(echo $align | cut -f1 -d.)
+                        python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
+                        cd $outdir
+                          $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings_unique.fa -n consensus 
+                          #run RAXML EPA on the alignments
+                          raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                        cd $WD
+                    else
+                        echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
+                        $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
+                        raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                fi
             else
                 $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
                 raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA

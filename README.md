@@ -8,6 +8,7 @@ calls consensus, adds to alignment using PaPara, and places in the tree using EP
 
 
 Arguments:
+----------
 
  -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta
 (required)
@@ -33,6 +34,7 @@ Arguments:
  -w Boolean. Try creating consensus from non optimal (worse) reference locus. Useful for investigating effects of refence choice.
 
  Output files:
+ ------------
  
  (with -n QUERY)
  
@@ -64,25 +66,17 @@ Arguments:
 
 
 Requirements: 
+-----------------
 
-(Too many probably...)
-
-Python packages:
-
-    Dendropy
-
-Software in path:
-
-	bowtie2
-	
-	fastx
-	
-	PaPaRa
-	
-	raxmlHPC
-	
-	seqtk
-	
+(Too many probably...) 
+Python packages: 
+    Dendropy 
+Software in path: 
+	bowtie2 
+	fastx 
+	PaPaRa 
+	raxmlHPC 
+	seqtk 
 	samtools / bcftools
 	NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
 	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!!!

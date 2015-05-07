@@ -29,7 +29,7 @@ Arguments:
  
  (with -n QUERY)  
   ref_nogap.fas : The refence alignement will all gap characters removed, used as potential mapping reference loci  
-  ' '.bt : bowtie2 refences  
+  {}.bt : bowtie2 refences  
   full_alignment.sam : reads mapped to all loci in refence alignement (same full_sorted.bam, full_sorted.bam.bai)  
   mapping_info : listing of how many reads mapped to each locus. Used in determining best refence locus  
   matches : list of reads that mapped to any locus  
@@ -37,9 +37,9 @@ Arguments:
   matches.fa : fasta of all reads mapped to any locus  
   matches_unique.fa : matches.fa with duplicate reads removed  
   {alignname}.phy : reference alignement in phylip format for PaPaRa  
-  papara_{*}.reads : PaPaRa read alignment output files  
+  papara_{}.reads : PaPaRa read alignment output files  
   papara_alignment.reads : Alignment of reads in fasta  
-  RAxML_{*}.QUERY_reads_EPA : RAxML reads output files  
+  RAxML_{}.QUERY_reads_EPA : RAxML reads output files  
 
 
 Requirements: 

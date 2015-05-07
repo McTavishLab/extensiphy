@@ -2,6 +2,7 @@
 
 Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.
 
+
 Assembles  homologous locus, if possible, using closest match as reference,
 calls consensus, adds to alignment using PaPara, and places in the tree using EPA in RAxML.
 
@@ -16,9 +17,8 @@ or
 http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374  
 
 
-Arguments:
-----------
-
+##Arguments:
+###required
  -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta  (required)  
  -t tree in newick format. Tip lables must match alignment labels, and polytomies must be resolved. Use 'preprocessing.py' to do so if necessary.
  (required)  
@@ -26,7 +26,7 @@ Arguments:
     or  
  -s query reads (stub of single end read names. File should be named stub.fastq)  
  (required)  
-Optional arguments   
+###ptional arguments   
  -o output directory. Optional default is EPAome_run  
  -n run_name.  Optional, default is QUERY.  
  -r Boolean. Align and place reads. Default is 0, set to 1 if you want to align and place reads. Can be SLOWWWW if lots map.  
@@ -34,9 +34,7 @@ Optional arguments
  -b Boolean. Align reads to best reference in alignment, call and place consensus sequence. Default is 1, set to 0 if you only want to align and place reads.  
  -w Boolean. Try creating consensus from non optimal (worse) reference locus. Useful for investigating effects of refence choice.  
 
- Output files:
----------------
- 
+##Output files:
  (with -n QUERY)  
   ref_nogap.fas : The refence alignement will all gap characters removed, used as potential mapping reference loci  
   {}.bt : bowtie2 refences  
@@ -52,10 +50,10 @@ Optional arguments
   RAxML_{}.QUERY_reads_EPA : RAxML reads output files  
 
 
-Requirements: 
------------------
+##Requirements: 
 
-(Too many probably...) 
+runs on linux, probably not anywhere else  
+(Too many probably...)   
 Python packages: 
     Dendropy  
 Software in path: 

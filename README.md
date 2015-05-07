@@ -7,7 +7,9 @@ calls consensus, adds to alignment using PaPara, and places in the tree using EP
 
 
 Example run:
+
     ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374
+
 NOTE: This requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
 http://www.ebi.ac.uk/ena/data/view/SRR610374&display=html  
 or   

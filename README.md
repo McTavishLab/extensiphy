@@ -6,6 +6,13 @@ Assembles  homologous locus, if possible, using closest match as reference,
 calls consensus, adds to alignment using PaPara, and places in the tree using EPA in RAxML.
 
 
+Example run:
+    ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374
+NOTE: This requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
+http://www.ebi.ac.uk/ena/data/view/SRR610374&display=html  
+or   
+http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374  
+
 
 Arguments:
 ----------
@@ -17,6 +24,7 @@ Arguments:
     or  
  -s query reads (stub of single end read names. File should be named stub.fastq)  
  (required)  
+Optional arguments   
  -o output directory. Optional default is EPAome_run  
  -n run_name.  Optional, default is QUERY.  
  -r Boolean. Align and place reads. Default is 0, set to 1 if you want to align and place reads. Can be SLOWWWW if lots map.  

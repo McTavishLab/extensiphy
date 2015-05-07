@@ -29,7 +29,7 @@ Arguments:
  
  (with -n QUERY)  
   ref_nogap.fas : The refence alignement will all gap characters removed, used as potential mapping reference loci  
-  *.bt : bowtie2 refences  
+  '*'.bt : bowtie2 refences  
   full_alignment.sam : reads mapped to all loci in refence alignement (same full_sorted.bam, full_sorted.bam.bai)  
   mapping_info : listing of how many reads mapped to each locus. Used in determining best refence locus  
   matches : list of reads that mapped to any locus  

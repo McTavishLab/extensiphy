@@ -13,5 +13,74 @@
 
 \end{abstract}
 
+While whole genome sequencing is becoming affordable, and many novel species are being sequenced, 
+these data are not straightforward to add into pre-existing estimates o phylogenetic relationships.
+
+Much time and effort has been devoted to developing single copy nuclear genes, sequencing them, 
+and using them to build phylogenies in order to understand species relationships.
+This tool simplifies the process required to go from sequencing an individual and placing it in it's appropriate phylogenetic context.
+In contrast to barcoding or blast based methods, this is not an allele-matching approach.
+Rather it is a modified assembly approach, which assembles loci homologous to those already existing in phylogenies.
+
+By using pre-existing phylogenies an alignments this approach leverages previous work dedicated to selecting
+markers with the appropriate levels of variation to understand relationships among the taxa of interest.
+By assembling the full locus using existing loci as a reference, 
+full maximum likelihood and phylogenetic methods can be applied to the new alignment.
+
+In contrast to methods that discover homologous loci using properties of the entire data set.
+e.g. (SISES, aTRAM) or SNP discovery methods (KSNP ...?) which rely on shared qualities of the entire data set, 
+this method captures the necessary information contained in loci homologous to existing alignments
+
+It can be used as a standard 'barcoding' approach if the input tree and alignment are a barcoding gene.
+
+Advantages of this method include: 
+rapid filtering of whole genome data sets.
+incorporation of new taxa into phylogenies, as opposed to a purely placement based approach
+does not require uniform sequencing technology, or sampling plan.
+the outputs can easily be shared and combined, as they are full alignments, not just SNP loci.
+
+
+
+\subsection{Methods}
+This pipeline uses an existing tree and alignment to call homologous loci from a set of NGS reads, and place that taxon in the tree.
+
+It treats each sequence as a potential reference to assemble a homologous locus from the query reads.
+
+\subsubsection{First pass mapping}. (Required) Use bowtie2 to map reads to all loci found in the alignment.
+This is a coarse filtering step which a) determines if there is a potentially appropriate reference found in this alignment, 
+and b) ranks the potential reference loci buy the number of reads it is possible to map.
+
+\subsubsection{Read alignment and placing} (optional) Align all mapped reads to the reference alignment using PaPaRa (ref) and place those in a phylogenetic tree using EPA.
+This step may be used to test if there are reads from multiple biologically relevant clusters.
+(problem - conserved seqs will drop to bottom of tree I think, even if only one SPp)
+
+\subsubsection{Consensus locus calling, alignment, and placement} Re-map query reads to best reference genome, using bowtie2 local alignment and call consensus sequence. 
+
+
+\subsubsection{Alternate consensus locus calling} 
+This repeats the consensus locus calling step using an alternate locus as the reference.
+By returning both the sequences and the phylogenetic placements which result from the use of an alternate reference, 
+it is possible to examine biases due to selection of reference locus.
+
+\subsubsection{Full phylogenetic reanalysis}
+If a researcher wishes to continue adding taxa to this tree, a full phylogenetic analysis can be performed using the new alignment.
+Following this full ML search, this tree and alignment can be used as the reference data set to add more taxa to the tree.
+
+
+\subsection{Discussion}
+Continually updated phylogenetic trees, with little human input required between steps, 
+is necessary for phylogenetics to keep pace with current sequencing.
+
+While whole genome based approaches are becoming available for phylogenetics, many of these rely on dubious inference of homology among groups, 
+and are not able to leverage the many years of past phylogenetic effort which has been applied to selecting appropriate markers and understanding relationships in groups of interest.
+
+By building up alignments of homologous 
+
+[issues with SNP based approaches]
+
+[importance of full marker seqs?]
+
+[some blather about phylogenetic models]
+
 
 \end{document}

@@ -125,7 +125,6 @@ if [ $re_map -eq 1 ]
         #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
         if [ $PE -eq 1 ]
         	then 
-        	    echo "PAIRED ENDS"
         	    bowtie2 -x $outdir/best_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/best_map.sam --no-unal --local
             else 
             	bowtie2 -x $outdir/best_ref  -U ${read_stub}.fastq -S $outdir/best_map.sam --no-unal --local
@@ -150,7 +149,6 @@ if [ $re_map -eq 1 ]
 
                 if [ $PE -eq 1 ];
                     then 
-                        echo "PAIRED ENDS"
                         bowtie2 -x $outdir/worse_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/worse_map.sam --no-unal --local
                     else 
                         bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local
@@ -169,7 +167,7 @@ if [ $re_map -eq 1 ]
                         aln_stub=$(echo $align | cut -f1 -d.)
                         python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
                         cd $outdir
-                          $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings_unique.fa -n consensus 
+                          $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n consensus 
                           #run RAXML EPA on the alignments
                           raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                         cd $WD

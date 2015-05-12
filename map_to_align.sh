@@ -8,6 +8,7 @@
 papara=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
 EPAOME=/home/ejmctavish/projects/Exelixis/EPAome
 
+
 PE=0
 outdir=EPAome_run
 nam=QUERY
@@ -19,7 +20,7 @@ read_name_prefix=SRR
 wre_map=0
 
 WD=$(pwd)
-while getopts ":a:t:p:s:o:n:r:m:b:w:" opt; do
+while getopts ":a:t:p:s:o:n:r:m:b:w:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -41,16 +42,51 @@ while getopts ":a:t:p:s:o:n:r:m:b:w:" opt; do
     b) re_map="$OPTARG"
     ;;
     w) wre_map="$OPTARG"
+    ;; 
+    h) echo  "alignment (-a), tree (-t), and reads (-p or -s required)"
+    exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
 done
 
-printf "Argument alightis %s\n" "$align"
-printf "Argument tree is %s\n" "$tree"
-printf "Argument PE is %s\n" "$PE"
-printf "Argument stub is %s\n" "$read_stub"
+if [ -z "$align" ] || [ -z "$tree" ] || [ -z "$read_stub" ]; then
+   "alignment (-a), tree (-t), and reads (-p or -s required)"
+   exit
+fi
+
+#Ttest if files actually exist
+
+
+if [ -f "$align" ]; then  
+    printf "Alignment is %s\n" "$align"
+  else
+    printf "Alignment $align not found. Exiting\n"
+    exit
+fi
+if [ -f "$tree" ]; then  
+    printf "Tree is %s\n" "$tree"
+  else
+    printf "Tree $tree not found. Exiting\n"
+    exit
+fi
+if [ $PE -eq 1 ]; then
+  if [ -f "${read_stub}_1.fastq" ]; then      
+     printf "Paired end reads \n"
+     printf "read one is ${read_stub}_1.fastq\n"
+  else
+    printf "read one ${read_stub}_1.fastq not found. Exiting\n"
+    exit
+  fi
+else
+  if [ -f "${read_stub}.fastq" ]; then      
+    printf "reads are ${read_stub}.fastq\n"
+  else
+    printf "read one ${read_stub}.fastq not found. Exiting\n"
+    exit
+  fi
+fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument read_align is %s\n" "$read_align"

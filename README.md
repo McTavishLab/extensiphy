@@ -1,4 +1,4 @@
-# EPAome
+# Phycorder
 
 Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.
 
@@ -11,7 +11,7 @@ Example run:
 
     ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374
 
-NOTE: This requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
+NOTE: This example requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
 http://www.ebi.ac.uk/ena/data/view/SRR610374&display=html  
 or   
 http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374  

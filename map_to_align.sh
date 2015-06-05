@@ -13,7 +13,7 @@ PE=0
 outdir=phycorder_run
 nam=QUERY
 read_align=0
-re_map=0
+re_map=1
 map=1
 read_name_prefix=SRR
 
@@ -57,7 +57,7 @@ if [ -z "$align" ] || [ -z "$tree" ] || [ -z "$read_stub" ]; then
 fi
 
 #Ttest if files actually exist
-
+#Check to make sure mapping has occured if re-mapping
 
 if [ -f "$align" ]; then  
     printf "Alignment is %s\n" "$align"
@@ -94,6 +94,9 @@ printf "Argument map is %s\n" "$map"
 printf "Argument re_mapis %s\n" "$re_map"
 
 mkdir -p $outdir
+aln_stub=$(echo $align | cut -f1 -d.)
+python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
+
 if [ $map -eq 1 ];
     then
     echo 'Performing full mapping of reads to all sequences in alignment'
@@ -139,8 +142,6 @@ if [ $read_align -eq 1 ]
         fi
         fastq_to_fasta -i $outdir/matches.fq -o $outdir/matches.fa
         fastx_collapser < $outdir/matches.fa > $outdir/matches_unique.fa
-        aln_stub=$(echo $align | cut -f1 -d.)
-        python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
         cd $outdir
             $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q matches_unique.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
             raxmlHPC -m GTRCAT -f v -s papara_alignment.reads -t ${WD}/${tree} -n ${nam}_reads_EPA
@@ -200,21 +201,19 @@ if [ $re_map -eq 1 ]
                      then 
                         echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
                         cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
-                        aln_stub=$(echo $align | cut -f1 -d.)
-                        python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
                         cd $outdir
-                          $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n consensus 
+                          $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n multi_consensus 
                           #run RAXML EPA on the alignments
-                          raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                          raxmlHPC -m GTRCAT -f v -s papara_alignment.multi_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                         cd $WD
                     else
                         echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
-                        $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
-                        raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                        $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
+                        raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                 fi
             else
-                $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
-                raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
+                raxmlHPC -m GTRCAT -f v -s papara_alignment.fi_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
             fi
             #run full raxml? tooo sloooo
        # raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL

@@ -5,15 +5,15 @@
 #HOw to deal with single mapping to multiple alignements??!?
 #./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o fulltest -n fulltest #
 #DEFAULT ARGS
-papara=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
-EPAOME=/home/ejmctavish/projects/Exelixis/EPAome
+PAPARA=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
+PHYCORDER=/home/ejmctavish/projects/Exelixis/phycorder
 
 
 PE=0
-outdir=EPAome_run
+outdir=phycorder_run
 nam=QUERY
 read_align=0
-re_map=1
+re_map=0
 map=1
 read_name_prefix=SRR
 
@@ -140,9 +140,9 @@ if [ $read_align -eq 1 ]
         fastq_to_fasta -i $outdir/matches.fq -o $outdir/matches.fa
         fastx_collapser < $outdir/matches.fa > $outdir/matches_unique.fa
         aln_stub=$(echo $align | cut -f1 -d.)
-        python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
+        python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
         cd $outdir
-            $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q matches_unique.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
+            $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q matches_unique.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
             raxmlHPC -m GTRCAT -f v -s papara_alignment.reads -t ${WD}/${tree} -n ${nam}_reads_EPA
         cd $WD
 fi    
@@ -171,7 +171,7 @@ if [ $re_map -eq 1 ]
         samtools sort $outdir/best_map.bam $outdir/best_sorted
         samtools index $outdir/best_sorted.bam 
         samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq 
-        python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
+        python $PHYCORDER/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
         if [ $wre_map -eq 1 ]
             then
                 #generate consensus mapped to second best locus to assuage some ref dependence
@@ -195,25 +195,25 @@ if [ $re_map -eq 1 ]
                 samtools index $outdir/worse_sorted.bam 
                 samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
 
-                python ~/projects/Exelixis/EPAome/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
+                python $PHYCORDER/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
                 if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
                      then 
                         echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
                         cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
                         aln_stub=$(echo $align | cut -f1 -d.)
-                        python $EPAOME/fasta_to_phylip.py $align $outdir/$aln_stub.phy
+                        python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
                         cd $outdir
-                          $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n consensus 
+                          $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n consensus 
                           #run RAXML EPA on the alignments
                           raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                         cd $WD
                     else
                         echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
-                        $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
+                        $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
                         raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
                 fi
             else
-                $papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
+                $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n consensus 
                 raxmlHPC -m GTRCAT -f v -s papara_alignment.consensus -t ${WD}/$tree -n ${nam}_consensusEPA
             fi
             #run full raxml? tooo sloooo

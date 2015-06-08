@@ -55,7 +55,7 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
 runs on linux, probably not anywhere else  
 (Too many probably...)   
 Python packages: 
-    Dendropy  (pip install dendropy)
+    Dendropy 4.0 (pip install dendropy)
 Software in path: 
 	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html

@@ -8,13 +8,31 @@ tre=sys.argv[3]
 tretype=sys.argv[4]
 nam=sys.arg[5]
 
+mat="example.aln"
+mattype="fasta"
+tre="tree.tre"
+tretype="newick"
+nam="test"
+d = dendropy.DnaCharacterMatrix.get(path=mat, schema=mattype)
+tree = dendropy.Tree.get(path='tree.tre', schema='newick', preserve_underscores=True, taxon_namespace=d.taxon_namespace)
 
-charmat = dendropy.DataSet.get_from_path(fas, mattype)
-charmat.write_to_path("{}.fas".format(nam), "dnafasta")
+
+tre.resolve_polytomies()
+tre.write_to_path("{}.tre".format(nam), "newick", quote_underscores=False, )
+
+
+print(d.taxon_namespaces[0].description(2))
+
+
+charmat.write_to_path("{}.fas".format(nam), ")
 #charmat.write_to_path("{}.phy".format(nam), "phylip")
 
 
-tre = dendropy.Tree.get_from_path(tre,tretype)
-tre.resolve_polytomies()
-tre.write_to_path("{}.tre".format(nam), "newick", quote_underscores=False)
 
+
+
+
+for taxon in charmat.taxon_namespace:
+    if taxon in tree_list2.taxon_namespace:
+        # this branch is never visited
+        print("Taxon '{}': found in both trees".format(taxon.label))

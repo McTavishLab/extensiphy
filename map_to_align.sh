@@ -62,13 +62,13 @@ fi
 if [ -f "$align" ]; then  
     printf "Alignment is %s\n" "$align"
   else
-    printf "Alignment $align not found. Exiting\n"
+    printf "Alignment $align not found. Exiting\n" >&2
     exit
 fi
 if [ -f "$tree" ]; then  
     printf "Tree is %s\n" "$tree"
   else
-    printf "Tree $tree not found. Exiting\n"
+    printf "Tree $tree not found. Exiting\n" >&2
     exit
 fi
 if [ $PE -eq 1 ]; then
@@ -76,14 +76,14 @@ if [ $PE -eq 1 ]; then
      printf "Paired end reads \n"
      printf "read one is ${read_stub}_1.fastq\n"
   else
-    printf "read one ${read_stub}_1.fastq not found. Exiting\n"
+    printf "read one ${read_stub}_1.fastq not found. Exiting\n" >&2 
     exit
   fi
 else
   if [ -f "${read_stub}.fastq" ]; then      
     printf "reads are ${read_stub}.fastq\n"
   else
-    printf "read one ${read_stub}.fastq not found. Exiting\n"
+    printf "read one ${read_stub}.fastq not found. Exiting\n" >&2 
     exit
   fi
 fi
@@ -115,7 +115,7 @@ if [ $map -eq 1 ];
     samtools index $outdir/full_sorted.bam 
     samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
     if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
-        echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?'
+        echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?' >&2
         exit
     fi
     #assert at least some reads mapped!! 
@@ -127,7 +127,7 @@ if [ $read_align -eq 1 ]
         grep $read_name_prefix $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches #ToDo this relies on read names starting with SRR. Need better approach
         if [ $(wc -l $outdir/matches | cut -f1 -d' ') -lt  10 ]; 
             then
-               echo 'error in matched read grepping'
+               echo 'error in matched read grepping' >&2
                exit
         fi
         if [ $PE -eq 1 ];
@@ -204,47 +204,22 @@ if [ $re_map -eq 1 ]
                         cd $outdir
                           $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n multi_consensus 
                           #run RAXML EPA on the alignments
-                          raxmlHPC -m GTRCAT -f v -s papara_alignment.multi_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                          raxmlHPC -m GTRCAT -f v -s papara_alignment.multi_consensus -t ${WD}/$tree -n ${nam}_consensusPC
                         cd $WD
-                    else
-                        echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
+                else
+                    echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
+                    cd $outdir
                         $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
-                        raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
+                        raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
+                    cd $WD
                 fi
-            else
+        else
+            cd $outdir
                 $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
-                raxmlHPC -m GTRCAT -f v -s papara_alignment.fi_consensus -t ${WD}/$tree -n ${nam}_consensusEPA
-            fi
-            #run full raxml? tooo sloooo
-       # raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
+                raxmlHPC -m GTRCAT -f v -s papara_alignment.fi_consensus -t ${WD}/$tree -n ${nam}_consensusPC
+            cd $WD
+        fi
+        #run full raxml? tooo sloooo
+        # raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
 
 fi
-
-
-
-
-#----------playing with denovo locus assmbly, doesn't work RN-------------------------------------------------------
-#grep SRR $outdir/full_alignment.sam | cut -f1 | uniq > $outdir/matches
-
-#python matchgrabber.py analyses/matches $fasta
-#seqtk subseq ${read_stub}_R1.fastq   $outdir/matches > $outdir/mapped.fq
-#seqtk subseq ${read_stub}_R2.fastq   $outdir/matches >> $outdir/mapped.fq
-
-#assemble all the reads that mapped anywhere in the alignment into contigs
-#minia $outdir/mapped.fq 7 3 1000 $outdir/assemb
-
-
-#also align all mapped reads to the alignment
-#~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/mapped.fq --outfile read_alignment
-
-#try aligning contigs too
-#~/projects/Exelixis/pagan-msa/src/pagan --ref-seqfile $align -t $tree --queryfile $outdir/assemb.contigs.fa --outfile contig_alignment
-
-
-#run RAXML EPA on the alignments
-#raxmlHPC ­-f v ­-s read_alignment ­-t $tree ­-m GTRCAT ­-n contigs
-
-
-
-#run RAXML EPA on the alignments
-#raxmlHPC ­-f v ­-s contig_alignment ­-t $tree ­-m GTRCAT ­-n reads

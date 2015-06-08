@@ -5,9 +5,55 @@
 #HOw to deal with single mapping to multiple alignements??!?
 #./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o fulltest -n fulltest #
 #DEFAULT ARGS
-PAPARA=/home/ejmctavish/projects/Exelixis/papara_nt-2.4/papara
-PHYCORDER=/home/ejmctavish/projects/Exelixis/phycorder
+PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+printf "phycorder directory is %s\n" "$PHYCORDER"
+
+
+
+#Check for dependencies
+if [ $(bcftools -v  | grep 1.2 | wc -l) -lt 1 ]
+    then
+        printf "Requires bcftools v. 1.2. Exiting\n" >&2 
+    else
+        printf "Correct version of bfctools found.\n"
+fi
+if [ $(samtools 2>&1 >/dev/null | grep 1.2 | wc -l ) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
+    then
+        printf "Requires samtools v. 1.2. Exiting\n" >&2 
+    else
+        printf "Correct version of samtools found.\n"
+fi
+if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "seqtk not found\n" >&2 
+    else
+        printf "seqtk found\n"
+fi
+if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "bowtie2 not found. Install and/or add to path\n" >&2 
+    else
+        printf "bowtie2 found\n"
+fi
+if [ $(which raxmlHPC | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "raxmlHPC not found. Install and/or add to path\n" >&2 
+    else
+        printf "raxmlHPC found\n"
+fi
+if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "fastx toolkit not found. Install and/or add to path\n" >&2 
+    else
+        printf "fastx toolkit found\n"
+fi
+if [ $(which papara | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "papara not found. Install and/or add to path\n" >&2 
+    else
+        printf "papara  found\n"
+fi
 
 PE=0
 outdir=phycorder_run
@@ -43,7 +89,7 @@ while getopts ":a:t:p:s:o:n:r:m:b:w:h" opt; do
     ;;
     w) wre_map="$OPTARG"
     ;; 
-    h) echo  "alignment (-a), tree (-t), and reads (-p or -s required)"
+    h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p paired_end_base_filename or -s single_end_base_filename required)"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -93,9 +139,12 @@ printf "Argument read_align is %s\n" "$read_align"
 printf "Argument map is %s\n" "$map"
 printf "Argument re_mapis %s\n" "$re_map"
 
+
 mkdir -p $outdir
 aln_stub=$(echo $align | cut -f1 -d.)
 python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
+
+#Check that tipnames in alignemnet are the same as tipnames in tree
 
 if [ $map -eq 1 ];
     then
@@ -143,7 +192,7 @@ if [ $read_align -eq 1 ]
         fastq_to_fasta -i $outdir/matches.fq -o $outdir/matches.fa
         fastx_collapser < $outdir/matches.fa > $outdir/matches_unique.fa
         cd $outdir
-            $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q matches_unique.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
+            papara -t ${WD}/${tree} -s ${aln_stub}.phy -q matches_unique.fa -n reads #NOTE, Quotes in trees cause issues. From dendropy or elsewhere?!
             raxmlHPC -m GTRCAT -f v -s papara_alignment.reads -t ${WD}/${tree} -n ${nam}_reads_EPA
         cd $WD
 fi    
@@ -202,20 +251,20 @@ if [ $re_map -eq 1 ]
                         echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
                         cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
                         cd $outdir
-                          $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n multi_consensus 
+                          papara -t ${WD}/${tree} -s ${aln_stub}.phy -q mappings.fa -n multi_consensus 
                           #run RAXML EPA on the alignments
                           raxmlHPC -m GTRCAT -f v -s papara_alignment.multi_consensus -t ${WD}/$tree -n ${nam}_consensusPC
                         cd $WD
                 else
                     echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
                     cd $outdir
-                        $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
+                        papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
                         raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
                     cd $WD
                 fi
         else
             cd $outdir
-                $PAPARA -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
+                papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
                 raxmlHPC -m GTRCAT -f v -s papara_alignment.fi_consensus -t ${WD}/$tree -n ${nam}_consensusPC
             cd $WD
         fi

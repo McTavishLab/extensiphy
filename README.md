@@ -22,12 +22,12 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
  -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta  (required)  
  -t tree in newick format. Tip lables must match alignment labels, and polytomies must be resolved. Use 'preprocessing.py' to do so if necessary.
  (required)  
- -p paired end query reads (stub of paried end read names. _1.fastq and _2.fastq will be appended to locate the required files)  
+ -p paired end query reads (stub of paired end read names. _1.fastq and _2.fastq will be appended to locate the required files)  
     or  
  -s query reads (stub of single end read names. File should be named stub.fastq)  
  (required)  
-###ptional arguments   
- -o output directory. Optional default is EPAome_run  
+###optional arguments   
+ -o output directory. Optional default is phycorder_run  
  -n run_name.  Optional, default is QUERY.  
  -r Boolean. Align and place reads. Default is 0, set to 1 if you want to align and place reads. Can be SLOWWWW if lots map.  
  -m Boolean. Map reads. Default is 1, set to 0 only if you have already mapped reads.  
@@ -55,13 +55,13 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
 runs on linux, probably not anywhere else  
 (Too many probably...)   
 Python packages: 
-    Dendropy  
+    Dendropy  (pip install dendropy)
 Software in path: 
-	bowtie2  
-	fastx  
-	PaPaRa  
-	raxmlHPC   
-	seqtk  
+	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
+	PaPaRa http://sco.h-its.org/exelixis/web/software/papara/index.html
+	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
+	seqtk https://github.com/lh3/seqtk
 	samtools / bcftools  
 	NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
-	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!!!
+	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!

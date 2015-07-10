@@ -1,0 +1,35 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+%opening
+\title{Genetree updating plan}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{itemize}
+ \item [\textbf{End goal:}]
+Trees continually updated as new seqs are posted to database
+ \item[\textbf{Concept:}]
+Some set of (10? 100?) gene trees and alignments that are continually updated by scraping genbank or SRA.\\
+Treat trees as large but taxon limited to attempt to minimize alignment/orthology issues.\\
+Any alignable sequence posted to database from a that taxonomic group is added to the aligment and a new tree estimated.
+ \item[\textbf{Case studies:}]
+16s RNA in Cyanobactria, building on \href{https://tree.opentreeoflife.org/curator/study/view/pg_2739}{Schirrmeister 2011 pg\_2739}\\
+ITS and LSU in Ascomycota, building on \href{https://tree.opentreeoflife.org/curator/study/view/pg_873}{Crous 2012 pg\_873}\\
+ \item[\textbf{Deadlines:}]
+Have basic loop (NCBI scraping, alignment, placement, tree estimation) working for these two trees by August OT Software meeting.\\
+Following that meeting discuss with organismal folks priorities for genes, trees, taxa that are well suited to this approach.\\
+ \item[\textbf{Extensions/in parallel:}]
+Improve tree updating algorithms to reduce lag time due to tree estimation step.\\
+ \item[\textbf{Questions:}]
+Add sequences only if represent new tips not already represented in this or any other trees?\\
+How to select trees/loci for updating?\\
+How broad/narrow should trees for updating be?\\
+Tests for error/prarology, seq misnaming? (e.g. Alexey and JiaJie's work)\\
+\end{itemize}
+
+\end{document}

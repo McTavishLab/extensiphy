@@ -55,13 +55,13 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
 runs on linux, probably not anywhere else  
 (Too many probably...)   
 Python packages: 
-    Dendropy 4.0 (pip install dendropy)
+    Dendropy 4.0 (pip install dendropy)  
 Software in path: 
-	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
-	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
-	PaPaRa http://sco.h-its.org/exelixis/web/software/papara/index.html
-	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
-	seqtk https://github.com/lh3/seqtk
+	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml  
+	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html  
+	PaPaRa http://sco.h-its.org/exelixis/web/software/papara/index.html  
+	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html  
+	seqtk https://github.com/lh3/seqtk  
 	samtools / bcftools  
-	NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
-	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!
+	NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/  
+	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!  

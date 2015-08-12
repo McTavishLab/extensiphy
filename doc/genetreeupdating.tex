@@ -27,9 +27,67 @@ Following that meeting discuss with organismal folks priorities for genes, trees
 Improve tree updating algorithms to reduce lag time due to tree estimation step.\\
  \item[\textbf{Questions:}]
 Add sequences only if represent new tips not already represented in this or any other trees?\\
+Use BLAST or annotations to choose seqs?\\
 How to select trees/loci for updating?\\
 How broad/narrow should trees for updating be?\\
 Tests for error/prarology, seq misnaming? (e.g. Alexey and JiaJie's work)\\
 \end{itemize}
+
+
+Plan:
+
+inputs: tree, alignment, target taxon list (ott <-> ncbi)
+Target taxon list not exceed ?? value?
+
+
+
+Step 1: 
+
+get listt of wanted ott_ids from tree.
+
+Get tree with ott_ids
+
+https://tree.opentreeoflife.org/curator/study/view/pg_2739/?tab=trees&tree=tree6601
+curl http://api.opentreeoflife.org/v2/study/pg_2739.tre/?tip_label=ot:ottid > cyan.tre
+
+curl http://api.opentreeoflife.org/v2/study/pg_2739/otus
+
+curl http://api.opentreeoflife.org/v2/study/pg_2739/otus > cyan.otus
+
+
+curl -X POST http://api.opentreeoflife.org/v2/tree_of_life/mrca -H "content-type:application/json" -d '{"ott_ids":[412129, 536234]}'
+
+from that mrca, get all tip ID's
+curl -X POST http://api.opentreeoflife.org/v2/tree_of_life/subtree -H "content-type:application/json" -d '{"ott_id":3599390}'
+withe th ott id as teh return from the previous func.
+
+Concept: fill in existing trees, rather than adding seq from outside? SImplify alignment issues, homology etc.
+
+pull OTT id's off that subtree. Inlcude only OTT_ID's not already represented by THIS phylogeny.
+
+
+BLAST (every?) seq from the alignemnt and pull down genbank records. Q. Is local DB needed?
+
+if OTT_ID on most wanted list, add to alignement, proceed.
+
+Proceed with alignment, placement and tree inference as set up in phycorder.
+
+
+_taxon_labels 
+
+
+excluding re-used taxa? not to be added? 
+
+Save them for another time...
+for testing / placement 
+
+
+Some set of trees and some 
+
+RBCL ... mt genome for vert groups...
+
+
+
+
 
 \end{document}

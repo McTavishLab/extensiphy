@@ -1,0 +1,21 @@
+DendroPy==4.0.3
+MySQL-python==1.2.5
+PyGithub==1.19.0
+anyjson==0.3.3
+argcomplete==0.8.4
+biopython==1.65
+coverage==4.0a5
+dogpile.cache==0.5.5
+dogpile.core==0.4.1
+enum34==1.0.4
+ete2==2.2.1072
+locket==0.1.1
+nose==1.2.1
+numpy==1.9.1
+-e git+git@github.com:OpenTreeOfLife/peyotl.git@e5634f906eff951d1d3e104a31bd9b1f4b701dd7#egg=peyotl-origin/HEAD
+redis==2.10.1
+requests==2.5.1
+sh==1.11
+simplejson==3.6.5
+virtualenv==1.9.1
+wsgiref==0.1.2

@@ -22,6 +22,7 @@ tree = Tree.get(path=tre,
                 schema=tretype,
                 preserve_underscores=True,
                 taxon_namespace=d.taxon_namespace)
+
 # get all of the taxa associated with tips of the tree, and make sure that
 #   they include all of the members of the data's taxon_namespace...
 treed_taxa = [i.taxon for i in tree.leaf_nodes()]

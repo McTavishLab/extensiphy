@@ -5,11 +5,9 @@ from peyotl import gen_otu_dict, iter_node
 from peyotl.manip import iter_trees
 from peyotl.phylesystem.phylesystem_umbrella import Phylesystem
 from peyotl.sugar import tree_of_life, taxonomy
-import codecs
-import sys
+from peyotl.nexson_syntax import extract_tree,  PhyloSchema
 import re
-import httplib2
-http = httplib2.Http()
+
 
 phy = Phylesystem()
 
@@ -20,9 +18,9 @@ print study_id
 n = phy.return_study(study_id)[0]
 
 #There has gort to be a better way to get the ingroup otus...
-m = extract_tree(n[0], tree_id, PhyloSchema('newick', output_nexml2json = '1.2.1', content="tree", tip_label="ot:ottId"), subtree_id="ingroup")
+m = extract_tree(n, tree_id, PhyloSchema('newick', output_nexml2json = '1.2.1', content="tree", tip_label="ot:ottId"), subtree_id="ingroup")
 
-otu_dict = gen_otu_dict(n[0])
+otu_dict = gen_otu_dict(n)
 ottids = []
 for oid, o in otu_dict.items():
     try:
@@ -39,12 +37,8 @@ mrca_node = tree_of_life.mrca(ott_ids=ottids, wrap_response=True)
 
 #curl -X POST http://api.opentreeoflife.org/v2/taxonomy/taxon -H "content-type:application/json" -d '{"ott_id":225495, "list_terminal_descendants": "True"}'
 
-
-
-info = taxonomy.taxon(ott_id= mrca_node.nearest_taxon.ott_id,
-                          include_lineage=False,
-                          list_terminal_descendants=True,
-                          wrap_response=False)
+named_node = tree_of_life.mrca(ott_ids=[mrca_node.nearest_taxon.ott_id], wrap_response=True)
+newick = named_node.subtree_newick # NOTE: Excludes daughter taxa that  are considered non monophylo.
 
 
 ott_to_ncbi = {}
@@ -53,14 +47,38 @@ for lin in fi:
     lii= lin.split(",")
     ott_to_ncbi[lii[0]]=lii[1]
 
-wanted_identifiers = []
-for item in info:
-     ott_to_ncbi[item[u'ot:ottId']]
+
+matches = re.finditer('ott(\d*)', newick) 
+wanted_ncbi_ids = []
+unfound = []
+for item in matches:
+    try:
+        wanted_ncbi_ids.append(ott_to_ncbi[item.group(1)])
+    except:
+        unfound.append(item.group(1))
+
+
+#NOW: work through the alignment, blast each seq (EACH?)
+#and make a list of genbacnk id's that match.
+
+#OR ancestral states?
+#blastn -remote -query fulltest3/cns.fa -db nr -max_target_seqs 1 -outfmt "6 qseqid staxids"
+
 
 
 
 #Now get all descendants of that node in the synth tree. Or the taxonomy? better closest tax node above.
-'''named_node = tree_of_life.mrca(ott_ids=[mrca_node.nearest_taxon.ott_id], wrap_response=True)
+
+
+'''
+
+
+
+info = taxonomy.taxon(ott_id= mrca_node.nearest_taxon.ott_id,
+                          include_lineage=False,
+                          list_terminal_descendants=True,
+                          wrap_response=False)
+named_node = tree_of_life.mrca(ott_ids=[mrca_node.nearest_taxon.ott_id], wrap_response=True)
 newick = named_node.subtree_newick
 
 names = re.split(r'[;,\s]\s*', newick)

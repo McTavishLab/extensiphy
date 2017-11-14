@@ -274,7 +274,7 @@ if [ $re_map -eq 1 ]
             cd $outdir
               #  papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
                 mafft --add cns.fa --reorder ${WD}/$align > extended.aln
-                raxmlHPC -m GTRCAT -f v -s $outdir/extended.aln -t ${WD}/$tree -n ${nam}_consensusPC
+                raxmlHPC -m GTRCAT -f v -s extended.aln -t ${WD}/$tree -n ${nam}_consensusPC
             cd $WD
         fi
         #run full raxml? tooo sloooo

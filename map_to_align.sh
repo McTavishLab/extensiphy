@@ -175,6 +175,7 @@ if [ $map -eq 1 ];
         echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?' >&2
         exit
     fi 
+    #TODO this is VERY DANGEROUS
 fi
 
 if [ $read_align -eq 1 ]

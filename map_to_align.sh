@@ -172,12 +172,13 @@ if [ $map -eq 1 ];
     samtools index $outdir/full_sorted.bam 
     samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
     if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
-        echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?' >&2
+        echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
         exit
     fi 
     #TODO this is VERY DANGEROUS
 fi
 
+#EJM: I don't know what this next section does at all
 if [ $read_align -eq 1 ]
     then 
         echo 'Attempting to align and place all mapped reads'
@@ -271,7 +272,7 @@ if [ $re_map -eq 1 ]
                         raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
                     cd $WD
                 fi
-        else
+        else #when is this condition met?
             cd $outdir
               #  papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
                 mafft --add cns.fa --reorder ${WD}/$align > extended.aln

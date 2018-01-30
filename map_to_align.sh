@@ -280,9 +280,10 @@ if [ $re_map -eq 1 ]
             cd $WD
         fi
         #run full raxml? tooo sloooo
-        # raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
+        raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
 
 fi
 
 #todo strip all fq to fa 
-#srtip all 
+
+ 

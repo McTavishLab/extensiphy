@@ -151,7 +151,7 @@ printf "Argument re_mapis %s\n" "$re_map"
 mkdir -p $outdir
 aln_stub=$(echo $align | cut -f1 -d.)
 #python $PHYCORDER/fasta_to_phylip.py --input-fasta $align --output-phy $outdir/$aln_stub.phy
-perl Fasta2Phylip.pl $align $outdir/$aln_stub.phy
+python fasta_to_phylip.py --input-fasta  $align --output-phy $outdir/$aln_stub.phy
 #Check that tipnames in alignemnet are the same as tipnames in tree
 
 if [ $map -eq 1 ];
@@ -178,7 +178,7 @@ if [ $map -eq 1 ];
     #TODO this is VERY DANGEROUS
 fi
 
-#EJM: I don't know what this next section does at all
+#EJM: I think it takes the reads that mapped anywhere and maps them to the best ref
 if [ $read_align -eq 1 ]
     then 
         echo 'Attempting to align and place all mapped reads'
@@ -211,6 +211,11 @@ if [ $re_map -eq 1 ]
         echo 'Refining mapping and calling consensus sequence'
         refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
         grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
+        grep -Pzo '(?s)>'$align'.*?>' $outdir/ref_gaps.fas 
+        for i in $(grep -aob '-' hand_best_ref_gaps.fas|sort -rn | cut -d":" -f1);
+            do sed -i "s/./&-/$i" ./cns_aln.fa;
+        done
+
         python fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas
         echo 'The best reference found in your alignment was '$refnam
         echo 'mapping reads to '$refnam

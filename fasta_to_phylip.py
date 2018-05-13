@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 __DESCRIPTION__ = '''
-from https://github.com/audy/bioinformatics-hacks/blob/master/bin/fasta-to-phylip
 Convert a FASTA alignment to Phylip format.
 
 Dependenies: BioPython
@@ -10,7 +9,7 @@ fasta_to_phylip --input-fasta file.fasta --output-phy file.phy
 
 '''
 
-from Bio import AlignIO
+import dendropy
 import argparse
 
 
@@ -26,12 +25,14 @@ def main():
 
     args = parse_args()
 
-    with open(args.input_fasta) as handle:
-        records = AlignIO.parse(handle, 'fasta')
+    aln = dendropy.DnaCharacterMatrix.get(
+        path=args.input_fasta,
+        schema="fasta")
 
-        with open(args.output_phy, 'w') as output_handle:
-            AlignIO.write(records, output_handle, 'phylip')
-
-
+    aln.write(
+        path=args.output_phy,
+        schema="phylip",
+        strict=False)
+    
 if __name__ == '__main__':
     main()

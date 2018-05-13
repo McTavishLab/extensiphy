@@ -15,12 +15,14 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 if [ $(bcftools -v  | grep 1.2 | wc -l) -lt 1 ]
     then
         printf "Requires bcftools v. 1.2. Exiting\n" >&2 
+     #   exit 0
     else
         printf "Correct version of bfctools found.\n"
 fi
 if [ $(samtools 2>&1 >/dev/null | grep 1.2 | wc -l ) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
     then
         printf "Requires samtools v. 1.2. Exiting\n" >&2 
+      #  exit 0
     else
         printf "Correct version of samtools found.\n"
 fi
@@ -53,6 +55,12 @@ if [ $(which papara | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
         printf "papara not found. Install and/or add to path\n" >&2 
     else
         printf "papara  found\n"
+fi
+if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
+    then
+        printf "vcfutils.pl not found. Install and/or add to path\n" >&2 
+    else
+        printf "vcfutils.pl found\n"
 fi
 
 PE=0
@@ -142,8 +150,8 @@ printf "Argument re_mapis %s\n" "$re_map"
 
 mkdir -p $outdir
 aln_stub=$(echo $align | cut -f1 -d.)
-python $PHYCORDER/fasta_to_phylip.py $align $outdir/$aln_stub.phy
-
+#python $PHYCORDER/fasta_to_phylip.py --input-fasta $align --output-phy $outdir/$aln_stub.phy
+perl Fasta2Phylip.pl $align $outdir/$aln_stub.phy
 #Check that tipnames in alignemnet are the same as tipnames in tree
 
 if [ $map -eq 1 ];
@@ -160,16 +168,17 @@ if [ $map -eq 1 ];
     fi
 
     samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
-    samtools sort $outdir/full_alignment.bam $outdir/full_sorted
+    samtools sort $outdir/full_alignment.bam -o $outdir/full_sorted.bam
     samtools index $outdir/full_sorted.bam 
     samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
     if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
-        echo 'LESS THAN TEN READS MAPPED TO ANY LOCUS. Try a different input alignment?' >&2
+        echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
         exit
-    fi
-    #assert at least some reads mapped!! 
+    fi 
+    #TODO this is VERY DANGEROUS
 fi
 
+#EJM: I don't know what this next section does at all
 if [ $read_align -eq 1 ]
     then 
         echo 'Attempting to align and place all mapped reads'
@@ -218,10 +227,11 @@ if [ $re_map -eq 1 ]
 
         samtools faidx $outdir/best_ref.fas
         samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
-        samtools sort $outdir/best_map.bam $outdir/best_sorted
+        samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
         samtools index $outdir/best_sorted.bam 
-        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq 
-        python $PHYCORDER/samtoolsfq_to_fa.py $outdir/cns.fq $outdir/cns.fa $nam
+        samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
+        seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
+        sed -i -e "s/>/>${nam}_/g" $outdir/cns.fa
         if [ $wre_map -eq 1 ]
             then
                 #generate consensus mapped to second best locus to assuage some ref dependence
@@ -241,11 +251,11 @@ if [ $re_map -eq 1 ]
                 fi
                 samtools faidx $outdir/worse_ref.fas 
                 samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
-                samtools sort $outdir/worse_map.bam $outdir/worse_sorted
+                samtools sort $outdir/worse_map.bam -o $outdir/worse_sorted.bam
                 samtools index $outdir/worse_sorted.bam 
                 samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
-
-                python $PHYCORDER/samtoolsfq_to_fa.py $outdir/worse_cns.fq $outdir/worse_cns.fa worse_query
+                seqtk seq -a $outdir/worse_cns.fq > $outdir/worse_cns.fa
+                sed -i -e "s/>/>${nam}_worse_/g" $outdir/worse_cns.fa
                 if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
                      then 
                         echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
@@ -262,13 +272,18 @@ if [ $re_map -eq 1 ]
                         raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
                     cd $WD
                 fi
-        else
+        else #when is this condition met?
             cd $outdir
-                papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
-                raxmlHPC -m GTRCAT -f v -s papara_alignment.fi_consensus -t ${WD}/$tree -n ${nam}_consensusPC
+              #  papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n fi_consensus 
+                mafft --add cns.fa --reorder ${WD}/$align > extended.aln
+                raxmlHPC -m GTRCAT -f v -s extended.aln -t ${WD}/$tree -n ${nam}_consensusPC
             cd $WD
         fi
         #run full raxml? tooo sloooo
-        # raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
+        raxmlHPC -m GTRGAMMA -s $outdir/contig_alignment.fas -t $tree -p 12345 -n consensusFULL
 
 fi
+
+#todo strip all fq to fa 
+
+ 

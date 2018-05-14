@@ -36,17 +36,15 @@ def main():
             out.write('-')
         else:
             d = new.read(1)
-            if d:
+            if d and (d != '\n'):
                 i+=1
                 if c.lower() != d.lower():
                     snps.write("poss {}, {}, {}".format(i,c,d))
-                out.write('-')
+                out.write(d)
             else:
                 if c:
                     assert c == 'N' or c =='\n'
                     out.write(c)
-                else:
-                    pass
 
 
 if __name__ == '__main__':

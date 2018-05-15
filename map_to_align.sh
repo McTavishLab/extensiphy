@@ -209,13 +209,13 @@ sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
-align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/aligned_cns.fas 
+python align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/aligned_cns.fas 
 
 cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC -m GTRGAMMA -s extended.aln -t ../$tree -p 12345 -n consensusFULL
 
 cd $WD
 

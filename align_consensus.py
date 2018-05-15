@@ -22,7 +22,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    out = open(args, outfile, 'w')
+    out = open(args.outfile, 'w')
     snps = open("snps.txt", 'w')
     orig = open(args.gapped_ref)
     new = open(args.consensus)

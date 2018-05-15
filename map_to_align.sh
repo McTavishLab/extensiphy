@@ -209,13 +209,13 @@ sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
-align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa
+align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/aligned_cns.fas 
 
-cat ${align} $outdir/aligned_cns.fas > tmp.aln
+cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC -m GTRGAMMA -s $outdir/tmp.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
 
 cd $WD
 
@@ -223,46 +223,46 @@ cd $WD
 
  
 
-if [ $wre_map -eq 1 ]
-     then
-         #generate consensus mapped to second best locus to assuage some ref dependence
-         wrefnam=$(sort -rnk3 $outdir/mapping_info | head -2 | tail -1| cut -f1)
-         grep -Pzo '(?s)>'$wrefnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref_uneven.fas
-         python fastafixer.py $outdir/worse_ref_uneven.fas $outdir/worse_ref.fas
-         echo 'The second best reference found in your alignment was '$wrefnam
-         echo 'mapping reads to '$wrefnam
+# if [ $wre_map -eq 1 ]
+#      then
+#          #generate consensus mapped to second best locus to assuage some ref dependence
+#          wrefnam=$(sort -rnk3 $outdir/mapping_info | head -2 | tail -1| cut -f1)
+#          grep -Pzo '(?s)>'$wrefnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/worse_ref_uneven.fas
+#          python fastafixer.py $outdir/worse_ref_uneven.fas $outdir/worse_ref.fas
+#          echo 'The second best reference found in your alignment was '$wrefnam
+#          echo 'mapping reads to '$wrefnam
 
-         bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref >> $outdir/bowtiebuild.log
+#          bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref >> $outdir/bowtiebuild.log
 
-         if [ $PE -eq 1 ];
-             then 
-                 bowtie2 -x $outdir/worse_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/worse_map.sam --no-unal --local
-             else 
-                 bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local
-         fi
-         samtools faidx $outdir/worse_ref.fas 
-         samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
-         samtools sort $outdir/worse_map.bam -o $outdir/worse_sorted.bam
-         samtools index $outdir/worse_sorted.bam 
-         samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
-         seqtk seq -a $outdir/worse_cns.fq > $outdir/worse_cns.fa
-         sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-         if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
-              then 
-                  echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
-                  cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
-                  cd $outdir
-                  grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/worse_ref_gaps.fas
-                  align_consensus.py --gapped-ref $outdir/worse_ref_gaps.fas --consensus $outdir/worse_cns.fa --outfile $outdir/worse_aln.fa
-                  cat $outdir/tmp.aln $outdir/worse_align.fa > $outdir/tmp2.aln
-                  raxmlHPC -m GTRGAMMA -s $outdir/tmp.aln -t $tree -p 12345 -n consensusFULL
+#          if [ $PE -eq 1 ];
+#              then 
+#                  bowtie2 -x $outdir/worse_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/worse_map.sam --no-unal --local
+#              else 
+#                  bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local
+#          fi
+#          samtools faidx $outdir/worse_ref.fas 
+#          samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
+#          samtools sort $outdir/worse_map.bam -o $outdir/worse_sorted.bam
+#          samtools index $outdir/worse_sorted.bam 
+#          samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
+#          seqtk seq -a $outdir/worse_cns.fq > $outdir/worse_cns.fa
+#          sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
+#          if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
+#               then 
+#                   echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
+#                   cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
+#                   cd $outdir
+#                   grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/worse_ref_gaps.fas
+#                   align_consensus.py --gapped-ref $outdir/worse_ref_gaps.fas --consensus $outdir/worse_cns.fa --outfile $outdir/worse_aln.fa
+#                   cat $outdir/tmp.aln $outdir/worse_align.fa > $outdir/tmp2.aln
+#                   raxmlHPC -m GTRGAMMA -s $outdir/tmp.aln -t $tree -p 12345 -n consensusFULL
 
-                 cd $WD
-#         else
-#             echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
-#             cd $outdir
-#                 papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
-#                 raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
-#             cd $WD
-# fi
+#                  cd $WD
+# #         else
+# #             echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
+# #             cd $outdir
+# #                 papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
+# #                 raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
+# #             cd $WD
+# # fi
 

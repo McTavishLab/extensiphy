@@ -4,12 +4,12 @@ Pipline that takes an alignment, a tree, and set of sequencing reads form a quer
 
 
 Assembles  homologous locus, if possible, using closest match as reference,
-calls consensus, adds to alignment using PaPara, and places in the tree using EPA in RAxML.
+calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
 
 
 Example run:
 
-    ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374
+    ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374_1.fastq -e SRR610374_2.fastq
 
 NOTE: This example requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
 http://www.ebi.ac.uk/ena/data/view/SRR610374&display=html  
@@ -22,7 +22,7 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
  -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta  (required)  
  -t tree in newick format. Tip lables must match alignment labels, and polytomies must be resolved. Use 'preprocessing.py' to do so if necessary.
  (required)  
- -p paired end query reads (stub of paired end read names. _1.fastq and _2.fastq will be appended to locate the required files)  
+ -p -e paired end query reads  
     or  
  -s query reads (stub of single end read names. File should be named stub.fastq)  
  (required)  

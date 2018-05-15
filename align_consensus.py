@@ -16,12 +16,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gapped-ref', default='/dev/stdin')
     parser.add_argument('--consensus', default='/dev/stdout')
+    parser.add_argument('--outfile', default="aligned_cns.fas")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    out = open("aligned_cns.fas", 'w')
+    out = open(args, outfile, 'w')
     snps = open("snps.txt", 'w')
     orig = open(args.gapped_ref)
     new = open(args.consensus)

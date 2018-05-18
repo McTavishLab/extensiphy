@@ -26,27 +26,34 @@ def main():
     snps = open("snps.txt", 'w')
     orig = open(args.gapped_ref)
     new = open(args.consensus)
-    orig.readline()
+    refname = orig.readline()
     header = new.readline()
     out.write(header)
     i = 0
-    c = 1
-    while c:
-        c = orig.read(1)
-        if c == '-':
+    refnuc = 1
+    snps.write("Differences between ref: {} and {}".format(refname, header))
+    while refnuc:
+        refnuc = orig.read(1)
+        if refnuc == '-':
             out.write('-')
         else:
-            d = new.read(1)
-            if d and (d != '\n'):
-                i+=1
-                if c.lower() != d.lower():
-                    snps.write("poss {}, {}, {}".format(i,c,d))
-                out.write(d)
-            else:
-                if c:
-                    assert c == 'N' or c =='\n'
-                    out.write(c)
-
+            if refnuc.lower() in set(['a', 'c', 'g', 't', 'n']):
+                newnuc = new.read(1)
+                if newnuc and (newnuc != '\n'):
+                    i+=1
+                    if refnuc.lower() != newnuc.lower():
+                        snps.write("position {}, ref {}, alt {}\n".format(i,refnuc,newnuc))
+                    out.write(newnuc)
+                else:
+                    out.write('n')
+            else: 
+                if refnuc:
+                    assert refnuc =='\n'
+                    out.write(refnuc)
+    new.close()
+    orig.close()
+    snps.close()
+    out.close()
 
 if __name__ == '__main__':
     main()

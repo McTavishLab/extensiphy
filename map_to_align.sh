@@ -38,7 +38,7 @@ if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "bowtie2 found\n"
 fi
-if [ $(which raxmlHPC | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "raxmlHPC not found. Install and/or add to path\n" >&2 
     else
@@ -215,7 +215,7 @@ cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC -m GTRGAMMA -s extended.aln -t ../$tree -p 12345 -n consensusFULL
+raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t ../$tree -p 12345 -n consensusFULL
 
 cd $WD
 

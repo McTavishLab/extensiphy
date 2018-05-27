@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 import sys
 from dendropy import Tree, DnaCharacterMatrix
 from peyotl import gen_otu_dict, iter_node

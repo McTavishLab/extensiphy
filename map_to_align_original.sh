@@ -205,8 +205,7 @@ samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 
 #automatic naming names it to the ref wich is confusing
-#sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_/g" $outdir/cns.fa
+sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
 
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
@@ -218,7 +217,7 @@ cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t ../$tree -p 12345 -n consensusFULL
 
 cd $WD
 

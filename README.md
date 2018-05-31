@@ -22,7 +22,8 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
  -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta  (required)  
  -t tree in newick format. Tip lables must match alignment labels, and polytomies must be resolved. Use 'preprocessing.py' to do so if necessary.
  (required)  
- -p -e paired end query reads  
+ -p paired end query reads fastq (read 1)
+ -e paired end query reads fastq (read 2)
     or  
  -s query reads (stub of single end read names. File should be named stub.fastq)  
  (required)  
@@ -59,7 +60,6 @@ Python packages:
 Software in path: 
 	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml  
 	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html  
-	PaPaRa http://sco.h-its.org/exelixis/web/software/papara/index.html  
 	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html  
 	seqtk https://github.com/lh3/seqtk  
 	samtools / bcftools  

@@ -12,14 +12,14 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 
 
 #Check for dependencies
-if [ $(bcftools -v  | grep 1.2 | wc -l) -lt 1 ]
+if [ $(which bcftools | wc -l) -lt 1 ]
     then
         printf "Requires bcftools v. 1.2. Exiting\n" >&2 
      #   exit 0
     else
         printf "Correct version of bfctools found.\n"
 fi
-if [ $(samtools 2>&1 >/dev/null | grep 1.2 | wc -l ) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
+if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
     then
         printf "Requires samtools v. 1.2. Exiting\n" >&2 
       #  exit 0
@@ -38,9 +38,9 @@ if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "bowtie2 found\n"
 fi
-if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which raxmlHPC | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "raxmlHPC not found. Install and/or add to path\n" >&2 
+        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2 
     else
         printf "raxmlHPC found\n"
 fi
@@ -49,12 +49,6 @@ if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
         printf "fastx toolkit not found. Install and/or add to path\n" >&2 
     else
         printf "fastx toolkit found\n"
-fi
-if [ $(which papara | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "papara not found. Install and/or add to path\n" >&2 
-    else
-        printf "papara  found\n"
 fi
 if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
     then

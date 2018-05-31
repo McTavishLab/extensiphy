@@ -14,14 +14,14 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 #Check for dependencies
 if [ $(which bcftools | wc -l) -lt 1 ]
     then
-        printf "Requires bcftools v. 1.2. Exiting\n" >&2 
+        printf "Requires bcftools" >&2 
      #   exit 0
     else
         printf "Correct version of bfctools found.\n"
 fi
 if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
     then
-        printf "Requires samtools v. 1.2. Exiting\n" >&2 
+        printf "Requires samtools" >&2 
       #  exit 0
     else
         printf "Correct version of samtools found.\n"
@@ -176,8 +176,7 @@ fi
 echo 'Refining mapping and calling consensus sequence'
 refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
 grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
-#python
-fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
+./fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 echo 'The best reference found in your alignment was '$refnam
 echo 'mapping reads to '$refnam
 
@@ -206,13 +205,13 @@ sed -i -e "s/>/>QUERY_/g" $outdir/cns.fa
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
 #python
-align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/aligned_cns.fas 
+./align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/aligned_cns.fas 
 
 cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
 
 cd $WD
 

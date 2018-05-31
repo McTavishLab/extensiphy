@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 
 __DESCRIPTION__ = '''
 Add indels to new consensus sequence to align to other taxa

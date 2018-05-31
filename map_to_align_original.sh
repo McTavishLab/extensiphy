@@ -158,14 +158,14 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
 #pretend the alignemnt is a set of chromosomes
-bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+bowtie2-build $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 
 if [ $PE -eq 1 ];
 	then 
 	    echo "PAIRED ENDS"
-	    bowtie2 -p 4 -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    bowtie2 -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
     else 
-    	bowtie2 -p 4 -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
+    	bowtie2 -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
 fi
 
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
@@ -187,14 +187,14 @@ fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out 
 echo 'The best reference found in your alignment was '$refnam
 echo 'mapping reads to '$refnam
 
-bowtie2-build --threads 4 $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+bowtie2-build $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
 	then 
-	    bowtie2 -p 4 -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+	    bowtie2 -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else 
-    	bowtie2 -p 4 -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
+    	bowtie2 -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas
@@ -205,8 +205,7 @@ samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 
 #automatic naming names it to the ref wich is confusing
-#sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_/g" $outdir/cns.fa
+sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
 
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
@@ -218,7 +217,7 @@ cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t ../$tree -p 12345 -n consensusFULL
 
 cd $WD
 

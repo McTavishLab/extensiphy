@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 
 __DESCRIPTION__ = '''
 Convert a FASTA alignment to Phylip format.

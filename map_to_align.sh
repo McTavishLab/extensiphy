@@ -151,6 +151,9 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
+
+### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
+
 #pretend the alignemnt is a set of chromosomes
 bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 

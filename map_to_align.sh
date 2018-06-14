@@ -160,9 +160,9 @@ bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuil
 if [ $PE -eq 1 ];
 	then 
 	    echo "PAIRED ENDS"
-	    bowtie2 -p 4 -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    bowtie2 -p 4 --very-fast -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
     else 
-    	bowtie2 -p 4 -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
+    	bowtie2 -p 4 --very-fast -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
 fi
 
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
@@ -188,9 +188,9 @@ bowtie2-build --threads 4 $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowti
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
 	then 
-	    bowtie2 -p 4 -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+	    bowtie2 -p 4 --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else 
-    	bowtie2 -p 4 -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
+    	bowtie2 -p 4 --very-fast -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas

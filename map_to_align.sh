@@ -214,7 +214,7 @@ cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 cd $outdir
 #run full raxml? tooo sloooo
-raxmlHPC -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
+raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
 
 cd $WD
 

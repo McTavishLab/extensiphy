@@ -13,5 +13,5 @@ OUTPUT=$4
 cd $READ_DIR
 READ_LOC=$(pwd)
 for i in $(ls *R1_.fastq); do
-    "$PHYCORDER/map_to_align.sh -a $ALIGN -t $TREE -p "$READ_loc/$i" -e "{$i%R1_.fastq}R2_.fastq" -o $OUTPUT > "$OUTPUT/multi_map_dev.log"
+    "$PHYCORDER/map_to_align.sh -a $ALIGN -t $TREE -p "$READ_loc/$i" -e "{$i%R1_.fastq}R2_.fastq" -o $OUTPUT > "$PHYCORDER/multi_map_dev.log"
 done

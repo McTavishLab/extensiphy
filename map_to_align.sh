@@ -67,7 +67,7 @@ read_name_prefix=SRR
 wre_map=0
 
 WD=$(pwd)
-while getopts ":a:t:p:e:s:o:n:r:m:b:w:h" opt; do
+while getopts ":a:t:p:e:s:o:n:r:m:b:w:t:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -92,6 +92,8 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:h" opt; do
     b) re_map="$OPTARG"
     ;;
     w) wre_map="$OPTARG"
+    ;;
+    t) threads="$OPTARG"
     ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
@@ -155,14 +157,14 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 ### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
 
 #pretend the alignemnt is a set of chromosomes
-bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 
 if [ $PE -eq 1 ];
 	then
 	    echo "PAIRED ENDS"
-	    bowtie2 -p 4 --very-fast -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
     else
-    	bowtie2 -p 4 --very-fast -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
+    	bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
 fi
 
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
@@ -183,14 +185,14 @@ $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #stari
 echo 'The best reference found in your alignment was '$refnam
 echo 'mapping reads to '$refnam
 
-bowtie2-build --threads 4 $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
 	then
-	    bowtie2 -p 4 --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+	    bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else
-    	bowtie2 -p 4 --very-fast -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
+    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas

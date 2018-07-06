@@ -103,42 +103,42 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
   esac
 done
 
-if [ -z "$align" ] || [ -z "$tree" ]; then
-   "alignment (-a), tree (-t), and reads (-p or -s required)"
-   exit
-fi
-
-#Ttest if files actually exist
-#Check to make sure mapping has occured if re-mapping
-
-if [ -f "$align" ]; then
-    printf "Alignment is %s\n" "$align"
-  else
-    printf "Alignment $align not found. Exiting\n" >&2
-    exit
-fi
-if [ -f "$tree" ]; then
-    printf "Tree is %s\n" "$tree"
-  else
-    printf "Tree $tree not found. Exiting\n" >&2
-    exit
-fi
-# if [ $PE -eq 1 ]; then
-#   if [ -f ${read_one} ]; then
-#      printf "Paired end reads \n"
-#      printf "read one is ${read_one}\n"
+# if [ -z "$align" ] || [ -z "$tree" ]; then
+#    "alignment (-a), tree (-t), and reads (-p or -s required)"
+#    exit
+# fi
+#
+# #Ttest if files actually exist
+# #Check to make sure mapping has occured if re-mapping
+#
+# if [ -f "$align" ]; then
+#     printf "Alignment is %s\n" "$align"
 #   else
-#     printf "read one ${read_one} not found. Exiting\n" >&2
+#     printf "Alignment $align not found. Exiting\n" >&2
 #     exit
 # fi
-#   if [ -f ${read_two} ]; then
-#      printf "Paired end reads \n"
-#      printf "read two is ${read_two}\n"
+# if [ -f "$tree" ]; then
+#     printf "Tree is %s\n" "$tree"
 #   else
-#     printf "read two ${read_two} not found. Exiting\n" >&2
+#     printf "Tree $tree not found. Exiting\n" >&2
 #     exit
 # fi
-fi
+# # if [ $PE -eq 1 ]; then
+# #   if [ -f ${read_one} ]; then
+# #      printf "Paired end reads \n"
+# #      printf "read one is ${read_one}\n"
+# #   else
+# #     printf "read one ${read_one} not found. Exiting\n" >&2
+# #     exit
+# # fi
+# #   if [ -f ${read_two} ]; then
+# #      printf "Paired end reads \n"
+# #      printf "read two is ${read_two}\n"
+# #   else
+# #     printf "read two ${read_two} not found. Exiting\n" >&2
+# #     exit
+# # fi
+# fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument map is %s\n" "$map"

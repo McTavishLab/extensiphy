@@ -8,7 +8,7 @@ while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
     ;;
     t) tree="$OPTARG"
     ;;
-    p) read_dir
+    p) read_dir="$OPTARG"
     ;;
     o) outdir="$OPTARG"
 	;;

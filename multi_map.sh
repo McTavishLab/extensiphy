@@ -15,7 +15,7 @@ THREADS=$5
 cd $READ_DIR
 READ_LOC=$(pwd)
 for i in $(ls *R1_.fastq); do
-    "$PHYCORDER/map_to_align.sh -a $ALIGN -t $TREE -p "$READ_LOC/$i" -e "$READ_LOC{$i%R1_.fastq}R2_.fastq" -t $5 -o $OUTPUT > "$PHYCORDER/multi_map_dev.log"
+    "$PHYCORDER/map_to_align.sh -a $ALIGN -t $TREE -p "$READ_LOC/$i" -e "$READ_LOC{$i%R1_.fastq}R2_.fastq" -t $THREADS -o $OUTPUT > "$PHYCORDER/multi_map_dev.log"
 done
 
 wait

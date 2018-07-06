@@ -52,22 +52,22 @@ if [ -f "$tree" ]; then
     printf "Tree $tree not found. Exiting\n" >&2
     exit
 fi
-if [ $PE -eq 1 ]; then
-  if [ -f ${read_one} ]; then
-     printf "Paired end reads \n"
-     printf "read one is ${read_one}\n"
-  else
-    printf "read one ${read_one} not found. Exiting\n" >&2
-    exit
-fi
-  if [ -f ${read_two} ]; then
-     printf "Paired end reads \n"
-     printf "read two is ${read_two}\n"
-  else
-    printf "read two ${read_two} not found. Exiting\n" >&2
-    exit
-fi
-fi
+# if [ $PE -eq 1 ]; then
+#   if [ -f ${read_one} ]; then
+#      printf "Paired end reads \n"
+#      printf "read one is ${read_one}\n"
+#   else
+#     printf "read one ${read_one} not found. Exiting\n" >&2
+#     exit
+# fi
+#   if [ -f ${read_two} ]; then
+#      printf "Paired end reads \n"
+#      printf "read two is ${read_two}\n"
+#   else
+#     printf "read two ${read_two} not found. Exiting\n" >&2
+#     exit
+# fi
+# fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument map is %s\n" "$map"

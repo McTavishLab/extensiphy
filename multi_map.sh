@@ -70,10 +70,12 @@ fi
 # fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
-printf "Argument map is %s\n" "$map"
-printf "Argument re_mapis %s\n" "$re_map"
+# printf "Argument map is %s\n" "$map"
+# printf "Argument re_mapis %s\n" "$re_map"
 
 mkdir -p $outdir
+
+cd $read_dir
 
 #cd $READ_DIR
 #READ_LOC=$(pwd)

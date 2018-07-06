@@ -2,7 +2,7 @@
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-while getopts ":a:t:p:o:n:r:m:b:w:t:h" opt; do
+while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -22,7 +22,7 @@ while getopts ":a:t:p:o:n:r:m:b:w:t:h" opt; do
     ;;
     w) wre_map="$OPTARG"
     ;;
-    t) threads="$OPTARG"
+    c) threads="$OPTARG"
     ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit

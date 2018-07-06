@@ -77,10 +77,12 @@ mkdir -p $outdir
 
 cd $read_dir
 
+for i in $(ls *R1_.fastq); do
+  mkdir $i_outdir
+
 #cd $READ_DIR
 #READ_LOC=$(pwd)
 for i in $(ls *R1_.fastq); do
-    mkdir "$i"_"$outdir"
     time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"$outdir" > "$PHYCORDER/multi_map_dev.log"
 done
 

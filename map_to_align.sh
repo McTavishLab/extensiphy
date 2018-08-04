@@ -5,6 +5,10 @@
 #HOw to deal with single mapping to multiple alignements??!?
 #./map_to_align.sh -a example.aln -t tree.tre -p /home/ejmctavish/projects/Exelixis/SISRS/full_aln/datafiles/SRR610374 -o fulltest -n fulltest #
 #DEFAULT ARGS
+set -e
+set -u
+set -o pipefail
+
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 printf "phycorder directory is %s\n" "$PHYCORDER"
@@ -158,19 +162,23 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
 #pretend the alignemnt is a set of chromosomes
 bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+printf "build 1 passed"
 
 if [ $PE -eq 1 ];
 	then
 	    echo "PAIRED ENDS"
-	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+      printf "map PE 1 passed"
     else
-    	bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
+      bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
+      printf "map single 1 passed"
 fi
 
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
 samtools sort $outdir/full_alignment.bam -o $outdir/full_sorted.bam
 samtools index $outdir/full_sorted.bam
 samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
+printf "samtools passed"
 if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
     echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
     exit
@@ -181,6 +189,7 @@ fi
 echo 'Refining mapping and calling consensus sequence'
 refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
 grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
+printf "going to fastafixer"
 $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 echo 'The best reference found in your alignment was '$refnam
 echo 'mapping reads to '$refnam
@@ -192,7 +201,7 @@ if [ $PE -eq 1 ]
 	then
 	    bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else
-    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
+    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas
@@ -209,8 +218,12 @@ sed -i -e "s/>/>QUERY_/g" $outdir/cns.fa
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
+printf "beginning aligned consensus processing"
 #python
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir"/"$read_one_aligned_cns.fas"
+
+y=${read_one%.fastq}
+cns_align=${y##*/}
+$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir"/"$cns_align.fas"
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 

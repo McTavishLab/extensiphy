@@ -1,4 +1,8 @@
 #! /bin/bash
+set -e
+set -u
+set -o pipefail
+
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -69,28 +73,34 @@ fi
 # fi
 # fi
 printf "Argument out is %s\n" "$outdir"
-printf "Argument name is %s\n" "$nam"
+#printf "Argument name is %s\n" "$nam"
 # printf "Argument map is %s\n" "$map"
 # printf "Argument re_mapis %s\n" "$re_map"
 
-mkdir -p $outdir
+
 
 cd $read_dir
+printf "check 1"
 
-for i in $(ls *R1_.fastq); do
-  mkdir $i_outdir
-
+append='_outdir'
+#for i in $(ls *R1_.fastq); do
+#  mkdir $i$append
+#done
 #cd $READ_DIR
 #READ_LOC=$(pwd)
+
+printf "check 2"
 for i in $(ls *R1_.fastq); do
-    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"$outdir" > "$PHYCORDER/multi_map_dev.log"
+    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log"
 done
 
 wait
 
-cd $outdir
+printf "check 3"
 
-cat *aligned_cns.fas > $outdir/extended.aln
+cd output_dir
+
+cat *aligned_cns.fas > output_dir/extended.aln
 
 cat extended.aln | uniq > uniq_extended.aln
 

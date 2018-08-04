@@ -92,4 +92,6 @@ cd $outdir
 
 cat *aligned_cns.fas > $outdir/extended.aln
 
-raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+cat extended.aln | uniq > uniq_extended.aln
+
+raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -T $threads -s uniq_extended.aln -t $tree -p 12345 -n consensusFULL

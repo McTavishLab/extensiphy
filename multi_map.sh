@@ -72,7 +72,7 @@ fi
 #     exit
 # fi
 # fi
-printf "Argument out is %s\n" "$outdir"
+#printf "Argument out is %s\n" "$outdir"
 #printf "Argument name is %s\n" "$nam"
 # printf "Argument map is %s\n" "$map"
 # printf "Argument re_mapis %s\n" "$re_map"
@@ -91,17 +91,26 @@ append='_outdir'
 
 printf "check 2"
 for i in $(ls *R1_.fastq); do
-    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log"
+    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+    printf "adding new map_to_align run"
 done
 
 wait
 
 printf "check 3"
 
-cd output_dir
+mkdir combine_and_infer
 
-cat *aligned_cns.fas > output_dir/extended.aln
+for i in $(ls -d *_output_dir); do
+  cp $i/*R1*.fas ./
+done
 
-cat extended.aln | uniq > uniq_extended.aln
+cp $align $read_dir
 
-raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -T $threads -s uniq_extended.aln -t $tree -p 12345 -n consensusFULL
+cat *.fas > extended.aln
+
+#cat *aligned_cns.fas > output_dir/extended.aln
+
+#cat extended.aln | uniq > uniq_extended.aln
+
+raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL

@@ -1,10 +1,16 @@
 #! /bin/bash
+# inputs: a sequence alignment and a tree inferred from that alignment.
+# inputs: a directory of paired end reads for new taxa to be added to the alignment and corresponding tree.
+# example command: multi_map.sh -example.aln -t example.tre -p example_read_dir -c number_of_threads
+
 set -e
 set -u
 set -o pipefail
 
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+printf "phycorder directory is %s\n" "$PHYCORDER"
 
 while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
   case $opt in

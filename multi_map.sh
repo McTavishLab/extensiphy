@@ -56,40 +56,18 @@ if [ -f "$tree" ]; then
     printf "Tree $tree not found. Exiting\n" >&2
     exit
 fi
-# if [ $PE -eq 1 ]; then
-#   if [ -f ${read_one} ]; then
-#      printf "Paired end reads \n"
-#      printf "read one is ${read_one}\n"
-#   else
-#     printf "read one ${read_one} not found. Exiting\n" >&2
-#     exit
-# fi
-#   if [ -f ${read_two} ]; then
-#      printf "Paired end reads \n"
-#      printf "read two is ${read_two}\n"
-#   else
-#     printf "read two ${read_two} not found. Exiting\n" >&2
-#     exit
-# fi
-# fi
-#printf "Argument out is %s\n" "$outdir"
-#printf "Argument name is %s\n" "$nam"
-# printf "Argument map is %s\n" "$map"
-# printf "Argument re_mapis %s\n" "$re_map"
-
+if [ -f "$read_dir" ]; then
+    printf "Directory of reads is %s\n" "$read_dir"
+  else
+    printf "Directory of reads $read_dir not found. exiting\n" >&2
+    exit
+fi
 
 
 cd $read_dir
-printf "check 1"
 
-append='_outdir'
-#for i in $(ls *R1_.fastq); do
-#  mkdir $i$append
-#done
-#cd $READ_DIR
-#READ_LOC=$(pwd)
+printf "Beginning Phycorder runs\n"
 
-printf "check 2"
 for i in $(ls *R1_.fastq); do
     time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
     printf "adding new map_to_align run"
@@ -97,7 +75,7 @@ done
 
 wait
 
-printf "check 3"
+printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
 mkdir combine_and_infer
 
@@ -109,8 +87,8 @@ cp $align $read_dir
 
 cat *.fas > extended.aln
 
-#cat *aligned_cns.fas > output_dir/extended.aln
-
-#cat extended.aln | uniq > uniq_extended.aln
+printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
 raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+
+printf "Multiple taxa update of phylogenetic tree complete\n"

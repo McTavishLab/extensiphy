@@ -10,7 +10,7 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-printf "phycorder directory is %s\n" "$PHYCORDER"
+
 
 while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
   case $opt in
@@ -72,29 +72,45 @@ fi
 
 cd $read_dir
 
-printf "Beginning Phycorder runs\n"
+num_files=$(ls -1 *.R1_.fastq | wc -l)
 
-for i in $(ls *R1_.fastq); do
+if [ $threads -ge $num_files]
+then
+  printf "Number of cores allocated enough to process all read sets\n"
+  printf "Beginning Phycorder runs\n"
+
+  for i in $(ls *R1_.fastq); do
+      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+      printf "adding new map_to_align run"
+  done
+
+  wait
+
+  printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
+
+  mkdir combine_and_infer
+
+  for i in $(ls -d *_output_dir); do
+    cp $i/*R1*.fas ./
+  done
+
+  cp $align $read_dir
+
+  cat *.fas > extended.aln
+
+  printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
+
+  raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+
+  printf "Multiple taxa update of phylogenetic tree complete\n"
+else
+  counter=0
+  while [ $counter -lt $threads]; do
     time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
-    printf "adding new map_to_align run"
-done
+    printf "adding new map_to_align run\n"
+  done
 
-wait
+  wait
 
-printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
-
-mkdir combine_and_infer
-
-for i in $(ls -d *_output_dir); do
-  cp $i/*R1*.fas ./
-done
-
-cp $align $read_dir
-
-cat *.fas > extended.aln
-
-printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
-
-raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
-
-printf "Multiple taxa update of phylogenetic tree complete\n"
+  # NEED SECTION ON HOW TO IDENTIFY FILES THAT HAVE BEEN PROCESSED ALREADY AND IGNORE THEM
+  

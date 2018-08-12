@@ -62,7 +62,7 @@ if [ -f "$tree" ]; then
     printf "Tree $tree not found. Exiting\n" >&2
     exit
 fi
-if [ -f "$read_dir" ]; then
+if [ -d "$read_dir" ]; then
     printf "Directory of reads is %s\n" "$read_dir"
   else
     printf "Directory of reads $read_dir not found. exiting\n" >&2
@@ -72,7 +72,7 @@ fi
 
 cd $read_dir
 
-num_files=$(ls -1 *.R1_.fastq | wc -l)
+num_files=$(ls -1 *R1_.fastq | wc -l)
 
 if [ $threads -ge $num_files]
 then
@@ -133,3 +133,5 @@ else
   raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 
   printf "Multiple taxa update of phylogenetic tree complete\n"
+
+fi

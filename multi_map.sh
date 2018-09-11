@@ -74,13 +74,14 @@ cd $read_dir
 
 num_files=$(ls -1 *R1_.fastq | wc -l)
 
-if [ $threads -ge $num_files]
+if [ $threads -ge $num_files ]
 then
   printf "Number of cores allocated enough to process all read sets\n"
   printf "Beginning Phycorder runs\n"
 
   for i in $(ls *R1_.fastq); do
-      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+      # time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$i"_"output_dir"/"multi_map_dev.log" &
       printf "adding new map_to_align run"
   done
 
@@ -109,7 +110,8 @@ else
   echo "Beginning job-number controlled Phycorder run\n"
 
   for i in $(ls *R1_.fastq); do
-    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+    # time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$i"_"output_dir"/"multi_map_dev.log" &
     printf "adding new map_to_align run\n"
     while [ $(jobs | wc -l) -ge $threads ] ; do sleep 1 ; done
   done
@@ -130,7 +132,7 @@ else
 
   printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
-  raxmlHPC-PTHREADS-AVX -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+  raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 
   printf "Multiple taxa update of phylogenetic tree complete\n"
 

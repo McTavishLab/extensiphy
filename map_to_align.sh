@@ -14,45 +14,45 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 #Check for dependencies
 if [ $(which bcftools | wc -l) -lt 1 ]
     then
-        printf "Requires bcftools" >&2 
+        printf "Requires bcftools" >&2
      #   exit 0
     else
         printf "Correct version of bfctools found.\n"
 fi
 if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
     then
-        printf "Requires samtools" >&2 
+        printf "Requires samtools" >&2
       #  exit 0
     else
         printf "Correct version of samtools found.\n"
 fi
 if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "seqtk not found\n" >&2 
+        printf "seqtk not found\n" >&2
     else
         printf "seqtk found\n"
 fi
 if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "bowtie2 not found. Install and/or add to path\n" >&2 
+        printf "bowtie2 not found. Install and/or add to path\n" >&2
     else
         printf "bowtie2 found\n"
 fi
 if [ $(which raxmlHPC | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2 
+        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
     else
         printf "raxmlHPC found\n"
 fi
 if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "fastx toolkit not found. Install and/or add to path\n" >&2 
+        printf "fastx toolkit not found. Install and/or add to path\n" >&2
     else
         printf "fastx toolkit found\n"
 fi
 if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
     then
-        printf "vcfutils.pl not found. Install and/or add to path\n" >&2 
+        printf "vcfutils.pl not found. Install and/or add to path\n" >&2
     else
         printf "vcfutils.pl found\n"
 fi
@@ -92,7 +92,7 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:h" opt; do
     b) re_map="$OPTARG"
     ;;
     w) wre_map="$OPTARG"
-    ;; 
+    ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
     ;;
@@ -109,31 +109,31 @@ fi
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
 
-if [ -f "$align" ]; then  
+if [ -f "$align" ]; then
     printf "Alignment is %s\n" "$align"
   else
     printf "Alignment $align not found. Exiting\n" >&2
     exit
 fi
-if [ -f "$tree" ]; then  
+if [ -f "$tree" ]; then
     printf "Tree is %s\n" "$tree"
   else
     printf "Tree $tree not found. Exiting\n" >&2
     exit
 fi
 if [ $PE -eq 1 ]; then
-  if [ -f ${read_one} ]; then      
+  if [ -f ${read_one} ]; then
      printf "Paired end reads \n"
      printf "read one is ${read_one}\n"
   else
-    printf "read one ${read_one} not found. Exiting\n" >&2 
+    printf "read one ${read_one} not found. Exiting\n" >&2
     exit
 fi
-  if [ -f ${read_two} ]; then      
+  if [ -f ${read_two} ]; then
      printf "Paired end reads \n"
      printf "read two is ${read_two}\n"
   else
-    printf "read two ${read_two} not found. Exiting\n" >&2 
+    printf "read two ${read_two} not found. Exiting\n" >&2
     exit
 fi
 fi
@@ -155,21 +155,21 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 
 if [ $PE -eq 1 ];
-	then 
+	then
 	    echo "PAIRED ENDS"
 	    bowtie2 -p 4 -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
-    else 
+    else
     	bowtie2 -p 4 -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
 fi
 
 samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
 samtools sort $outdir/full_alignment.bam -o $outdir/full_sorted.bam
-samtools index $outdir/full_sorted.bam 
+samtools index $outdir/full_sorted.bam
 samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
 if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
     echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
     exit
-fi 
+fi
     #TODO this is VERY DANGEROUS
 
 
@@ -184,16 +184,16 @@ bowtie2-build --threads 4 $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowti
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
-	then 
+	then
 	    bowtie2 -p 4 -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
-    else 
+    else
     	bowtie2 -p 4 -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
 samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
-samtools index $outdir/best_sorted.bam 
+samtools index $outdir/best_sorted.bam
 samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 
@@ -215,9 +215,9 @@ raxmlHPC -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
 
 cd $WD
 
-#todo strip all fq to fa 
+#todo strip all fq to fa
 
- 
+
 
 # if [ $wre_map -eq 1 ]
 #      then
@@ -231,20 +231,20 @@ cd $WD
 #          bowtie2-build $outdir/worse_ref.fas $outdir/worse_ref >> $outdir/bowtiebuild.log
 
 #          if [ $PE -eq 1 ];
-#              then 
+#              then
 #                  bowtie2 -x $outdir/worse_ref -1 ${read_stub}_1.fastq -2 ${read_stub}_2.fastq -S $outdir/worse_map.sam --no-unal --local
-#              else 
+#              else
 #                  bowtie2 -x $outdir/worse_ref  -U ${read_stub}.fastq -S $outdir/worse_map.sam --no-unal --local
 #          fi
-#          samtools faidx $outdir/worse_ref.fas 
+#          samtools faidx $outdir/worse_ref.fas
 #          samtools view -bS $outdir/worse_map.sam > $outdir/worse_map.bam
 #          samtools sort $outdir/worse_map.bam -o $outdir/worse_sorted.bam
-#          samtools index $outdir/worse_sorted.bam 
-#          samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq 
+#          samtools index $outdir/worse_sorted.bam
+#          samtools mpileup -uf $outdir/worse_ref.fas $outdir/worse_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/worse_cns.fq
 #          seqtk seq -a $outdir/worse_cns.fq > $outdir/worse_cns.fa
 #          sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
 #          if [ $(diff $outdir/cns.fa $outdir/worse_cns.fa | wc -l | cut -f3) -gt 4 ]
-#               then 
+#               then
 #                   echo 'Alternate references result in different sequences. Placing both, but investigating differences recommended!'
 #                   cat $outdir/cns.fa $outdir/worse_cns.fa > $outdir/mappings.fa
 #                   cd $outdir
@@ -257,8 +257,7 @@ cd $WD
 # #         else
 # #             echo 'Using worse reference resulted in identical sequences - only aligning and placing one.'
 # #             cd $outdir
-# #                 papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus 
+# #                 papara -t ${WD}/${tree} -s ${aln_stub}.phy -q cns.fa -n re_consensus
 # #                 raxmlHPC -m GTRCAT -f v -s papara_alignment.re_consensus -t ${WD}/$tree -n ${nam}_consensusPC
 # #             cd $WD
 # # fi
-

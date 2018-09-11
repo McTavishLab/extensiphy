@@ -97,23 +97,23 @@ then
       printf "adding new map_to_align run"
   done
 
-#   wait
+   wait
 
-#   printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
+   printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
   
-#   mkdir -p combine_and_infer
+   mkdir -p combine_and_infer
 
-#   for i in $(ls -d *_output_dir); do
-#     cp $i/*R1*.fas ./
-#   done
+   for i in $(ls -d *_output_dir); do
+     cp $i/*_align.fas combine_and_infer
+   done
 
-#   cp $align $read_dir
+#   cp $align combine_and_infer
 
-#   cat *.fas > extended.aln
+   cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
-#   printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
+   printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
-#   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s combine_and_infer/extended.aln -t $tree -p 12345 -n consensusFULL
 
 #   printf "Multiple taxa update of phylogenetic tree complete\n"
 # else

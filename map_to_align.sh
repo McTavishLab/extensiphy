@@ -266,9 +266,9 @@ grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
 printf ">beginning aligned consensus processing"
 #python
 
-y=${read_one%.fastq}
-cns_align=${y##*/}
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir"/"$cns_align.fas"
+#y=${base%.fastq}
+#cns_align=${base}
+$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir"/"${base}_align.fas"
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 

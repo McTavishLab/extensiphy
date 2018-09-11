@@ -1,5 +1,11 @@
 # Phycorder
 
+DEV BRANCH command for multimap data test
+
+multi_map.sh -a ./testdata/phycorder_testdata.fasta -t ./testdata/RAxML_bestTree.phycorder_testdata.out -p ./testdata/ -c 2
+
+
+
 Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.
 
 

@@ -172,9 +172,14 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 $BOWTIE2PATH/bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 printf ">build 1 passed\n"
 
-base=$(basename $read_one .R1_.fastq)
 
+#this is a hack that is in both scripts!! need to be passed between
+r1_tail="R1_.fastq"
+r2_tail="R2_.fastq"
+
+base=$(basename $read_one $r1_tail)
 echo "basename is $base"
+
 if [ $PE -eq 1 ];
 	then
 	    echo "PAIRED ENDS"
@@ -193,7 +198,7 @@ samtools index $outdir/full_sorted.bam
 
 samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
 
-printf ">samtools passed"
+printf ">samtools passed\n"
 if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
     echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
     exit
@@ -202,7 +207,12 @@ fi
 
 
 echo '>Refining mapping and calling consensus sequence'
-refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
+sort -rnk3 $outdir/mapping_info >  $outdir/mapping_info_sort
+
+refnam=$(cat $outdir/mapping_info_sort | head -1 | cut -f1)
+
+echo $refnam
+
 
 grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
 #printf ">THIS IS A TEST SECTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"

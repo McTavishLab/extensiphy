@@ -21,8 +21,8 @@ while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
     p) read_dir="$OPTARG"
     ;;
     o) outdir="$OPTARG"
-	;;
-	n) nam="$OPTARG"
+  	;;
+  	n) nam="$OPTARG"
     ;;
     r) read_align="$OPTARG"
     ;;
@@ -69,45 +69,63 @@ if [ -d "$read_dir" ]; then
     exit
 fi
 
+#this is a hack that is in both scripts!! need to be passed between
+r1_tail="R1_.fastq"
+r2_tail="R2_.fastq"
 
-ls ${read_dir}/*R1_.fastq > readnames.txt
+mkdir -p $outdir
+cd $outdir
+
+ls ${read_dir}/*$r1_tail > readnames.txt
 
 num_files=$(cat readnames.txt | wc -l )
 echo $num_files
 echo $threads
 
 if [ $threads -ge $num_files ]
-then
+ then
   printf "Number of cores allocated enough to process all read sets\n"
   printf "Beginning Phycorder runs\n"
 
   for i in $(cat readnames.txt); do
-      base=$(basename $i .R1_.fastq)
+      base=$(basename $i $r1_tail)
       echo $base
       echo $i
       echo $PHYCORDER
       echo $align 
       echo $tree x
       echo $i 
-      echo ${i%R1_.fastq}R2_.fastq 
+      echo ${base}${r2_tail}
       echo $threads 
-      echo "$i"_"output_dir" 
-      # time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
-      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%R1_.fastq}R2_.fastq -c $threads -o "${base}_output_dir" > "multi_map_dev.log" &
+      echo "${base}_output_dir"
+      echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}_output_dir > multi_map_dev.log &"
+      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}_output_dir > multi_map_dev.log &
+      wait
       printf "adding new map_to_align run"
   done
 
-   wait
 
+  else
+   # section handles times when you are adding more tips to the tree than available processors
+   echo "Number of taxa being added to alignment and tree are greater than number of processors\n"
+   echo "Beginning job-number controlled Phycorder run\n"
+   echo "THIS DOES NOT APPEAR TO BE WORKING. only more cores than new runs, for now\n"
+   for i in $(cat readnames.txt); do
+    base=$(basename $i $r1_tail)
+#     # time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
+     time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i  -e ${i%$r1_tail}$r2_tail -c $threads -o "${base}_output_dir" > "multi_map_dev.log" &
+     printf "adding new map_to_align run\n"
+     while [ $(jobs | wc -l) -ge $threads ] ; do sleep 1 ; done
+   done
+fi
    printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
-  
+
    mkdir -p combine_and_infer
 
    for i in $(ls -d *_output_dir); do
-     cp $i/*_align.fas combine_and_infer
+      cp $i/*_align.fas combine_and_infer
    done
 
-#   cp $align combine_and_infer
 
    cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
@@ -115,37 +133,5 @@ then
 
    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s combine_and_infer/extended.aln -t $tree -p 12345 -n consensusFULL
 
-#   printf "Multiple taxa update of phylogenetic tree complete\n"
-# else
-#   # section handles times when you are adding more tips to the tree than available processors
-#   echo "Number of taxa being added to alignment and tree are greater than number of processors\n"
-#   echo "Beginning job-number controlled Phycorder run\n"
+   printf "Multiple taxa update of phylogenetic tree complete\n"
 
-#   for i in $(ls *R1_.fastq); do
-#     # time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "$PHYCORDER/multi_map_dev.log" &
-#     time $PHYCORDER/map_to_align.sh -a $align -t $tree -p "$read_dir"/"$i" -e "$read_dir"/"${i%R1_.fastq}R2_.fastq" -c $threads -o "$i"_"output_dir" > "multi_map_dev.log" &
-#     printf "adding new map_to_align run\n"
-#     while [ $(jobs | wc -l) -ge $threads ] ; do sleep 1 ; done
-#   done
-
-#   wait
-
-#   printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
-
-#   mkdir combine_and_infer
-
-#   for i in $(ls -d *_output_dir); do
-#     cp $i/*R1*.fas ./
-#   done
-
-#   cp $align $read_dir
-
-#   cat *.fas > extended.aln
-
-#   printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
-
-#   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
-
-#   printf "Multiple taxa update of phylogenetic tree complete\n"
-
-fi

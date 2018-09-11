@@ -2,9 +2,12 @@
 
 DEV BRANCH command for multimap data test
 
-multi_map.sh -a ./testdata/phycorder_testdata.fasta -t ./testdata/RAxML_bestTree.phycorder_testdata.out -p ./testdata/ -c 2
+./multi_map.sh -a /shared/phycorder/testdata/phycorder_testdata.fasta -t /shared/phycorder/testdata/RAxML_bestTree.phycorder_testdata.out -p /shared/phycorder/testdata/ -c 4 -o tmp_o1
+## NOTE this currently does not run with -c 2
 
+./multi_map.sh -a /shared/phycorder/example.aln -t /shared/phycorder/tree.tre -p /shared/phycorder/tmp_reads/ -c 4 -o tmp_ncbi
 
+---------------------------------------------------------------------
 
 Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.
 

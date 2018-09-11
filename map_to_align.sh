@@ -11,6 +11,7 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+BOWTIE2PATH="/home/ejmctavish/Applications/bowtie2-2.3.4.2-linux-x86_64"
 printf "phycorder directory is %s\n" "$PHYCORDER"
 
 
@@ -69,6 +70,8 @@ re_map=1
 map=1
 read_name_prefix=SRR
 wre_map=0
+threads=0
+
 
 WD=$(pwd)
 while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
@@ -86,8 +89,8 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
     s) read_stub="$OPTARG"
     ;;
     o) outdir="$OPTARG"
-	;;
-	n) nam="$OPTARG"
+	  ;;
+	  n) nam="$OPTARG"
     ;;
     r) read_align="$OPTARG"
     ;;
@@ -121,12 +124,14 @@ done
 #     printf "Alignment $align not found. Exiting\n" >&2
 #     exit
 # fi
-# if [ -f "$tree" ]; then
-#     printf "Tree is %s\n" "$tree"
-#   else
-#     printf "Tree $tree not found. Exiting\n" >&2
-#     exit
-# fi
+
+if [ $threads -eq 0 ]; then
+     threads=2
+     printf "Threads not set, defaulting to 2" >&2
+else
+     echo "num threads is"
+     echo $threads
+fi
 # # if [ $PE -eq 1 ]; then
 # #   if [ -f ${read_one} ]; then
 # #      printf "Paired end reads \n"
@@ -147,7 +152,7 @@ printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument map is %s\n" "$map"
 printf "Argument re_mapis %s\n" "$re_map"
-
+printf "Argument threads is %s\n" "$threads"
 mkdir -p $outdir
 
 #Check that tipnames in alignemnet are the same as tipnames in tree
@@ -157,23 +162,26 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
-printf ">THIS IS THE FIRST TEST SECTION!!!!!!!!!!!!\n"
-cat $outdir/ref_nogap.fas
+#printf ">THIS IS THE FIRST TEST SECTION!!!!!!!!!!!!\n"
+#cat $outdir/ref_nogap.fas
 
 
 ### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
 
 #pretend the alignemnt is a set of chromosomes
-bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
-printf ">build 1 passed"
+$BOWTIE2PATH/bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+printf ">build 1 passed\n"
 
+base=$(basename $read_one .R1_.fastq)
+
+echo "basename is $base"
 if [ $PE -eq 1 ];
 	then
 	    echo "PAIRED ENDS"
-	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    ${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
       printf ">map PE 1 passed"
     else
-      bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
+      ${BOWTIE2PATH}bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
       printf ">map single 1 passed"
 fi
 
@@ -197,38 +205,38 @@ echo '>Refining mapping and calling consensus sequence'
 refnam=$(sort -rnk3 $outdir/mapping_info | head -1 | cut -f1)
 
 grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
-printf ">THIS IS A TEST SECTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-cat $outdir/best_ref_uneven.fas
-printf ">TEST OVER\n"
+#printf ">THIS IS A TEST SECTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+#cat $outdir/best_ref_uneven.fas
+#printf ">TEST OVER\n"
 
-printf ">going to fastafixer"
+#printf ">going to fastafixer"
 $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 echo '>The best reference found in your alignment was '$refnam
 echo '>mapping reads to '$refnam
 
-printf ">TEST SEGMENT BEGINNING\n"
-printf ">best_ref_uneven.fas"
-cat $outdir/best_ref_uneven.fas
-printf ">best_ref.fas"
-cat $outdir/best_ref.fas
-printf ">TEST OVER\n"
+#printf ">TEST SEGMENT BEGINNING\n"
+#printf ">best_ref_uneven.fas"
+##cat $outdir/best_ref_uneven.fas#
+#printf ">best_ref.fas"
+#cat $outdir/best_ref.fas
+#printf ">TEST OVER\n"
 
-bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+${BOWTIE2PATH}/bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
 	then
-	    bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+	    ${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else
-    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
+    	${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas
 
-printf ">TEST SEGMENT BEGINNING\n"
-printf ">best_ref.fas"
-cat $outdir/best_ref.fas
-printf ">TEST FINISHED\n"
+#printf ">TEST SEGMENT BEGINNING\n"
+#printf ">best_ref.fas"
+#cat $outdir/best_ref.fas
+#printf ">TEST FINISHED\n"
 
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
 samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
@@ -236,24 +244,24 @@ samtools index $outdir/best_sorted.bam
 samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 
-printf ">TEST SEGMENT BEGINNING\n"
-printf ">cns.fa"
-cat $outdir/cns.fa
-printf ">TEST FINISHED"
+#printf ">TEST SEGMENT BEGINNING\n"
+#printf ">cns.fa"
+#cat $outdir/cns.fa
+#printf ">TEST FINISHED"
 
 #automatic naming names it to the ref wich is confusing
 #sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_/g" $outdir/cns.fa
+sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
 
-printf ">TEST SEGMENT cns.fa"
-cat $outdir/cns.fa
-printf ">TEST FINISHED\n"
+#printf ">TEST SEGMENT cns.fa"
+#cat $outdir/cns.fa
+#printf ">TEST FINISHED\n"
 
 #pull the aligned reference from the alignement
 grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
-printf ">TEST SEGMENT best_ref_gaps.fas"
-cat $outdir/best_ref_gaps.fas
-printf ">TEST FINISHED\n"
+#printf ">TEST SEGMENT best_ref_gaps.fas"
+#cat $outdir/best_ref_gaps.fas
+#printf ">TEST FINISHED\n"
 
 printf ">beginning aligned consensus processing"
 #python

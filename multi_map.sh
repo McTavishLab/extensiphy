@@ -70,8 +70,8 @@ if [ -d "$read_dir" ]; then
 fi
 
 #this is a hack that is in both scripts!! need to be passed between
-r1_tail="R1_.fastq"
-r2_tail="R2_.fastq"
+r1_tail="1.fastq.gz.fastq"
+r2_tail="2.fastq.gz.fastq"
 
 mkdir -p $outdir
 cd $outdir
@@ -82,8 +82,8 @@ num_files=$(cat readnames.txt | wc -l )
 echo $num_files
 echo $threads
 
-if [ $threads -ge $num_files ]
- then
+#if [ $threads -ge $num_files ]
+# then
   printf "Number of cores allocated enough to process all read sets\n"
   printf "Beginning Phycorder runs\n"
 
@@ -105,8 +105,10 @@ if [ $threads -ge $num_files ]
   done
 
 
-#   else
-#    # section handles times when you are adding more tips to the tree than available processors
+
+ # else
+   # section handles times when you are adding more tips to the tree than available processors
+
 #    echo "Number of taxa being added to alignment and tree are greater than number of processors\n"
 #    echo "Beginning job-number controlled Phycorder run\n"
 #    echo "THIS DOES NOT APPEAR TO BE WORKING. only more cores than new runs, for now\n"

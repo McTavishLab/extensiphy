@@ -79,8 +79,10 @@ cd $outdir
 ls ${read_dir}/*$r1_tail > readnames.txt
 
 num_files=$(cat readnames.txt | wc -l )
-echo $num_files
-echo $threads
+echo "the number of files you're trying to add is" $num_files
+echo "the number of threads on this computer is" $threads
+
+useable reads=$(ls ${read_dir}/*$r1_tail | head -n $threads)
 
 #if [ $threads -ge $num_files ]
 # then

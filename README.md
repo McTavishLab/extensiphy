@@ -1,8 +1,8 @@
 # Phycorder
 
-DEV BRANCH command for multimap data test
+PARALLEL BRANCH command for multimap data test
 
-./multi_map.sh -a /shared/phycorder/testdata/phycorder_testdata.fasta -t /shared/phycorder/testdata/RAxML_bestTree.phycorder_testdata.out -p /shared/phycorder/testdata/ -c 4 -o tmp_o1
+./multi_map.sh -a /path/to/testdata/phycorder_testdata.fasta -t /path/to/testdata/RAxML_bestTree.phycorder_testdata.out -p /path/to/testdata/ -c 4 -r 4 -o tmp_o1
 ## NOTE this currently does not run with -c 2
 
 ./multi_map.sh -a /shared/phycorder/example.aln -t /shared/phycorder/tree.tre -p /shared/phycorder/tmp_reads/ -c 4 -o tmp_ncbi

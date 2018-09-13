@@ -34,7 +34,9 @@ while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
     ;;
     c) threads="$OPTARG"
     ;;
-    h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
+    r) phycorder_runs="$OPTARG"
+    ;;
+    h) echo  "alignment in fasta format (-a), tree in Newick format (-t), directory of reads (-p), number of reads your computer can process at one time (-r)"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -70,26 +72,21 @@ if [ -d "$read_dir" ]; then
 fi
 
 #this is a hack that is in both scripts!! need to be passed between
-r1_tail="1.fastq.gz.fastq"
-r2_tail="2.fastq.gz.fastq"
+r1_tail="R1_.fastq"
+r2_tail="R2_.fastq"
 
 mkdir -p $outdir
 cd $outdir
 
-ls ${read_dir}/*$r1_tail > readnames.txt
-
-num_files=$(cat readnames.txt | wc -l )
-echo "the number of files you're trying to add is" $num_files
-echo "the number of threads on this computer is" $threads
-
-useable reads=$(ls ${read_dir}/*$r1_tail | head -n $threads)
+ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 
 #if [ $threads -ge $num_files ]
 # then
   printf "Number of cores allocated enough to process all read sets\n"
   printf "Beginning Phycorder runs\n"
 
-  for i in $(cat readnames.txt); do
+for j in $(ls xa*); do
+  for i in $(cat $j); do
       base=$(basename $i $r1_tail)
       echo $base
       echo $i
@@ -105,7 +102,7 @@ useable reads=$(ls ${read_dir}/*$r1_tail | head -n $threads)
       wait
       printf "adding new map_to_align run"
   done
-
+done
 
 
  # else

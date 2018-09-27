@@ -99,9 +99,10 @@ for j in $(ls xa*); do
       echo "${base}_output_dir"
       echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}_output_dir > multi_map_dev.log &"
       time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}_output_dir > multi_map_dev.log &
-      wait
+      #wait
       printf "adding new map_to_align run"
   done
+  wait
 done
 
 

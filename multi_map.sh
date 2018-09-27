@@ -72,8 +72,8 @@ if [ -d "$read_dir" ]; then
 fi
 
 #this is a hack that is in both scripts!! need to be passed between
-r1_tail="R1_.fastq"
-r2_tail="R2_.fastq"
+r1_tail="R1_001.fastq"
+r2_tail="R2_001.fastq"
 
 mkdir -p $outdir
 cd $outdir

@@ -12,7 +12,7 @@ PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 
 
-while getopts ":a:t:p:o:n:r:m:b:w:c:h" opt; do
+while getopts ":a:t:p:o:n:r:m:b:w:c:r:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;

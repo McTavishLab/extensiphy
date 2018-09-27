@@ -24,8 +24,6 @@ while getopts ":a:t:p:o:n:m:b:w:c:r:h" opt; do
   	;;
   	n) nam="$OPTARG"
     ;;
-    r) read_align="$OPTARG"
-    ;;
     m) map="$OPTARG"
     ;;
     b) re_map="$OPTARG"

@@ -11,7 +11,7 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-BOWTIE2PATH="/home/ejmctavish/Applications/bowtie2-2.3.4.2-linux-x86_64"
+# BOWTIE2PATH="/home/ejmctavish/Applications/bowtie2-2.3.4.2-linux-x86_64"
 printf "phycorder directory is %s\n" "$PHYCORDER"
 
 
@@ -169,7 +169,7 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 ### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
 
 #pretend the alignemnt is a set of chromosomes
-$BOWTIE2PATH/bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
 printf ">build 1 passed\n"
 
 
@@ -184,10 +184,10 @@ echo "basename is $base"
 if [ $PE -eq 1 ];
 	then
 	    echo "PAIRED ENDS"
-	    ${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
       printf ">map PE 1 passed"
     else
-      ${BOWTIE2PATH}bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
+      bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
       printf ">map single 1 passed"
 fi
 
@@ -232,14 +232,14 @@ echo '>mapping reads to '$refnam
 #cat $outdir/best_ref.fas
 #printf ">TEST OVER\n"
 
-${BOWTIE2PATH}/bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 if [ $PE -eq 1 ]
 	then
-	    ${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+	    bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
     else
-    	${BOWTIE2PATH}/bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
+    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
 fi
 
 samtools faidx $outdir/best_ref.fas

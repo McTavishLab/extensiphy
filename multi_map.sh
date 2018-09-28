@@ -10,68 +10,68 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+source $PHYCORDER/phycorder.cfg
 
-
-while getopts ":a:t:p:o:n:m:b:w:c:r:h" opt; do
-  case $opt in
-    a) align="$OPTARG"
-    ;;
-    t) tree="$OPTARG"
-    ;;
-    p) read_dir="$OPTARG"
-    ;;
-    o) outdir="$OPTARG"
-  	;;
-  	n) nam="$OPTARG"
-    ;;
-    m) map="$OPTARG"
-    ;;
-    b) re_map="$OPTARG"
-    ;;
-    w) wre_map="$OPTARG"
-    ;;
-    c) threads="$OPTARG"
-    ;;
-    r) phycorder_runs="$OPTARG"
-    ;;
-    h) echo  "alignment in fasta format (-a), tree in Newick format (-t), directory of reads (-p), number of reads your computer can process at one time (-r)"
-    exit
-    ;;
-    \?) echo "Invalid option -$OPTARG" >&2
-    ;;
-  esac
-done
-
-if [ -z "$align" ] || [ -z "$tree" ]; then
-   "alignment (-a), tree (-t), and reads (-p or -s required)"
-   exit
-fi
-
-#Ttest if files actually exist
-#Check to make sure mapping has occured if re-mapping
-
-if [ -f "$align" ]; then
-    printf "Alignment is %s\n" "$align"
-  else
-    printf "Alignment $align not found. Exiting\n" >&2
-    exit
-fi
-if [ -f "$tree" ]; then
-    printf "Tree is %s\n" "$tree"
-  else
-    printf "Tree $tree not found. Exiting\n" >&2
-    exit
-fi
-if [ -d "$read_dir" ]; then
-    printf "Directory of reads is %s\n" "$read_dir"
-  else
-    printf "Directory of reads $read_dir not found. exiting\n" >&2
-    exit
-fi
-
-#this is a hack that is in both scripts!! need to be passed between
-r1_tail="R1_001.fastq"
-r2_tail="R2_001.fastq"
+# while getopts ":a:t:p:o:n:m:b:w:c:r:h" opt; do
+#   case $opt in
+#     a) align="$OPTARG"
+#     ;;
+#     t) tree="$OPTARG"
+#     ;;
+#     p) read_dir="$OPTARG"
+#     ;;
+#     o) outdir="$OPTARG"
+#   	;;
+#   	n) nam="$OPTARG"
+#     ;;
+#     m) map="$OPTARG"
+#     ;;
+#     b) re_map="$OPTARG"
+#     ;;
+#     w) wre_map="$OPTARG"
+#     ;;
+#     c) threads="$OPTARG"
+#     ;;
+#     r) phycorder_runs="$OPTARG"
+#     ;;
+#     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), directory of reads (-p), number of reads your computer can process at one time (-r)"
+#     exit
+#     ;;
+#     \?) echo "Invalid option -$OPTARG" >&2
+#     ;;
+#   esac
+# done
+#
+# if [ -z "$align" ] || [ -z "$tree" ]; then
+#    "alignment (-a), tree (-t), and reads (-p or -s required)"
+#    exit
+# fi
+#
+# #Ttest if files actually exist
+# #Check to make sure mapping has occured if re-mapping
+#
+# if [ -f "$align" ]; then
+#     printf "Alignment is %s\n" "$align"
+#   else
+#     printf "Alignment $align not found. Exiting\n" >&2
+#     exit
+# fi
+# if [ -f "$tree" ]; then
+#     printf "Tree is %s\n" "$tree"
+#   else
+#     printf "Tree $tree not found. Exiting\n" >&2
+#     exit
+# fi
+# if [ -d "$read_dir" ]; then
+#     printf "Directory of reads is %s\n" "$read_dir"
+#   else
+#     printf "Directory of reads $read_dir not found. exiting\n" >&2
+#     exit
+# fi
+#
+# #this is a hack that is in both scripts!! need to be passed between
+# r1_tail="R1_001.fastq"
+# r2_tail="R2_001.fastq"
 
 mkdir -p $outdir
 cd $outdir

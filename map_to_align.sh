@@ -110,20 +110,20 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
   esac
 done
 
-# if [ -z "$align" ] || [ -z "$tree" ]; then
-#    "alignment (-a), tree (-t), and reads (-p or -s required)"
-#    exit
-# fi
-#
-# #Ttest if files actually exist
-# #Check to make sure mapping has occured if re-mapping
-#
-# if [ -f "$align" ]; then
-#     printf "Alignment is %s\n" "$align"
-#   else
-#     printf "Alignment $align not found. Exiting\n" >&2
-#     exit
-# fi
+if [ -z "$align" ] || [ -z "$tree" ]; then
+   "alignment (-a), tree (-t), and reads (-p or -s required)"
+   exit
+fi
+
+#Ttest if files actually exist
+#Check to make sure mapping has occured if re-mapping
+
+if [ -f "$align" ]; then
+    printf "Alignment is %s\n" "$align"
+  else
+    printf "Alignment $align not found. Exiting\n" >&2
+    exit
+fi
 
 if [ $threads -eq 0 ]; then
      threads=2

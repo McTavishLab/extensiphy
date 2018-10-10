@@ -3,6 +3,12 @@
 PARALLEL BRANCH command for multimap data test
 
 You must set up the config file for use after you have tested your install.
+The PARALLEL branch allows for control over both how many phycorder runs happen
+in parallel (hence the name) and how many threads are allocated to each phycorder run_name
+Make sure you dont ask your computer to work to hard by adding more runs and threads than your computer can handle
+find out how many cores you have available and calculate (cores*phycorder runs you wish to run as the same time)
+if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
+then adjust to your optimum setting.
 First, use the following command as Phycorder should be able to find the included test datafiles
 
 ./multi_map.sh

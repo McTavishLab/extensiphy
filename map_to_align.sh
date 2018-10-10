@@ -174,8 +174,8 @@ printf ">build 1 passed\n"
 
 
 #this is a hack that is in both scripts!! need to be passed between
-r1_tail="1_.fastq.gz.fastq"
-r2_tail="2_.fastq.gz.fastq"
+# r1_tail="1_.fastq.gz.fastq"
+# r2_tail="2_.fastq.gz.fastq"
 
 
 base=$(basename $read_one $r1_tail)

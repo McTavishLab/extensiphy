@@ -2,8 +2,15 @@
 
 PARALLEL BRANCH command for multimap data test
 
-./multi_map.sh -a /path/to/testdata/phycorder_testdata.fasta -t /path/to/testdata/RAxML_bestTree.phycorder_testdata.out -p /path/to/testdata/ -c 4 -r 4 -o tmp_o1
-## NOTE this currently does not run with -c 2
+You must set up the config file for use after you have tested your install.
+First, use the following command as Phycorder should be able to find the included test datafiles
+
+./multi_map.sh
+
+It is recommended that you leave the sample_phycorder.cfg file alone so you always have a reference
+
+The following command is currently used for dev BRANCH
+but that branch should not be used until further notice.
 
 ./multi_map.sh -a /shared/phycorder/example.aln -t /shared/phycorder/tree.tre -p /shared/phycorder/tmp_reads/ -c 4 -o tmp_ncbi
 
@@ -60,13 +67,13 @@ http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374
   RAxML_{}.QUERY_reads_EPA : RAxML reads output files  
 
 
-##Requirements: 
+##Requirements:
 
 runs on linux, probably not anywhere else  
 (Too many probably...)   
-Python packages: 
+Python packages:
     Dendropy 4.0 (pip install dendropy)  
-Software in path: 
+Software in path:
 	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml  
 	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html  
 	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html  

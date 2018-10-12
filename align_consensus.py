@@ -46,8 +46,9 @@ def main():
                     out.write(newnuc)
                 else:
                     out.write('n')
-            else: 
+            else:
                 if refnuc:
+                    print(refnuc)
                     assert refnuc =='\n'
                     out.write(refnuc)
     new.close()

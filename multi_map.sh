@@ -95,8 +95,8 @@ for j in $(ls xa*); do
       echo ${base}${r2_tail}
       echo $threads
       echo "${base}_output_dir"
-      echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}output_dir > multi_map_dev.log &"
-      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}output_dir > multi_map_dev.log &
+      echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}output_dir > $outdir/parallel-$base-dev.log &"
+      time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -c $threads -o ${base}output_dir > $outdir/parallel-$base-dev.log &
       #wait
       printf "adding new map_to_align run"
   done
@@ -122,6 +122,8 @@ done
 
    mkdir -p combine_and_infer
 
+   mkdir -p phycorder-dev-logs
+
    for i in $(ls -d *_output_dir); do
       cp $i/*_align.fas combine_and_infer
    done
@@ -134,3 +136,5 @@ done
    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s combine_and_infer/extended.aln -t $tree -p 12345 -n consensusFULL
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
+   printf "Moving run logs into phycorder-dev-logs"
+   mv *-dev.log ./phycorder-dev-logs

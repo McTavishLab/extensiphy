@@ -137,4 +137,6 @@ done
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
    printf "Moving run logs into phycorder-dev-logs"
-   mv *-dev.log ./phycorder-dev-logs
+   cd ..
+
+   mv *-dev.log $outdir/phycorder-dev-logs

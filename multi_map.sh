@@ -131,6 +131,8 @@ done
      count=$(ls *_align.fas | wc -l)
      if [ $count -gt 0 ]; then
        cp *_align.fas $wd/combine_and_infer/
+     else
+       echo "$i"
      fi
      cd ..
    done

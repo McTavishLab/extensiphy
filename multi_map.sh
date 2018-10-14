@@ -125,7 +125,12 @@ done
    mkdir -p phycorder-dev-logs
 
    for i in $(ls -d *_output_dir); do
-      cp $i/*_align.fas combine_and_infer
+     cd $i
+     count=$(ls *_align.fas | wc -l)
+     if [ $count -gt 0 ]; then
+       cp *_align.fas $outdir/combine_and_infer
+     fi
+     cd ..
    done
 
 
@@ -136,7 +141,7 @@ done
    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s combine_and_infer/extended.aln -t $tree -p 12345 -n consensusFULL
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
-   printf "Moving run logs into phycorder-dev-logs"
-   cd ..
-
-   mv *-dev.log $outdir/phycorder-dev-logs
+   # printf "Moving run logs into phycorder-dev-logs"
+   # cd ..
+   #
+   # mv *-dev.log $outdir/phycorder-dev-logs

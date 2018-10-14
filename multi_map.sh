@@ -124,11 +124,13 @@ done
 
    mkdir -p phycorder-dev-logs
 
+   wd=$(pwd)
+
    for i in $(ls -d *_output_dir); do
      cd $i
      count=$(ls *_align.fas | wc -l)
      if [ $count -gt 0 ]; then
-       cp *_align.fas $outdir/combine_and_infer
+       cp *_align.fas $wd/combine_and_infer/
      fi
      cd ..
    done

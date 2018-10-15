@@ -133,6 +133,7 @@ done
        cp *_align.fas $wd/combine_and_infer/
      else
        echo "$i"
+       continue
      fi
      cd ..
    done

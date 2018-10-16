@@ -215,7 +215,7 @@ refnam=$(cat $outdir/mapping_info_sort | head -1 | cut -f1)
 echo $refnam
 
 
-grep -Pzo '(?s)>'$refnam'.*?>' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
+grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
 #printf ">THIS IS A TEST SECTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
 #cat $outdir/best_ref_uneven.fas
 #printf ">TEST OVER\n"
@@ -269,7 +269,7 @@ sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
 #printf ">TEST FINISHED\n"
 
 #pull the aligned reference from the alignement
-grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/best_ref_gaps.fas
+grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 #printf ">TEST SEGMENT best_ref_gaps.fas"
 #cat $outdir/best_ref_gaps.fas
 #printf ">TEST FINISHED\n"

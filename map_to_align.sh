@@ -74,7 +74,7 @@ threads=0
 
 
 WD=$(pwd)
-while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
+while getopts ":a:t:p:e:s:o:n:r:c:1:2:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -94,13 +94,11 @@ while getopts ":a:t:p:e:s:o:n:r:m:b:w:c:h" opt; do
     ;;
     r) read_align="$OPTARG"
     ;;
-    m) map="$OPTARG"
-    ;;
-    b) re_map="$OPTARG"
-    ;;
-    w) wre_map="$OPTARG"
-    ;;
     c) threads="$OPTARG"
+    ;;
+    1) r1_tail="$OPTARG"
+    ;;
+    2) r2_tail="$OPTARG"
     ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
@@ -148,10 +146,10 @@ fi
 # #     exit
 # # fi
 # fi
+printf "tail_1 is %s\n" "$r1_tail"
+printf "tail_2 is %s\n" "$r2_tail"
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
-printf "Argument map is %s\n" "$map"
-printf "Argument re_mapis %s\n" "$re_map"
 printf "Argument threads is %s\n" "$threads"
 mkdir -p $outdir
 
@@ -169,117 +167,90 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 ### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
 
 #pretend the alignemnt is a set of chromosomes
-bowtie2-build --threads $threads $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
-printf ">build 1 passed\n"
-
 
 #this is a hack that is in both scripts!! need to be passed between
-r1_tail="1.fastq.gz.fastq"
-r2_tail="1.fastq.gz.fastq"
 
-
-base=$(basename $read_one $r1_tail)
+echo "PAIRED ENDS"
+base=$(basename $i $r1_tail)
 echo "basename is $base"
+mkdir -p ${base}_outdir
+# bowtie2 -p $threads --very-fast -x $outdir/ref -1 $i -2 ${i%$r1_tail}$r2_tail -S $outdir/${base}_outdir/full_alignment.sam --no-unal
+# printf ">map PE 1 passed"
+#
+# samtools view -bS $outdir/${base}_outdir/full_alignment.sam > $outdir/${base}_outdir/full_alignment.bam
+#
+# samtools sort $outdir/${base}_outdir/full_alignment.bam -o $outdir/${base}_outdir/full_sorted.bam
+#
+# samtools index $outdir/${base}_outdir/full_sorted.bam
+#
+# samtools idxstats $outdir/${base}_outdir/full_sorted.bam > $outdir/${base}_outdir/mapping_info
+#
+# if [ $(sort -rnk3 $outdir/${base}_outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
+#     echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
+#     exit
+# fi
+#
+# echo '>Refining mapping and calling consensus sequence'
+# sort -rnk3 $outdir/${base}_outdir/mapping_info >  $outdir/${base}_outdir/mapping_info_sort
+#
+refnam=$(head -n 1 ref_nogap.fas)
 
-if [ $PE -eq 1 ];
-	then
-	    echo "PAIRED ENDS"
-	    bowtie2 -p $threads --very-fast -x $outdir/ref -1 ${read_one} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
-      printf ">map PE 1 passed"
-    else
-      bowtie2 -p $threads --very-fast -x $outdir/ref -U ${read_one}-S $outdir/full_alignment.sam --no-unal
-      printf ">map single 1 passed"
-fi
+echo "refname is $refnam"
+#
+#
+grep -Pzo '(?s)'$refnam'.*?(>|\Z)' ref_nogap.fas |head -n-1 > ${base}_outdir/best_ref_uneven.fas
+# grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
-samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
+fold -w 80 $outdir?${base}_outdir/best_ref_uneven.fas > best_ref.fas
+# #printf ">going to fastafixer"
+# $PHYCORDER/fastafixer.py $outdir/${base}_outdir/best_ref_uneven.fas $outdir/${base}_outdir/best_ref.fas #starightens out line lengths
+# echo '>The best reference found in your alignment was '$refnam
+# echo '>mapping reads to '$refnam
 
-samtools sort $outdir/full_alignment.bam -o $outdir/full_sorted.bam
-
-samtools index $outdir/full_sorted.bam
-
-samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
-
-printf ">samtools passed\n"
-if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
-    echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
-    exit
-fi
-    #TODO this is VERY DANGEROUS
-
-
-echo '>Refining mapping and calling consensus sequence'
-sort -rnk3 $outdir/mapping_info >  $outdir/mapping_info_sort
-
-refnam=$(cat $outdir/mapping_info_sort | head -1 | cut -f1)
-
-echo $refnam
-
-
-grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
-#printf ">THIS IS A TEST SECTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-#cat $outdir/best_ref_uneven.fas
-#printf ">TEST OVER\n"
-
-#printf ">going to fastafixer"
-$PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
-echo '>The best reference found in your alignment was '$refnam
-echo '>mapping reads to '$refnam
-
-#printf ">TEST SEGMENT BEGINNING\n"
-#printf ">best_ref_uneven.fas"
-##cat $outdir/best_ref_uneven.fas#
-#printf ">best_ref.fas"
-#cat $outdir/best_ref.fas
-#printf ">TEST OVER\n"
-
-bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+# bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
+bowtie2-build --threads $threads ${base}_outdir/best_ref.fas ${base}_outdir/best_ref >> ${base}_outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
-if [ $PE -eq 1 ]
-	then
-	    bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
-    else
-    	bowtie2 -p $threads --very-fast -x $outdir/best_ref  -U ${read_one} -S $outdir/best_map.sam --no-unal --local
-fi
+time bowtie2 -p $threads --very-fast -x ${base}_outdir/best_ref -1 $read_one -2 $read_two -S ${base}_outdir/best_map.sam --no-unal --local
 
-samtools faidx $outdir/best_ref.fas
 
-#printf ">TEST SEGMENT BEGINNING\n"
-#printf ">best_ref.fas"
-#cat $outdir/best_ref.fas
-#printf ">TEST FINISHED\n"
+samtools faidx ${base}_outdir/best_ref.fas
+echo '>samtools faidx passed'
 
-samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
-samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
-samtools index $outdir/best_sorted.bam
-samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
-seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
-
-#printf ">TEST SEGMENT BEGINNING\n"
-#printf ">cns.fa"
-#cat $outdir/cns.fa
-#printf ">TEST FINISHED"
+samtools view -bS ${base}_outdir/best_map.sam > ${base}_outdir/best_map.bam
+echo '>samtools view passed'
+samtools sort ${base}_outdir/best_map.bam -o ${base}_outdir/best_sorted.bam
+echo '>samtools sort passed'
+samtools index ${base}_outdir/best_sorted.bam
+echo '>samtools index passed'
+time samtools mpileup -uf ${base}_outdir/best_ref.fas ${base}_outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  ${base}_outdir/cns.fq
+echo '>samtools mpileup passed'
+seqtk seq -a ${base}_outdir/cns.fq > ${base}_outdir/cns.fa
+echo '>seqtk passed'
 
 #automatic naming names it to the ref wich is confusing
 #sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
+sed -i -e "s/>/>QUERY_${base}_ref_/g" ${base}_outdir/cns.fa
+echo '>sed producing cns.fa passed'
 
-#printf ">TEST SEGMENT cns.fa"
-#cat $outdir/cns.fa
-#printf ">TEST FINISHED\n"
+# TODO this might be a DANGEROUS way to handle this issue. think of alternate
+# cat $align | head -1 | cut -f1 | cut -c 2- > $outdir/${base}_outdir/best_ref_gaps_name.fas
+
+#refnam=$(cat $outdir/${base}_outdir/best_ref_gaps_name.fas | head -1)
+
+ refnam=$(head -n 1 ref_nogap.fas)
 
 #pull the aligned reference from the alignement
-grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
-#printf ">TEST SEGMENT best_ref_gaps.fas"
-#cat $outdir/best_ref_gaps.fas
-#printf ">TEST FINISHED\n"
+#grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas
+grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > ${base}_outdir/best_ref_gaps.fas
+
+echo '>grep for refnam passed'
 
 printf ">beginning aligned consensus processing"
 #python
 
-#y=${base%.fastq}
-#cns_align=${base}
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir"/"${base}_align.fas"
+$PHYCORDER/align_consensus.py --gapped-ref ${base}_outdir/best_ref_gaps.fas --consensus ${base}_outdir/cns.fa --outfile "${base}_outdir"/"${base}_align.fas"
+
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 

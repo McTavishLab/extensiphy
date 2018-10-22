@@ -193,7 +193,7 @@ mkdir -p ${base}_outdir
 # echo '>Refining mapping and calling consensus sequence'
 # sort -rnk3 $outdir/${base}_outdir/mapping_info >  $outdir/${base}_outdir/mapping_info_sort
 #
-refnam=$(head -n 1 ref_nogap.fas)
+refnam=$(head -n 1 $outdir/ref_nogap.fas)
 
 echo "refname is $refnam"
 #
@@ -238,7 +238,7 @@ echo '>sed producing cns.fa passed'
 
 #refnam=$(cat $outdir/${base}_outdir/best_ref_gaps_name.fas | head -1)
 
- refnam=$(head -n 1 ref_nogap.fas)
+ refnam=$(head -n 1 $outdir/ref_nogap.fas)
 
 #pull the aligned reference from the alignement
 #grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas

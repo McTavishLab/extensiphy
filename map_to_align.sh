@@ -198,39 +198,39 @@ refnam=$(head -n 1 ref_nogap.fas)
 echo "refname is $refnam"
 #
 #
-grep -Pzo '(?s)'$refnam'.*?(>|\Z)' ref_nogap.fas |head -n-1 > ${base}_outdir/best_ref_uneven.fas
+grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/${base}_outdir/best_ref_uneven.fas
 # grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
-fold -w 80 $outdir?${base}_outdir/best_ref_uneven.fas > best_ref.fas
+fold -w 80 $outdir/${base}_outdir/best_ref_uneven.fas > $outdir/${base}_outdir/best_ref.fas
 # #printf ">going to fastafixer"
 # $PHYCORDER/fastafixer.py $outdir/${base}_outdir/best_ref_uneven.fas $outdir/${base}_outdir/best_ref.fas #starightens out line lengths
 # echo '>The best reference found in your alignment was '$refnam
 # echo '>mapping reads to '$refnam
 
 # bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
-bowtie2-build --threads $threads ${base}_outdir/best_ref.fas ${base}_outdir/best_ref >> ${base}_outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
-time bowtie2 -p $threads --very-fast -x ${base}_outdir/best_ref -1 $read_one -2 $read_two -S ${base}_outdir/best_map.sam --no-unal --local
+time bowtie2 -p $threads --very-fast -x $outdir/${base}_outdir/best_ref -1 $read_one -2 $read_two -S $outdir/${base}_outdir/best_map.sam --no-unal --local
 
 
-samtools faidx ${base}_outdir/best_ref.fas
+samtools faidx $outdir/${base}_outdir/best_ref.fas
 echo '>samtools faidx passed'
 
-samtools view -bS ${base}_outdir/best_map.sam > ${base}_outdir/best_map.bam
+samtools view -bS $outdir/${base}_outdir/best_map.sam > $outdir/${base}_outdir/best_map.bam
 echo '>samtools view passed'
-samtools sort ${base}_outdir/best_map.bam -o ${base}_outdir/best_sorted.bam
+samtools sort $outdir/${base}_outdir/best_map.bam -o $outdir/${base}_outdir/best_sorted.bam
 echo '>samtools sort passed'
-samtools index ${base}_outdir/best_sorted.bam
+samtools index $outdir/${base}_outdir/best_sorted.bam
 echo '>samtools index passed'
-time samtools mpileup -uf ${base}_outdir/best_ref.fas ${base}_outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  ${base}_outdir/cns.fq
+time samtools mpileup -uf $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/${base}_outdir/cns.fq
 echo '>samtools mpileup passed'
-seqtk seq -a ${base}_outdir/cns.fq > ${base}_outdir/cns.fa
+seqtk seq -a $outdir/${base}_outdir/cns.fq > $outdir/${base}_outdir/cns.fa
 echo '>seqtk passed'
 
 #automatic naming names it to the ref wich is confusing
 #sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_${base}_ref_/g" ${base}_outdir/cns.fa
+sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/${base}_outdir/cns.fa
 echo '>sed producing cns.fa passed'
 
 # TODO this might be a DANGEROUS way to handle this issue. think of alternate
@@ -242,14 +242,14 @@ echo '>sed producing cns.fa passed'
 
 #pull the aligned reference from the alignement
 #grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas
-grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > ${base}_outdir/best_ref_gaps.fas
+grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas
 
 echo '>grep for refnam passed'
 
 printf ">beginning aligned consensus processing"
 #python
 
-$PHYCORDER/align_consensus.py --gapped-ref ${base}_outdir/best_ref_gaps.fas --consensus ${base}_outdir/cns.fa --outfile "${base}_outdir"/"${base}_align.fas"
+$PHYCORDER/align_consensus.py --gapped-ref $outdir/${base}_outdir/best_ref_gaps.fas --consensus $outdir/${base}_outdir/cns.fa --outfile "$outdir/${base}_outdir"/"${base}_align.fas"
 
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln

@@ -171,7 +171,7 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 #this is a hack that is in both scripts!! need to be passed between
 
 echo "PAIRED ENDS"
-base=$(basename $i $r1_tail)
+base=$(basename $read_one $r1_tail)
 echo "basename is $base"
 mkdir -p ${base}_outdir
 # bowtie2 -p $threads --very-fast -x $outdir/ref -1 $i -2 ${i%$r1_tail}$r2_tail -S $outdir/${base}_outdir/full_alignment.sam --no-unal

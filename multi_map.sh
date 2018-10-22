@@ -10,7 +10,10 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source $PHYCORDER/phycorder.cfg
+# changing location of .cfg file to a variable
+# for easy use of multiple config num_files
+source $1
+#source $PHYCORDER/phycorder.cfg
 
 # while getopts ":a:t:p:o:n:m:b:w:c:r:h" opt; do
 #   case $opt in

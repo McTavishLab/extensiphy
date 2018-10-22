@@ -151,7 +151,6 @@ printf "tail_2 is %s\n" "$r2_tail"
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument threads is %s\n" "$threads"
-mkdir -p $outdir
 
 #Check that tipnames in alignemnet are the same as tipnames in tree
 

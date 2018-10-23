@@ -248,7 +248,7 @@ echo '>grep for refnam passed'
 printf ">beginning aligned consensus processing"
 #python
 
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile "$outdir/${base}_outdir"/"${base}_align.fas"
+$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/${base}_align.fas
 
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln

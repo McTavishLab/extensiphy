@@ -200,9 +200,9 @@ echo "refname is $refnam"
 grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
 # grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
-fold -w 80 $outdir/best_ref_uneven.fas > $outdir/best_ref.fas
+# fold -w 80 $outdir/best_ref_uneven.fas > $outdir/best_ref.fas
 # #printf ">going to fastafixer"
-# $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/${base}_outdir/best_ref.fas #starightens out line lengths
+$PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 # echo '>The best reference found in your alignment was '$refnam
 # echo '>mapping reads to '$refnam
 

@@ -85,7 +85,9 @@ done
 
    printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
-   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s combine_and_infer/extended.aln -t $tree -p 12345 -n consensusFULL
+   cd combine_and_infer
+
+   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
    # printf "Moving run logs into phycorder-dev-logs"

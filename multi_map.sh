@@ -68,6 +68,10 @@ done
 
    wd=$(pwd)
 
+   ## Test Region
+   pwd
+   echo $outdir
+
    for i in $(ls -d *_output_dir); do
      cd $i
      count=$(ls *_align.fas | wc -l)

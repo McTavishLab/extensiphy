@@ -47,8 +47,8 @@ swap = re.sub(value, key, read_topo)
 for key, value in newnames_oldnames.iteritems():
     swap = re.sub(value, key, swap)
 
-print(swap)
-
+new_tree = open('renamed_tree.tre','w')
+new_tree.write(swap)
 
 with open(OTU_name_dict, 'w') as f:
     for key, value in newnames_oldnames.items():

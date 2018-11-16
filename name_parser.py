@@ -4,6 +4,7 @@ import sys
 import re
 
 alignment = sys.argv[1]
+tree = sys.argv[2]
 
 data = open(alignment,'r')
 readdata = data.read()
@@ -35,6 +36,19 @@ for key, value in newnames_oldnames.iteritems():
             new_alignment.write(">")
             new_alignment.write(replaces)
             new_alignment.write('\n')
+
+topology = open(tree, 'r')
+read_topo = topology.read()
+tree_name_count = 0
+
+swap = ''
+swap = re.sub(value, key, read_topo)
+
+for key, value in newnames_oldnames.iteritems():
+    swap = re.sub(value, key, swap)
+
+print(swap)
+
 
 with open(OTU_name_dict, 'w') as f:
     for key, value in newnames_oldnames.items():

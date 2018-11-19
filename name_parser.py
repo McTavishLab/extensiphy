@@ -8,9 +8,9 @@ import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Rename sequences in alignments and trees. Use previous dictionaries of names if available')
-    parser.add_argument('-o', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment')
+    parser.add_argument('-o', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment. Use with arguments --alignment_file [ALIGNMENT FILE] and --tree_file [TREE_FILE]')
     parser.add_argument('-d', action='store_true', help='Use this to test a tree and alignment against your directory of replaced names')
-    parser.add_argument('-u', action='store_true', help='Use with aruguments --readset_dir [DIRECTORY] and --dict_file [FILE] to rename taxa being added to tree')
+    parser.add_argument('-u', action='store_true', help='Use with aruguments --readset_dir [DIRECTORY] and --dict_file [FILE] to rename taxa being added to tree. ONLY use if the tree and alignment file have already been renamed and a dictionary of names has been produced')
     parser.add_argument('--tree_file')
     parser.add_argument('--alignment_file')
     parser.add_argument('--dict_file')

@@ -4,13 +4,17 @@ import sys
 import re
 import argparse
 import json
+import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Rename sequences in alignments and trees. Use previous dictionaries of names if available')
+    parser.add_argument('--rename_existing', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment')
     parser.add_argument('--tree_file')
     parser.add_argument('--alignment_file')
-    parser.add_argument('--provide_names', action='store_true', help='use this option in conjuction with --dict_file to provide a dictionary of names from a previous phycorder run')
+    parser.add_argument('--provide_names', action='store_true', help='Use this option in conjuction with --dict_file to provide a dictionary of names from a previous phycorder run')
     parser.add_argument('--dict_file')
+    parser.add_argument('--newtaxa_dir')
+    parser.add_argument('--rename_taxon', action='store_true', help='Use with aruguments --readset_dir to rename taxa being added to tree')
     return parser.parse_args()
 
 
@@ -18,13 +22,13 @@ def main():
     # read in files
     args = parse_args()
 
-    alignment = open(args.alignment_file)
-    tree = open(args.tree_file)
+    if args.provide_names == True and args.rename_taxon == False:
+        alignment = open(args.alignment_file)
+        tree = open(args.tree_file)
 
-    readdata = alignment.read()
-    read_topo = tree.read()
+        readdata = alignment.read()
+        read_topo = tree.read()
 
-    if args.provide_names == True:
         with open(args.dict_file) as json_data:
             read_dict = json_data.read()
             name_dict = json.loads(read_dict)
@@ -38,6 +42,32 @@ def main():
                 elif value in read_topo:
                 #elif re.match(value, read_topo):
                      print("found old name in tree file")
+
+
+
+    elif args.rename_taxon == True and args.provide_names == True:
+        name_dict = {}
+        current_OTU_count = 0
+        OTU_nums = []
+        taxa_dir = os.listdir(args.newtaxa_dir)
+        with open(args.dict_file) as json_data:
+            read_dict = json_data.read()
+            name_dict = json.loads(read_dict)
+            for key, value in name_dict.iteritems():
+                key = str(key)
+                split_key = key.split('_')
+                for item in split_key[1:]:
+                    OTU_nums.append(int(item))
+        current_OTU_count = max(OTU_nums)
+        for file in taxa_dir:
+            look = open(args.newtaxa_dir + '/' + file,'r')
+            examine = look.read()
+            
+
+
+
+
+
 
         # # split on newlines for alignment data
         # strp = readdata.strip()

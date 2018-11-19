@@ -8,13 +8,13 @@ import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Rename sequences in alignments and trees. Use previous dictionaries of names if available')
-    parser.add_argument('--rename_existing', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment')
+    parser.add_argument('-o', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment')
+    parser.add_argument('-d', action='store_true', help='Use this to test a tree and alignment against your directory of replaced names')
+    parser.add_argument('-u', action='store_true', help='Use with aruguments --readset_dir [DIRECTORY] and --dict_file [FILE] to rename taxa being added to tree')
     parser.add_argument('--tree_file')
     parser.add_argument('--alignment_file')
-    parser.add_argument('--provide_names', action='store_true', help='Use this option in conjuction with --dict_file to provide a dictionary of names from a previous phycorder run')
     parser.add_argument('--dict_file')
     parser.add_argument('--newtaxa_dir')
-    parser.add_argument('--rename_taxon', action='store_true', help='Use with aruguments --readset_dir to rename taxa being added to tree')
     return parser.parse_args()
 
 
@@ -22,7 +22,7 @@ def main():
     # read in files
     args = parse_args()
 
-    if args.provide_names == True and args.rename_taxon == False:
+    if args.d == True:
         alignment = open(args.alignment_file)
         tree = open(args.tree_file)
 
@@ -44,8 +44,13 @@ def main():
                      print("found old name in tree file")
 
 
+    # reads in a directory of new taxa fastas produced by multi_map.sh
+    # and a dictionary of names produced by an earlier run of name_parser.py
+    # produces:
+    # new seperate fasta files with renamed sequences
+    # new updated dictionary for all taxa with new and old names
 
-    elif args.rename_taxon == True and args.provide_names == True:
+    elif args.u == True:
         name_dict = {}
         current_OTU_count = 0
         OTU_nums = []
@@ -80,7 +85,12 @@ def main():
         with open(args.dict_file, 'w') as f:
             json.dump(name_dict, f)
 
-    else:
+
+    # takes in:
+    # alignment and tree tree files
+    # produces:
+    # renamed alignment file, renamed tree file and dictionary of old and new names
+    elif args.o == True:
         alignment = open(args.alignment_file)
         tree = open(args.tree_file)
 

@@ -50,7 +50,7 @@ def main():
         current_OTU_count = 0
         OTU_nums = []
         taxa_dir = os.listdir(args.newtaxa_dir)
-        new_taxa_dict =
+        #new_taxa_dict =
         with open(args.dict_file) as json_data:
             read_dict = json_data.read()
             name_dict = json.loads(read_dict)
@@ -77,7 +77,7 @@ def main():
                     new_name_file.write('\n')
         OTU_name_dict = "OTU_name_dict.txt"
         # write dictionary of names file
-        with open(OTU_name_dict, 'w') as f:
+        with open(args.dict_file, 'w') as f:
             json.dump(name_dict, f)
 
     else:

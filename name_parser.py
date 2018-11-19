@@ -60,9 +60,20 @@ def main():
                     OTU_nums.append(int(item))
         current_OTU_count = max(OTU_nums)
         for file in taxa_dir:
+            #new_name_file = open('OTU_' + str(current_OTU_count) + '.fas')
+            current_OTU_count+=1
+            new_name_file = open(args.newtaxa_dir + '/' + 'OTU_' + str(current_OTU_count) + '.fas', 'w')
             look = open(args.newtaxa_dir + '/' + file,'r')
             examine = look.read()
-            
+            split_read = examine.split('\n')
+            taxon_name = split_read[0]
+            name_dict['OTU_' + str(current_OTU_count)] = taxon_name
+            for key, value in name_dict.iteritems():
+                if re.match(value, examine):
+                    replaces = re.sub(value, key, examine)
+                    new_name_file.write('>')
+                    new_name_file.write(replaces)
+                    new_name_file.write('\n')
 
 
 

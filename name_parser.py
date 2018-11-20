@@ -63,6 +63,14 @@ def main():
             new_names_2[key + '_R2.fastq'] = value
         print(new_names_2)
 
+        os.chdir(args.newtaxa_dir)
+
+        for key, value in new_names_1.items():
+            os.rename(str(value), str(key))
+
+        for key, value in new_names_2.items():
+            os.rename(str(value), str(key))
+
 
 
 

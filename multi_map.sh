@@ -80,8 +80,12 @@ done
      cd ..
    done
 
+   if [ -f "$name_dict" ]; then
+     $PHYCORDER/name_parser.py -u --dict_file $name_dict --newtaxa_dir combine_and_infer
 
-   cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
+     cat combine_and_infer/OTU*.fas $align > combine_and_infer/extended.aln
+   else
+     cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
    printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 

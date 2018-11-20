@@ -71,6 +71,12 @@ def main():
         for key, value in new_names_2.items():
             os.rename(str(value), str(key))
 
+        with open('taxon_names_dict_set_1.txt', 'w') as f:
+            json.dump(new_names_1, f)
+
+        with open('taxon_names_dict_set_2.txt', 'w') as f:
+            json.dump(new_names_2, f)
+
 
 
 

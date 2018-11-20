@@ -229,8 +229,21 @@ echo '>seqtk passed'
 
 #automatic naming names it to the ref wich is confusing
 #sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
+
+# make copy of cns.fa for later reference of best reference for mapping
+cp $outdir/cns.fa $outdir/cns_ref.fa
+
+# get name of reference in a variable to use for removal
+refname_cns=$(head -1 $outdir/cns.fa)
+
+sed -i -e "s/$refname_cns/>${base}/g" $outdir/cns.fa
 echo '>sed producing cns.fa passed'
+
+sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns_ref.fa
+echo '>sed producing cns_ref.fa passed'
+
+# sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
+# echo '>sed producing cns.fa passed'
 
 # TODO this might be a DANGEROUS way to handle this issue. think of alternate
 # cat $align | head -1 | cut -f1 | cut -c 2- > $outdir/${base}_outdir/best_ref_gaps_name.fas

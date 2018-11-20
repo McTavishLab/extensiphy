@@ -5,11 +5,13 @@ import re
 import argparse
 import json
 import os
+import subprocess
+import numpy as np
 
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Rename sequences in alignments and trees. Use previous dictionaries of names if available')
     parser.add_argument('-o', action='store_true', help='Use to rename taxa in an alignment and tree based on that alignment. Use with arguments --alignment_file [ALIGNMENT FILE] and --tree_file [TREE_FILE]')
-    parser.add_argument('-d', action='store_true', help='Use this to test a tree and alignment against your directory of replaced names')
+    parser.add_argument('-d', action='store_true', help='Use this to rename read files before input into any program, producing a json dictionary of names')
     parser.add_argument('-u', action='store_true', help='Use with aruguments --readset_dir [DIRECTORY] and --dict_file [FILE] to rename taxa being added to tree. ONLY use if the tree and alignment file have already been renamed and a dictionary of names has been produced')
     parser.add_argument('--tree_file')
     parser.add_argument('--alignment_file')
@@ -23,25 +25,36 @@ def main():
     args = parse_args()
 
     if args.d == True:
-        alignment = open(args.alignment_file)
-        tree = open(args.tree_file)
+        #dirpath = os.path.dirname(args.newtaxa_dir)
+        #os.chdir(dirpath)
 
-        readdata = alignment.read()
-        read_topo = tree.read()
+        #dirpath = str(dirpath)
+        #os.chdir(dirpath)
 
-        with open(args.dict_file) as json_data:
-            read_dict = json_data.read()
-            name_dict = json.loads(read_dict)
-            for key, value in name_dict.iteritems():
-                key = str(key)
-                value = str(value)
-                read_topo = str(read_topo)
-                if key in read_topo:
-                #if re.match(key, read_topo):
-                    print("found a correct OTU name in tree file")
-                elif value in read_topo:
-                #elif re.match(value, read_topo):
-                     print("found old name in tree file")
+        files = os.listdir(args.newtaxa_dir)
+        match1_dict = {}
+        match2_dict = {}
+        sd = sorted(files)
+        pair_1_count = 0
+        pair_2_count = 0
+        file_count = 0
+        read_set_count = 0
+        for file in (sd):
+            file_count+=1
+            read_set_count+=1
+            if file_count == 1:
+                pair_1_count+=1
+                match1_dict["taxon_" + str(pair_1_count)] = file
+            elif file_count == 2:
+                pair_2_count+=1
+                match2_dict["taxon_" + str(pair_2_count)] = file
+                file_count = 0
+        print(match1_dict)
+        print(match2_dict)
+
+
+
+
 
 
     # reads in a directory of new taxa fastas produced by multi_map.sh

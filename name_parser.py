@@ -5,7 +5,7 @@ import re
 import argparse
 import json
 import os
-import subprocess
+import collections
 import numpy as np
 
 def parse_args():
@@ -25,12 +25,10 @@ def main():
     args = parse_args()
 
     if args.d == True:
-        #dirpath = os.path.dirname(args.newtaxa_dir)
-        #os.chdir(dirpath)
 
-        #dirpath = str(dirpath)
-        #os.chdir(dirpath)
-
+        # This is EXTREMELY overengineered. So many counts. I'm sorry if you have to edit this
+        # ill try to fix it to be an actual sorting algorithm soon
+        # i needed results quick! *sob*
         files = os.listdir(args.newtaxa_dir)
         match1_dict = {}
         match2_dict = {}
@@ -49,8 +47,22 @@ def main():
                 pair_2_count+=1
                 match2_dict["taxon_" + str(pair_2_count)] = file
                 file_count = 0
-        print(match1_dict)
-        print(match2_dict)
+        # print(match1_dict)
+        # print(match2_dict)
+
+        od1 = collections.OrderedDict(sorted(match1_dict.items()))
+        od2 = collections.OrderedDict(sorted(match2_dict.items()))
+
+        new_names_1 = {}
+        for key, value in od1.items():
+            new_names_1[key + '_R1.fastq'] = value
+        print(new_names_1)
+
+        new_names_2 = {}
+        for key, value in od2.items():
+            new_names_2[key + '_R2.fastq'] = value
+        print(new_names_2)
+
 
 
 

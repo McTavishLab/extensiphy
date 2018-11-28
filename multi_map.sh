@@ -80,16 +80,16 @@ done
      cd ..
    done
 
-   if [ -f "$name_dict" ]; then
-     printf "entering renaming step based on previous dictionary non containing the new taxa"
-
-     $PHYCORDER/name_parser.py -u --dict_file $name_dict --newtaxa_dir combine_and_infer
-
-     cat combine_and_infer/OTU*.fas $align > combine_and_infer/extended.aln
-   else
-     printf "skipping renaming step"
-     cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
-   fi
+   # if [ -f "$name_dict" ]; then
+   #   printf "entering renaming step based on previous dictionary non containing the new taxa"
+   #
+   #   $PHYCORDER/name_parser.py -u --dict_file $name_dict --newtaxa_dir combine_and_infer
+   #
+   #   cat combine_and_infer/OTU*.fas $align > combine_and_infer/extended.aln
+   # else
+   printf "skipping renaming step"
+   cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
+   # fi
 
    printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 

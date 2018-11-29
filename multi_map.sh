@@ -95,7 +95,7 @@ done
 
    cd combine_and_infer
 
-   raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
+   time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
    # printf "Moving run logs into phycorder-dev-logs"

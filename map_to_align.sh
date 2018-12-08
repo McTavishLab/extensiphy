@@ -225,7 +225,7 @@ echo '>samtools sort passed'
 samtools index $outdir/best_sorted.bam
 echo '>samtools index passed'
 echo '>Time for mpileup step:'
-time samtools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
+time bcftools mpileup -uf $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
 echo '>samtools mpileup passed'
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 echo '>seqtk passed'

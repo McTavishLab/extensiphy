@@ -224,8 +224,14 @@ samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
 echo '>samtools sort passed'
 samtools index $outdir/best_sorted.bam
 echo '>samtools index passed'
+
 echo '>Time for mpileup step:'
-time bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam| bcftools call -c | vcfutils.pl vcf2fq >  $outdir/cns.fq
+time bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
+
+time bcftools call -c $outdir/best_sorted.vcf -o $outdir/best_cns.vcf
+
+time vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq
+
 echo '>samtools mpileup passed'
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 echo '>seqtk passed'

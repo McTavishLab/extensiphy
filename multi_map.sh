@@ -16,6 +16,17 @@ source $1
 
 
 mkdir -p $outdir
+#cd $outdir
+#outdir_path=$(pwd)
+
+cd $read_dir
+
+for i in $(ls *$r1_tail); do
+  echo ">$i" >> "original_file_names_phycorder.txt"
+done
+
+mv "original_file_names_phycorder.txt" $outdir/
+
 cd $outdir
 
 ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
@@ -95,6 +106,19 @@ done
    printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
    cd combine_and_infer
+
+   # strip the unnecessary information from the taxa names in the alignment.
+   # this assumes you've used the renaming tool to rename all of the reads for this experiment
+
+   sed -i 's/_$//g' extended.aln
+
+   # for i in $(cat < extended.aln); do
+   #   echo "${i%_*}" >> extended2.aln
+   # done
+
+   # rm extended.aln
+   # mv extended2.aln extended.aln
+
 
    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 

@@ -19,13 +19,13 @@ mkdir -p $outdir
 #cd $outdir
 #outdir_path=$(pwd)
 
-cd $read_dir
-
-for i in $(ls *$r1_tail); do
-  echo ">$i" >> "original_file_names_phycorder.txt"
-done
-
-mv "original_file_names_phycorder.txt" $outdir/
+# cd $read_dir
+#
+# for i in $(ls *$r1_tail); do
+#   echo ">$i" >> "original_file_names_phycorder.txt"
+# done
+#
+# mv "original_file_names_phycorder.txt" $outdir/
 
 cd $outdir
 

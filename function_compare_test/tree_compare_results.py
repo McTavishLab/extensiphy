@@ -26,11 +26,11 @@ def main():
 
     open_gon_phy = open(args.gon_phy_tree, 'r')
     read_gon_phy = open_gon_phy.read()
-    print(read_gon_phy)
+    #print(read_gon_phy)
 
     open_phycord = open(args.phycorder_tree, 'r')
     read_phycord = open_phycord.read()
-    print(read_phycord)
+    #print(read_phycord)
 
     # import gon_phyling produced tree
     gon_phy_tree = dendropy.Tree.get(
@@ -38,7 +38,7 @@ def main():
         schema='newick',
         terminating_semicolon_required=False)
 
-    print(gon_phy_tree)
+    #print(gon_phy_tree)
 
     # import phycorder produced tree
     phycorder_tree = dendropy.Tree.get(
@@ -46,7 +46,7 @@ def main():
         schema='newick',
         terminating_semicolon_required=False)
 
-    print(phycorder_tree)
+    #print(phycorder_tree)
 
     # establish common taxon namespace
     tns = dendropy.TaxonNamespace()
@@ -55,13 +55,17 @@ def main():
     tree1 = dendropy.Tree.get(
             data=gon_phy_tree,
             schema='newick',
-            taxon_namespace=tns)
+            taxon_namespace=tns,
+            terminating_semicolon_required=False)
     tree2 = dendropy.Tree.get(
             data=phycorder_tree,
             schema='newick',
-            taxon_namespace=tns)
+            taxon_namespace=tns,
+            terminating_semicolon_required=False)
     #
     # Unweighted Robinson-Foulds distance
+    print('\n')
+    print("UNWEIGHTED RF distance: ")
     print(treecompare.symmetric_difference(tree1, tree2))
 
 

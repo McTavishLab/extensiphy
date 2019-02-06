@@ -16,6 +16,8 @@ def parse_args():
     parser.add_argument('--working_dir')
     parser.add_argument('--gon_phy_tree')
     parser.add_argument('--phycorder_tree')
+    parser.add_argument('--orig_gon_phy_tree')
+    parser.add_argument('--orig_phycorder_tree')
     return parser.parse_args()
 
 def main():
@@ -24,6 +26,7 @@ def main():
     # change into working dir where all the files are
     os.chdir(args.working_dir)
 
+    # read in the new tree files just produced by the run
     open_gon_phy = open(args.gon_phy_tree, 'r')
     read_gon_phy = open_gon_phy.read()
     #print(read_gon_phy)
@@ -32,7 +35,15 @@ def main():
     read_phycord = open_phycord.read()
     #print(read_phycord)
 
-    # import gon_phyling produced tree
+    # read in the tree files assumed to be the correct trees for each program
+    open_orig_gon_phy = open(args.orig_gon_phy_tree, 'r')
+    read_orig_gon_phy = open_orig_gon_phy.read()
+
+    open_orig_phycord = open(args.orig_phycorder_tree, 'r')
+    read_orig_phycord = open_orig_phycord.read()
+
+
+    # import the new gon_phyling produced tree
     gon_phy_tree = dendropy.Tree.get(
         path=args.gon_phy_tree,
         schema='newick',
@@ -40,9 +51,21 @@ def main():
 
     #print(gon_phy_tree)
 
-    # import phycorder produced tree
+    # import the new phycorder produced tree
     phycorder_tree = dendropy.Tree.get(
         path=args.phycorder_tree,
+        schema='newick',
+        terminating_semicolon_required=False)
+
+    # import the original gon_phyling produced tree
+    orig_gon_phy_tree = dendropy.Tree.get(
+        path=args.orig_gon_phy_tree,
+        schema='newick',
+        terminating_semicolon_required=False)
+
+    # import the new phycorder produced tree
+    orig_phycorder_tree = dendropy.Tree.get(
+        path=args.orig_phycorder_tree,
         schema='newick',
         terminating_semicolon_required=False)
 
@@ -57,15 +80,46 @@ def main():
             schema='newick',
             taxon_namespace=tns,
             terminating_semicolon_required=False)
+
     tree2 = dendropy.Tree.get(
             data=phycorder_tree,
             schema='newick',
             taxon_namespace=tns,
             terminating_semicolon_required=False)
-    #
+
+    orig_tree1 = dendropy.Tree.get(
+            data=orig_gon_phy_tree,
+            schema='newick',
+            taxon_namespace=tns,
+            terminating_semicolon_required=False)
+
+    orig_tree2 = dendropy.Tree.get(
+            data=orig_phycorder_tree,
+            schema='newick',
+            taxon_namespace=tns,
+            terminating_semicolon_required=False)
+
+    # unweighted robinson-Foulds distance of the original gon_phyling (traditional)
+    # tree compared to the newly produced gon_phyling tree
+    print('\n')
+    print("UNWEIGHTED RF distance comparison between original gon_phyling tree and newly produced tree")
+    print("This tells us if our trees have changed from what they should be")
+    print("RF: ")
+    print(treecompare.symmetric_difference(orig_tree1, tree1))
+    assert(int(treecompare.symmetric_difference(orig_tree1, tree1)) == int(0))
+
+    # unweighted robinson-Foulds distance of the original phycorder (rapid-updating)
+    # tree compared to the newly produced phycorder tree
+    print('\n')
+    print("UNWEIGHTED RF distance comparison between original phycorder tree and newly produced tree")
+    print("This tells us if our trees have changed from what they should be")
+    print("RF: ")
+    print(treecompare.symmetric_difference(orig_tree2, tree2))
+    assert(int(treecompare.symmetric_difference(orig_tree2, tree2)) == int(0))
+
     # Unweighted Robinson-Foulds distance
     print('\n')
-    print("UNWEIGHTED RF distance: ")
+    print("UNWEIGHTED RF distance comparison between rapid-updating method and traditional phylogenetics method: ")
     print(treecompare.symmetric_difference(tree1, tree2))
 
 

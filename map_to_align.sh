@@ -130,22 +130,35 @@ else
      echo "num threads is"
      echo $threads
 fi
-# # if [ $PE -eq 1 ]; then
-# #   if [ -f ${read_one} ]; then
-# #      printf "Paired end reads \n"
-# #      printf "read one is ${read_one}\n"
-# #   else
-# #     printf "read one ${read_one} not found. Exiting\n" >&2
-# #     exit
-# # fi
-# #   if [ -f ${read_two} ]; then
-# #      printf "Paired end reads \n"
-# #      printf "read two is ${read_two}\n"
-# #   else
-# #     printf "read two ${read_two} not found. Exiting\n" >&2
-# #     exit
-# # fi
-# fi
+
+#######################################################################
+assert ()                 #  If condition false,
+{                         #+ exit from script
+                          #+ with appropriate error message.
+  E_PARAM_ERR=98
+  E_ASSERT_FAILED=99
+
+
+  if [ -z "$2" ]          #  Not enough parameters passed
+  then                    #+ to assert() function.
+    return $E_PARAM_ERR   #  No damage done.
+  fi
+
+  lineno=$2
+
+  if [ ! $1 ]
+  then
+    echo "Assertion failed:  \"$1\""
+    echo "File \"$0\", line $lineno"    # Give name of file and line number.
+    exit $E_ASSERT_FAILED
+  # else
+  #   return
+  #   and continue executing the script.
+  fi
+}  
+#######################################################################
+
+
 printf "tail_1 is %s\n" "$r1_tail"
 printf "tail_2 is %s\n" "$r2_tail"
 printf "Argument out is %s\n" "$outdir"
@@ -159,34 +172,29 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 # TEST:
 # check file for gaps, then remove gaps and check that the number of gaps == 0
 
-# pre_remove_gaps_num=$(grep -c "-" $align)
-# printf "number of gaps found: $pre_remove_gaps_num"
+if [[ ! -z $(grep "-" $align) ]]; then
+  printf "GAP FOUND BEFORE REMOVAL"
+else
+  printf "NO GAPS FOUND BEFORE REMOVAL";
+fi
 
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
-# workd=$(pwd)
-#
-# cd $outdir
-#
-# if [ ! -z $(grep "-" ./ref_nogap.fas) ]; then echo "GAP FOUND AFTER REMOVAL"; fi
-#
-#
-# cd $workd
+workd=$(pwd)
+
+cd $outdir
+
+if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
+  printf "GAP FOUND AFTER REMOVAL!"
+else
+  printf "NO GAPS FOUND AFTER REMOVAL";
+fi
+
+
+cd $workd
 
 # TEST OF GAP REMOVAL FINISHED
-
-# post_remove_gaps_num=$(grep -c "-" ref_nogap.fas)
-# printf "gaps after removal: $post_remove_gaps_num"
-
-# if [ $post_remove_gaps_num -eq 0 ]; then
-#   printf "Gaps removed."
-# else
-#   printf "Gaps found after removal command."
-# fi
-
-#printf ">THIS IS THE FIRST TEST SECTION!!!!!!!!!!!!\n"
-#cat $outdir/ref_nogap.fas
 
 
 ### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time

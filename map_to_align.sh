@@ -156,8 +156,37 @@ mkdir -p $outdir
 
 echo 'Performing full mapping of reads to all sequences in alignment'
 
+# TEST:
+# check file for gaps, then remove gaps and check that the number of gaps == 0
+
+pre_remove_gaps_num=$(grep -c "-" $align)
+printf "number of gaps found: $pre_remove_gaps_num"
+
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
+
+workd=$(pwd)
+
+cd $outdir
+
+if [ ! -z $(grep "-" ./ref_nogap.fas) ]; then
+   echo "FOUND"
+ else
+   echo "NO GAPS FOUND after removal";
+fi
+
+cd $workd
+
+# TEST OF GAP REMOVAL FINISHED
+
+# post_remove_gaps_num=$(grep -c "-" ref_nogap.fas)
+# printf "gaps after removal: $post_remove_gaps_num"
+
+# if [ $post_remove_gaps_num -eq 0 ]; then
+#   printf "Gaps removed."
+# else
+#   printf "Gaps found after removal command."
+# fi
 
 #printf ">THIS IS THE FIRST TEST SECTION!!!!!!!!!!!!\n"
 #cat $outdir/ref_nogap.fas
@@ -169,7 +198,7 @@ sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
 #this is a hack that is in both scripts!! need to be passed between
 
-echo "PAIRED ENDS"
+echo "\nPAIRED ENDS"
 base=$(basename $read_one $r1_tail)
 echo "basename is $base"
 #mkdir -p ${base}_outdir

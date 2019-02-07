@@ -159,23 +159,20 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 # TEST:
 # check file for gaps, then remove gaps and check that the number of gaps == 0
 
-pre_remove_gaps_num=$(grep -c "-" $align)
-printf "number of gaps found: $pre_remove_gaps_num"
+# pre_remove_gaps_num=$(grep -c "-" $align)
+# printf "number of gaps found: $pre_remove_gaps_num"
 
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
-workd=$(pwd)
-
-cd $outdir
-
-if [ ! -z $(grep "-" ./ref_nogap.fas) ]; then
-   echo "FOUND"
- else
-   echo "NO GAPS FOUND after removal";
-fi
-
-cd $workd
+# workd=$(pwd)
+#
+# cd $outdir
+#
+# if [ ! -z $(grep "-" ./ref_nogap.fas) ]; then echo "GAP FOUND AFTER REMOVAL"; fi
+#
+#
+# cd $workd
 
 # TEST OF GAP REMOVAL FINISHED
 

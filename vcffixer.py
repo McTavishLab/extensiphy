@@ -12,6 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--vcf_file')
     parser.add_argument('--align_file')
+    parser.add_argument('--out_file')
     return parser.parse_args()
 
 
@@ -24,6 +25,8 @@ def main():
     seq_file = open(args.align_file, 'r')
     read_seq = seq_file.read()
     split_seqs = read_seq.split('\n')
+    tax_name = split_seqs[0:1]
+    str_tax_name = ''.join(tax_name)
     seq = split_seqs[1:2]
     seq_str = seq[0]
     for nuc in seq_str:
@@ -60,8 +63,8 @@ def main():
 
     fixed_seq = ''.join(ref_sequence_list)
 
-    new_file = open('cns_fixed.fa','w')
-    new_file.write('>' + ref_str)
+    new_file = open(args.out_file,'w')
+    new_file.write(str_tax_name)
     new_file.write('\n')
     new_file.write(fixed_seq)
 

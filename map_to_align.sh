@@ -287,7 +287,7 @@ echo '>sed producing cns_ref.fa passed'
 
 # use vcffixer.py to find the N's in the cns.fa and replace with the real nucleotides
 # from the reads. This seems to be a strange bug from all versions of mpileup
-$PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa
+$PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa --out_file $outdir/cns_fixed.fa
 
 # sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
 # echo '>sed producing cns.fa passed'

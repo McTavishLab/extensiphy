@@ -56,9 +56,14 @@ def main():
                 replace_nuc_dict[pos_str] = alt_nuc
 
     for key, value in replace_nuc_dict.items():
-        ref_sequence_list
+        ref_sequence_list[int(key) - 1] = value
 
-    #print(replace_nuc_dict)
+    fixed_seq = ''.join(ref_sequence_list)
+
+    new_file = open('cns_fixed.fa','w')
+    new_file.write('>' + ref_str)
+    new_file.write('\n')
+    new_file.write(fixed_seq)
 
 if __name__ == '__main__':
     main()

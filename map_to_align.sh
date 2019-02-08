@@ -155,7 +155,7 @@ assert ()                 #  If condition false,
   #   return
   #   and continue executing the script.
   fi
-}  
+}
 #######################################################################
 
 
@@ -285,6 +285,10 @@ echo '>sed producing cns.fa passed'
 sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns_ref.fa
 echo '>sed producing cns_ref.fa passed'
 
+# use vcffixer.py to find the N's in the cns.fa and replace with the real nucleotides
+# from the reads. This seems to be a strange bug from all versions of mpileup
+$PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa
+
 # sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
 # echo '>sed producing cns.fa passed'
 
@@ -304,7 +308,7 @@ echo '>grep for refnam passed'
 printf ">beginning aligned consensus processing"
 #python
 
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns.fa --outfile $outdir/${base}_align.fas
+$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
 
 
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln

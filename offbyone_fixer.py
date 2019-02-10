@@ -72,15 +72,27 @@ def main():
                     non_identical_nucleotides+=1
 
         if identical_nucleotides == len(list) - 1:
-            # print("identical list of letters")
-            # print(list)
+            print("identical list of letters")
+            print(list)
             list_of_identical_nucleotides+=1
+            if list_of_identical_nucleotides == 20:
+                list_of_non_identical_nucleotides = 0
+                list_of_identical_nucleotides = 0
 
         elif non_identical_nucleotides > 1:
-            # print("non identical list of letters")
-            # print(list)
+            print("non identical list of letters")
+            print(list)
             list_of_non_identical_nucleotides+=1
-            position_of_SNPs_start = position
+            if list_of_non_identical_nucleotides == 150:
+                print("pretty big problems")
+                list_of_non_identical_nucleotides = 0
+
+        # elif list_of_identical_nucleotides >= 10:
+        #     list_of_non_identical_nucleotides = 0
+        #     print("restarted list")
+        #
+        # elif list_of_non_identical_nucleotides >= 500:
+        #     print("major friggin problems")
 
 
 

@@ -56,102 +56,64 @@ def main():
     list_of_identical_nucleotides = 0
     list_of_non_identical_nucleotides = 0
     position_of_SNPs_start = ''
+    taxon_snp_dict = {}
+    first_list = nuc_list[0]
+
+    # create the dictionary of taxa that are indicated by their position in the alignment
+    # This will be updated whenever a nucleotide at the correct position is a snp
+    for position in range(len(first_list)):
+        taxon_snp_dict[position] = 0
+
+    # loop through the list of lists containing each nucleotide at the same position
+    # for all taxa
+    # start the counters for identical sites and SNPs at the beginning of each loop
     for position, list in enumerate(nuc_list):
         identical_nucleotides = 0
         non_identical_nucleotides = 0
         first_nucleotide = ''
-        for letter in list:
-            letter = letter.upper()
-            if len(first_nucleotide) == 0:
-                first_nucleotide = letter
-            elif len(first_nucleotide) != 0:
-                other_letter = letter
-                if other_letter == first_nucleotide:
-                    identical_nucleotides+=1
-                elif other_letter != first_nucleotide:
-                    non_identical_nucleotides+=1
 
-        if identical_nucleotides == len(list) - 1:
-            print("identical list of letters")
-            print(list)
-            list_of_identical_nucleotides+=1
-            if list_of_identical_nucleotides == 20:
-                list_of_non_identical_nucleotides = 0
-                list_of_identical_nucleotides = 0
+        for position in taxon_snp_dict:
 
-        elif non_identical_nucleotides > 1:
-            print("non identical list of letters")
-            print(list)
-            list_of_non_identical_nucleotides+=1
-            if list_of_non_identical_nucleotides == 150:
-                print("pretty big problems")
-                list_of_non_identical_nucleotides = 0
+            # Loop through each letter in the list of nucleotides
+            # establishing the first letter as the comparison letter for the rest of the identical_nucleotides
+            # TODO implement majority rule for the first, consensus nucleotide
+            for taxon, letter in enumerate(list):
+                letter = letter.upper()
+                if len(first_nucleotide) == 0:
+                    first_nucleotide = letter
+                elif len(first_nucleotide) != 0:
+                    other_letter = letter
 
-        # elif list_of_identical_nucleotides >= 10:
-        #     list_of_non_identical_nucleotides = 0
-        #     print("restarted list")
+                    # Establish if the next letters are identical to the first letter
+                    # and update the appropriate counter
+                    if other_letter == first_nucleotide:
+                        identical_nucleotides+=1
+                    elif other_letter != first_nucleotide:
+                        non_identical_nucleotides+=1
+                        if position == taxon:
+                            taxon_snp_dict[position]+=1
+
+
+    print(taxon_snp_dict)
+
+        # identical nucleotide logic handling section under constrution
+        # if identical_nucleotides == len(list) - 1:
+        #     # print("identical list of letters")
+        #     # print(list)
+        #     # list_of_identical_nucleotides+=1
+        #     # if list_of_identical_nucleotides == 20:
+        #     #     list_of_non_identical_nucleotides = 0
+        #     #     list_of_identical_nucleotides = 0
         #
-        # elif list_of_non_identical_nucleotides >= 500:
-        #     print("major friggin problems")
+        # elif non_identical_nucleotides > 1:
+            # print("non identical list of letters")
+            # print(list)
+            # list_of_non_identical_nucleotides+=1
+            # if list_of_non_identical_nucleotides == 150:
+            #     print("pretty big problems")
+            #     list_of_non_identical_nucleotides = 0
 
 
-
-
-    # for list in nuc_list:
-    #     nuc_chunk+=1
-    #     #for i in range(len(list)):
-    #     for i in list:
-    #         print(i)
-    # #       for j in range(i + 1, len(list)):
-    #         for j in range(i + 1, len(list)):
-    #             print(j)
-    #             if list[i].upper() != list[j].upper() and \
-    #              list[i].upper() != 'N' and list[j].upper() != 'N':
-    #                 SNPs+=1
-    #                 # homologous = 0
-    #                 if SNPs == 100:
-    #                     snp_chunk+=1
-    #                     SNPs = 0
-    #                     homologous = 0
-    #             elif list[i].upper() == list[j].upper() and \
-    #              list[i].upper() != 'N' and list[j].upper() != 'N':
-    #                 homologous+=1
-    #                 if homologous == 100:
-    #                     hom_chunk = 1
-    #                     SNPs = 0
-    #                     homologous = 0
-    # print(nuc_chunk)
-    # print("Number of 100 nucleotide segments with more SNPs than homologous sites:")
-    # #print(SNPs)
-    # print(snp_chunk)
-    # print("Number of 100 nucleotide segments with mor homologous sites than SNPs:")
-    # #print(homologous)
-    # print(hom_chunk)
-    # assert(snp_chunk <= hom_chunk)
-
-
-
-
-
-
-        # seq_count+=1
-    #     individ_seq_count = 0
-    #     seperate_seq_dict = {}
-    #     sep_seq_list = (list(str_seq))
-    #     for item in sep_seq_list:
-    #         individ_seq_count+=1
-    #         seperate_seq_dict[individ_seq_count] = item
-    #     seqs_dict[str_name] = seperate_seq_dict
-    #
-    # for taxon, seq in seqs_dict.items():
-    #
-    #     # print(taxon)
-    #     for key in seq:
-    #         #new_list + str(key) = []
-    #         nuc_list.append(seq[key])
-    # print(nuc_list)
-            # nuc_list.append(new_list[key])
-            # print(str(key) + '----', seq[key])
 
 
 

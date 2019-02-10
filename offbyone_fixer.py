@@ -4,6 +4,7 @@
 import os
 import argparse
 from collections import defaultdict
+import itertools
 
 
 def parse_args():
@@ -48,9 +49,79 @@ def main():
                 if num1 == num_list:
                     len_count+=1
                     list.append(letter)
-    print(nuc_list)
-    print(len_count)
-    print(len(nuc_list))
+    # print(nuc_list)
+    # print(len_count)
+    # print(len(nuc_list))
+
+    list_of_identical_nucleotides = 0
+    list_of_non_identical_nucleotides = 0
+    position_of_SNPs_start = ''
+    for position, list in enumerate(nuc_list):
+        identical_nucleotides = 0
+        non_identical_nucleotides = 0
+        first_nucleotide = ''
+        for letter in list:
+            letter = letter.upper()
+            if len(first_nucleotide) == 0:
+                first_nucleotide = letter
+            elif len(first_nucleotide) != 0:
+                other_letter = letter
+                if other_letter == first_nucleotide:
+                    identical_nucleotides+=1
+                elif other_letter != first_nucleotide:
+                    non_identical_nucleotides+=1
+
+        if identical_nucleotides == len(list) - 1:
+            # print("identical list of letters")
+            # print(list)
+            list_of_identical_nucleotides+=1
+
+        elif non_identical_nucleotides > 1:
+            # print("non identical list of letters")
+            # print(list)
+            list_of_non_identical_nucleotides+=1
+            position_of_SNPs_start = position
+
+
+
+
+    # for list in nuc_list:
+    #     nuc_chunk+=1
+    #     #for i in range(len(list)):
+    #     for i in list:
+    #         print(i)
+    # #       for j in range(i + 1, len(list)):
+    #         for j in range(i + 1, len(list)):
+    #             print(j)
+    #             if list[i].upper() != list[j].upper() and \
+    #              list[i].upper() != 'N' and list[j].upper() != 'N':
+    #                 SNPs+=1
+    #                 # homologous = 0
+    #                 if SNPs == 100:
+    #                     snp_chunk+=1
+    #                     SNPs = 0
+    #                     homologous = 0
+    #             elif list[i].upper() == list[j].upper() and \
+    #              list[i].upper() != 'N' and list[j].upper() != 'N':
+    #                 homologous+=1
+    #                 if homologous == 100:
+    #                     hom_chunk = 1
+    #                     SNPs = 0
+    #                     homologous = 0
+    # print(nuc_chunk)
+    # print("Number of 100 nucleotide segments with more SNPs than homologous sites:")
+    # #print(SNPs)
+    # print(snp_chunk)
+    # print("Number of 100 nucleotide segments with mor homologous sites than SNPs:")
+    # #print(homologous)
+    # print(hom_chunk)
+    # assert(snp_chunk <= hom_chunk)
+
+
+
+
+
+
         # seq_count+=1
     #     individ_seq_count = 0
     #     seperate_seq_dict = {}

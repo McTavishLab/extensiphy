@@ -5,21 +5,46 @@ PARALLEL BRANCH command for multimap data test
 You must set up the config file for use after you have tested your install.
 The PARALLEL branch allows for control over both how many phycorder runs happen
 in parallel (hence the name) and how many threads are allocated to each phycorder run_name
-Make sure you dont ask your computer to work to hard by adding more runs and threads than your computer can handle
+Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
 find out how many cores you have available and calculate (cores*phycorder runs you wish to run as the same time)
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
 First, use the following command as Phycorder should be able to find the included test datafiles
 
-./multi_map.sh
+./multi_map.sh ./sample_phycorder.cfg
 
 It is recommended that you leave the sample_phycorder.cfg file alone so you always have a reference
+Make a copy and then alter that for your analyses
 
-The following command is currently used for dev BRANCH
-but that branch should not be used until further notice.
+When you're ready to load your own data, adjust the variable values in the new config file
 
-./multi_map.sh -a /shared/phycorder/example.aln -t /shared/phycorder/tree.tre -p /shared/phycorder/tmp_reads/ -c 4 -o tmp_ncbi
+IMPORTANT!!
+Before you do anything else, make a copy of your read data and move that copy into an empty directory
+Run the name_parser.py program on that data with the following options:
+name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
 
+This will rename your reads in a way that is easily parsed by Phycorder
+
+Some specifics about the values to change:
+The alignment, tree and read directory options should be pretty obvious.
+- The alignment is the one used to generate the tree you're plugging into the program as a starting tree
+- The tree is the starting tree that you wish to add taxa to.
+- the read directory is the directory of paired end reads that you wish to add to your tree.
+If you are renaming your reads with name_parser.py (which you absolutely should. File name schemes are generally terrible)
+then leave the r1_tail and r2_tail options alone so they function with the name_parser.py outputs
+- phycorder runs dictates how many taxa you want to map at a single time.
+  - Say if you have 10 taxa to add to your tree, you can tell phycorder that you want to run 5 mappings at a time in order to be efficient
+- Threads should be obvious but interacts with [Phycorder runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
+  - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
+
+
+
+
+
+
+
+
+Old README info
 ---------------------------------------------------------------------
 
 Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.

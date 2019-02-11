@@ -55,19 +55,20 @@ def main():
     # begin looping through VCF file to look for positions that will be replaced
     # and add them to the dictionary
     with open(args.vcf_file) as vcf:
-        for line in vcf:
-            splitter = line.split()
-            ref_name = splitter[0:1]
-            ref_str = ''.join(ref_name)
-            pos = splitter[1:2]
-            ref = splitter[3:4]
-            alt = splitter[4:5]
-            if 'N' in ref:
-                pos_str = ''.join(pos)
-                str_alt = ''.join(alt)
-                split_alt = str_alt.split(',')
-                alt_nuc = split_alt[0]
-                replace_nuc_dict[pos_str] = alt_nuc
+        for line_num, line in enumerate(vcf):
+            if not line.startswith("#"):
+                splitter = line.split()
+                ref_name = splitter[0:1]
+                ref_str = ''.join(ref_name)
+                pos = splitter[1:2]
+                ref = splitter[3:4]
+                alt = splitter[4:5]
+                if 'N' in ref:
+                    pos_str = ''.join(pos)
+                    str_alt = ''.join(alt)
+                    split_alt = str_alt.split(',')
+                    alt_nuc = split_alt[0]
+                    replace_nuc_dict[pos_str] = alt_nuc
 
     # turn the dictionary into a list
     for key, value in replace_nuc_dict.items():

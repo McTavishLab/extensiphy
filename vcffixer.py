@@ -37,7 +37,7 @@ def main():
     tax_name = split_seqs[0:1]
     str_tax_name = ''.join(tax_name)
 
-    # seperate out the reference sequence
+    # seperate out the original sequence produced by mpileup
     seq = split_seqs[1:2]
     seq_str = seq[0]
     for nuc in seq_str:
@@ -70,7 +70,12 @@ def main():
                     alt_nuc = split_alt[0]
                     replace_nuc_dict[pos_str] = alt_nuc
 
-    # turn the dictionary into a list
+
+
+    # loop through the dictionary and find the positions in the list
+    # that matches the position for the new nucleotide in the dictionary
+    # replace the nucleotide in the list at that position
+    # with the nucleotide from the dictionary
     for key, value in replace_nuc_dict.items():
         ref_sequence_list[int(key) - 1] = value
 

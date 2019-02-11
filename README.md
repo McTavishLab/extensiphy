@@ -37,7 +37,12 @@ then leave the r1_tail and r2_tail options alone so they function with the name_
 - Threads should be obvious but interacts with [Phycorder runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
   - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
 
-
+!!! If all you have is raw reads and you need to create a starting tree:
+1. Run name_parser.py on your reads.
+2. Move some fraction of your reads to a new folder for assembly and starting tree inference.
+3. Make a copy of the sample_gon_phyling.cfg file and alter the variable for the read directory to be assembled.
+4. run: ./gon_phyling.sh ./[GON_PHYLING_CONFIG_FILE] in the Phycorder directory.
+5. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full Phycorder run.
 
 
 

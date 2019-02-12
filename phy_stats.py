@@ -1,40 +1,77 @@
 #! /usr/bin/python3
 
 import sys
+import os
+import argparse
 
-degen = ['I', 'R', 'Y', 'M', 'K', 'S', 'W', 'H', 'B', 'V', 'D']
-nucleotides = ['A', 'C', 'G', 'T']
-gaps = ['-']
-Ns = ['N']
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--align_file')
+    return parser.parse_args()
 
-n_count=0
-degen_count=0
-gap_count=0
-nucleotide_count=0
-with open(sys.argv[1], 'r') as fasta:
-    for i in fasta:
-        if ">" not in i:
-            for j in i:
-                if j in nucleotides:
-                    nucleotide_count+=1
-                elif j in gaps:
-                    gap_count+=1
-                elif j in degen:
-                    degen_count+=1
-                elif j in Ns:
-                    n_count+=1
+def main():
+    args = parse_args()
+
+    degen = ['I', 'R', 'Y', 'M', 'K', 'S', 'W', 'H', 'B', 'V', 'D']
+    nucleotides = ['A', 'C', 'G', 'T']
+    gaps = ['-']
+    Ns = ['N']
+
+    align_n_count=0
+    align_degen_count=0
+    align_gap_count=0
+    align_nucleotide_count=0
+    taxon_info_dict = {}
 
 
-percent_gap = (gap_count / nucleotide_count) * 100
-percent_gap = float(str(percent_gap)[:5])
+    with open(args.align_file, 'r') as fasta:
+        read_fasta = fasta.read()
+        split_file = read_fasta.split('>')
+        useful_align = split_file[1:]
 
-print("Percentage of gaps in the selected alignment")
-print(percent_gap)
-print("Number of gaps in the selected alignment")
-print(gap_count)
-print("Number of nucleotides in the selected alignment")
-print(nucleotide_count)
-print('Number of degenerate nucleotides (non-Ns) in the selected alignment')
-print(degen_count)
-print('Number of Ns in selected alignment')
-print(n_count)
+
+        for taxon in useful_align:
+            seperate_taxa = '>' + taxon
+            split_taxon = seperate_taxa.split('\n')
+            # split_taxon[0] = ">" + split_taxon[0]
+            taxon_info_dict[split_taxon[0]] = {}
+
+
+            for species in taxon_info_dict:
+                if split_taxon[0] == species:
+                    taxon_nucleotide_count = 0
+                    taxon_gap_count = 0
+                    taxon_degen_count = 0
+                    taxon_n_count = 0
+
+                    for nuc in split_taxon[1]:
+                        nuc = nuc.upper()
+                        if nuc in nucleotides:
+                            align_nucleotide_count+=1
+                            taxon_nucleotide_count+=1
+                        elif nuc in gaps:
+                            align_gap_count+=1
+                            taxon_gap_count+=1
+                        elif nuc in degen:
+                            align_degen_count+=1
+                            taxon_degen_count+=1
+                        elif nuc in Ns:
+                            align_n_count+=1
+                            taxon_n_count+=1
+
+
+
+            taxon_info_dict[species]['taxon nucleotide count'] = taxon_nucleotide_count
+            taxon_info_dict[species]['taxon gap count'] = taxon_gap_count
+            taxon_info_dict[species]['taxon degeneracy count'] = taxon_degen_count
+            taxon_info_dict[species]['taxon N count'] = taxon_n_count
+    taxon_info_dict['Total Alignment Info'] = {}
+    taxon_info_dict['Total Alignment Info']['alignment nucleotide count'] = align_nucleotide_count
+    taxon_info_dict['Total Alignment Info']['alignment gap count'] = align_gap_count
+    taxon_info_dict['Total Alignment Info']['alignment degeneracy count'] = align_degen_count
+    taxon_info_dict['Total Alignment Info']['alignment N count'] = align_n_count
+    print(taxon_info_dict)
+
+
+if __name__ == '__main__':
+    main()

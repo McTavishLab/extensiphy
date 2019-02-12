@@ -1,7 +1,7 @@
 #! /bin/bash
 # inputs: a sequence alignment and a tree inferred from that alignment.
 # inputs: a directory of paired end reads for new taxa to be added to the alignment and corresponding tree.
-# example command: multi_map.sh -example.aln -t example.tre -p example_read_dir -c number_of_threads
+# example command: ./multi_map.sh ./sample_phycorder.cfg
 
 set -e
 set -u

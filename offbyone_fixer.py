@@ -72,6 +72,7 @@ def main():
         non_identical_nucleotides = 0
         first_nucleotide = ''
 
+        # loop through each position in the SNP position dictionary
         for position in taxon_snp_dict:
 
             # Loop through each letter in the list of nucleotides

@@ -31,7 +31,8 @@ def main():
         nuc_list.append([])
     # print(nuc_list)
 
-    for chunk in split_file:
+    name_list = {}
+    for position, chunk in enumerate(split_file):
         name_and_seq = ''.join(chunk)
         split_name_and_seq = name_and_seq.split('\n')
         tax_name = split_name_and_seq[0:1]
@@ -39,6 +40,7 @@ def main():
         # print(tax_name)
         # print(seq)
         str_name = ''.join(tax_name)
+        name_list[position] = str_name
         str_seq = ''.join(seq)
         # print(str_seq)
         len_count = 0
@@ -94,8 +96,12 @@ def main():
                         if position == taxon:
                             taxon_snp_dict[position]+=1
 
-
-    print(taxon_snp_dict)
+    final_dict = {}
+    for position, name in name_list.items():
+        for pos, count in taxon_snp_dict.items():
+            if position == pos:
+                final_dict[name] = count
+    print(final_dict)
 
         # identical nucleotide logic handling section under constrution
         # if identical_nucleotides == len(list) - 1:

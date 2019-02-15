@@ -242,11 +242,11 @@ $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #stari
 
 # bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
 echo "Time for bowtie2-build:"
-time bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 echo "time for bowtie2 mapping:"
-time bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
+bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
 
 
 samtools faidx $outdir/best_ref.fas
@@ -260,11 +260,11 @@ samtools index $outdir/best_sorted.bam
 echo '>samtools index passed'
 
 echo '>Time for mpileup step:'
-time bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
+bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 
-time bcftools call -c $outdir/best_sorted.vcf -o $outdir/best_cns.vcf
+bcftools call -c $outdir/best_sorted.vcf -o $outdir/best_cns.vcf
 
-time vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq
+vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq
 
 echo '>samtools mpileup passed'
 seqtk seq -a $outdir/cns.fq > $outdir/cns.fa

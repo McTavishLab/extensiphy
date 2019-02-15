@@ -29,7 +29,9 @@ mkdir -p $outdir
 
 cd $outdir
 
-ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
+# ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
+
+ls ${read_dir}*$r1_tail | split -a 5 -l $phycorder_runs
 
 #if [ $threads -ge $num_files ]
 # then
@@ -124,9 +126,9 @@ done
 
    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL
 
-   time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345
-
-   time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus
+   # time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345
+   #
+   # time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
    # printf "Moving run logs into phycorder-dev-logs"

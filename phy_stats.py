@@ -23,29 +23,30 @@ def main():
     align_nucleotide_count=0
     taxon_info_dict = {}
 
-
+    file_segments = []
     with open(args.align_file, 'r') as fasta:
+
         read_fasta = fasta.read()
         split_file = read_fasta.split('>')
         useful_align = split_file[1:]
-
-
         for taxon in useful_align:
-            seperate_taxa = '>' + taxon
-            split_taxon = seperate_taxa.split('\n')
-            # split_taxon[0] = ">" + split_taxon[0]
-            taxon_info_dict[split_taxon[0]] = {}
 
+            str_aln = ''.join(taxon)
+            taxon_name = str_aln.split('\n', 1)[0]
+            seq = str_aln.split('\n', 1)[1]
+            one_line_seq = "".join(seq.splitlines())
+            taxon_info_dict[taxon_name] = {}
 
             for species in taxon_info_dict:
-                if split_taxon[0] == species:
+                if taxon_name == species:
                     taxon_nucleotide_count = 0
                     taxon_gap_count = 0
                     taxon_degen_count = 0
                     taxon_n_count = 0
 
-                    for nuc in split_taxon[1]:
+                    for nuc in one_line_seq:
                         nuc = nuc.upper()
+                        #print(nuc)
                         if nuc in nucleotides:
                             align_nucleotide_count+=1
                             taxon_nucleotide_count+=1

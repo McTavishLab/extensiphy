@@ -3,10 +3,12 @@
 import sys
 import os
 import argparse
+import pandas as pd
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--align_file')
+    parser.add_argument('--output_file')
     return parser.parse_args()
 
 def main():
@@ -66,13 +68,25 @@ def main():
             taxon_info_dict[species]['taxon gap count'] = taxon_gap_count
             taxon_info_dict[species]['taxon degeneracy count'] = taxon_degen_count
             taxon_info_dict[species]['taxon N count'] = taxon_n_count
-    taxon_info_dict['Total Alignment Info'] = {}
-    taxon_info_dict['Total Alignment Info']['alignment nucleotide count'] = align_nucleotide_count
-    taxon_info_dict['Total Alignment Info']['alignment gap count'] = align_gap_count
-    taxon_info_dict['Total Alignment Info']['alignment degeneracy count'] = align_degen_count
-    taxon_info_dict['Total Alignment Info']['alignment N count'] = align_n_count
-    print(taxon_info_dict)
 
+    # taxon_info_dict['Total Alignment Info'] = {}
+    # taxon_info_dict['Total Alignment Info']['alignment nucleotide count'] = align_nucleotide_count
+    # taxon_info_dict['Total Alignment Info']['alignment gap count'] = align_gap_count
+    # taxon_info_dict['Total Alignment Info']['alignment degeneracy count'] = align_degen_count
+    # taxon_info_dict['Total Alignment Info']['alignment N count'] = align_n_count
+
+    alignment_info_dict = {}
+    alignment_info_dict['Alignment nucleotide count'] = align_nucleotide_count
+    alignment_info_dict['Alignment gap count'] = align_gap_count
+    alignment_info_dict['Alignment degeneracy count'] = align_degen_count
+    alignment_info_dict['Alignment N count'] = align_n_count
+
+    # convert nested dictionary into a pandas dataframe
+    tax_info_df = pd.DataFrame.from_dict(taxon_info_dict, orient = 'index')
+    print(tax_info_df)
+
+    aln_info_df = pd.DataFrame.from_dict(alignment_info_dict, orient = 'index')
+    print(aln_info_df)
 
 if __name__ == '__main__':
     main()

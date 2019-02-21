@@ -8,7 +8,8 @@ import pandas as pd
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--align_file')
-    parser.add_argument('--output_file')
+    parser.add_argument('--taxon_output_file')
+    parser.add_argument('--align_output_file')
     return parser.parse_args()
 
 def main():
@@ -83,10 +84,10 @@ def main():
 
     # convert nested dictionary into a pandas dataframe
     tax_info_df = pd.DataFrame.from_dict(taxon_info_dict, orient = 'index')
-    print(tax_info_df)
-
     aln_info_df = pd.DataFrame.from_dict(alignment_info_dict, orient = 'index')
-    print(aln_info_df)
+
+    tax_info_df.to_csv(args.taxon_output_file, sep = '\t' )
+    aln_info_df.to_csv(args.align_output_file, sep = '\t' )
 
 if __name__ == '__main__':
     main()

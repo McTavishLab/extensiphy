@@ -76,13 +76,13 @@ if [[ $threads =~ ^-?[0-9]+$ ]]; then
 # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
 # for i in $(ls *R1_001.fastq); do
 		printf "%s threads selected" "$threads"
-		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
+		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
 	done
 else
 	for i in $(ls *$r1_tail); do
 
 		printf "No extra threads requested, default: 1"
-		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
+		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
 
 	done
 fi
@@ -121,7 +121,7 @@ if [ "$repetitive" -eq 1 ]; then
 
 	done
 
-	time parsnp -c -p 6 -d ./masked_genomes -r $ref_genome
+	parsnp -c -p 6 -d ./masked_genomes -r $ref_genome
 
         mkdir alignment_fixing
 
@@ -132,22 +132,22 @@ if [ "$repetitive" -eq 1 ]; then
 
 # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
 # in same folder being found in path
-        time $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+        $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
 # call RAxML for phylogenetic analysis on loci
         if [[ "$var" =~ ^-?[0-9]+$ ]]; then
 
                 printf "%s threads requested" "$threads"
-                time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+                raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
 
         else
                 printf "no additional threads requested, using default"
-                time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
+                raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
         fi
 
 else
 	echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
-	time parsnp -c -p 6 -d ./ -r !
+	parsnp -c -p 6 -d ./ -r !
   #time parsnp -c -p 6 -d ./ -r $ref_genome
 
 	mkdir alignment_fixing
@@ -159,7 +159,7 @@ else
 
 # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
 # in same folder being found in path
-	time $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+	$GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
   for i in $(cat < combo.fas); do
     echo "${i%_*}" >> combo2.fas
@@ -173,11 +173,15 @@ else
 	if [[ $threads =~ ^-?[0-9]+$ ]]; then
 
 		printf "%s threads requested" "$threads"
-		time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+		# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+
+    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 
 	else
 		printf "no additional threads requested, using default"
-		time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
+		# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
+
+    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 	fi
 fi
 # call RAxML to assign bootstrap score

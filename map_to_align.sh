@@ -231,7 +231,10 @@ refnam=$(head -n 1 $outdir/ref_nogap.fas)
 echo "refname is $refnam"
 #
 #
-grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
+
+$PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
+
+# grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
 # grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
 # fold -w 80 $outdir/best_ref_uneven.fas > $outdir/best_ref.fas
@@ -301,7 +304,8 @@ $PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/c
 
 #pull the aligned reference from the alignement
 #grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas
-grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
+#grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
+$PHYCORDER/ref_producer.py --align_file $align --out_file $outdir/best_ref_gaps.fas
 
 echo '>grep for refnam passed'
 

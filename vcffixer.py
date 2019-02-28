@@ -21,6 +21,8 @@ def parse_args():
 def main():
     args = parse_args()
 
+    nuc_set = ['A', 'C', 'G', 'T']
+
     # create an empty list that will hold the fixed sequence
     ref_sequence_list = []
 
@@ -64,11 +66,20 @@ def main():
                 ref = splitter[3:4]
                 alt = splitter[4:5]
                 if 'N' in ref:
-                    pos_str = ''.join(pos)
-                    str_alt = ''.join(alt)
-                    split_alt = str_alt.split(',')
-                    alt_nuc = split_alt[0]
-                    replace_nuc_dict[pos_str] = alt_nuc
+                    if alt in nuc_set:
+                        pos_str = ''.join(pos)
+                        str_alt = ''.join(alt)
+                        split_alt = str_alt.split(',')
+                        alt_nuc = split_alt[0]
+                        replace_nuc_dict[pos_str] = alt_nuc
+                    elif alt not in nuc_set:
+                        pos_str = ''.join(pos)
+                        str_alt = ''.join(alt)
+                        split_alt = str_alt.split(',')
+                        alt_nuc = 'N'
+                        replace_nuc_dict[pos_str] = alt_nuc
+                    else:
+                        print('YOU HAVE A LARGE PROBLEM WITH YOUR VCFFIXER.PY')
 
 
 

@@ -114,7 +114,7 @@ done
 
    sed -i 's/_$//g' extended.aln
 
-   $INFER=$(pwd)
+   INFER=$(pwd)
 
 
    # time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s extended.aln -t $tree -p 12345 -n consensusFULL

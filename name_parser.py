@@ -86,46 +86,121 @@ def main():
 
 
 
-    # reads in a directory of new taxa fastas produced by multi_map.sh
+    # reads in a directory of new reads
     # and a dictionary of names produced by an earlier run of name_parser.py
     # produces:
     # new seperate fasta files with renamed sequences
     # new updated dictionary for all taxa with new and old names
 
     elif args.u == True:
+
+        # initialize the necessary dictionaries and counts
         name_dict = {}
         current_OTU_count = 0
         OTU_nums = []
-        taxa_dir = os.listdir(args.newtaxa_dir)
-        #new_taxa_dict =
+
+        # open the previous dictionary produced by name_parser.py
+        # loop through the dictionary and get total number of files
         with open(args.dict_file) as json_data:
             read_dict = json_data.read()
             name_dict = json.loads(read_dict)
             for key, value in name_dict.iteritems():
                 key = str(key)
                 split_key = key.split('_')
-                for item in split_key[1:]:
-                    OTU_nums.append(int(item))
+                # print(split_key[1])
+                # for item in split_key[1:]:
+                OTU_nums.append(int(split_key[1]))
+        # print(OTU_nums)
         current_OTU_count = max(OTU_nums)
-        for file in taxa_dir:
-            #new_name_file = open('OTU_' + str(current_OTU_count) + '.fas')
-            current_OTU_count+=1
-            new_name_file = open(args.newtaxa_dir + '/' + 'OTU_' + str(current_OTU_count) + '.fas', 'w')
-            look = open(args.newtaxa_dir + '/' + file,'r')
-            examine = look.read()
-            split_read = examine.split('\n')
-            taxon_name = split_read[0]
-            name_dict['OTU_' + str(current_OTU_count)] = taxon_name
-            for key, value in name_dict.iteritems():
-                if re.match(value, examine):
-                    replaces = re.sub(value, key, examine)
-                    new_name_file.write('>')
-                    new_name_file.write(replaces)
-                    new_name_file.write('\n')
-        OTU_name_dict = "OTU_name_dict.txt"
-        # write dictionary of names file
-        with open(args.dict_file, 'w') as f:
-            json.dump(name_dict, f)
+
+
+        # open the directory of new files you wish to rename
+        # begin counting through the list to get numbers for matching pairs of files
+        # Starting with the previous number of files
+        # get the old number of files + the new number of files
+        # create a dictionary of names with these new numbers
+        # TODO this could still be messy and may not work on mac or something, TEST IT
+        files = os.listdir(args.newtaxa_dir)
+        match1_dict = {}
+        match2_dict = {}
+        sd = sorted(files)
+        pair_1_count = current_OTU_count
+        pair_2_count = current_OTU_count
+        file_count = 0
+        read_set_count = 0
+        for file in (sd):
+            file_count+=1
+            read_set_count+=1
+            if file_count == 1:
+                pair_1_count+=1
+                match1_dict["taxon_" + str(pair_1_count)] = file
+            elif file_count == 2:
+                pair_2_count+=1
+                match2_dict["taxon_" + str(pair_2_count)] = file
+                file_count = 0
+
+        # order the dictionaries you just created
+        # this may no longer be required
+        # TODO TEST
+        od1 = collections.OrderedDict(sorted(match1_dict.items()))
+        od2 = collections.OrderedDict(sorted(match2_dict.items()))
+
+        # print(od1)
+        # print(od2)
+
+
+        # add the read tail to each new file name
+        new_names_1 = {}
+        for key, value in od1.items():
+            new_names_1[key + '_R1.fastq'] = value
+
+        new_names_2 = {}
+        for key, value in od2.items():
+            new_names_2[key + '_R2.fastq'] = value
+
+
+        # go into the directory of files to be renamed and rename them
+        os.chdir(args.newtaxa_dir)
+
+        for key, value in new_names_1.items():
+            os.rename(str(value), str(key))
+
+        for key, value in new_names_2.items():
+            os.rename(str(value), str(key))
+
+        # print a new dictionary with new file names that correspond to the old file names
+        # NOTE: FILE NAMES FROM THE PREVIOUS DICTIONARY USED IN THIS RUN ARE NOT INCLUDED
+        with open('taxon_names_dict_set_1.txt', 'w') as f:
+            json.dump(new_names_1, f)
+
+        with open('taxon_names_dict_set_2.txt', 'w') as f:
+            json.dump(new_names_2, f)
+
+
+
+
+
+
+
+        # for file in taxa_dir:
+        #     #new_name_file = open('OTU_' + str(current_OTU_count) + '.fas')
+        #     current_OTU_count+=1
+        #     new_name_file = open(args.newtaxa_dir + '/' + 'OTU_' + str(current_OTU_count) + '.fas', 'w')
+        #     look = open(args.newtaxa_dir + '/' + file,'r')
+        #     examine = look.read()
+        #     split_read = examine.split('\n')
+        #     taxon_name = split_read[0]
+        #     name_dict['OTU_' + str(current_OTU_count)] = taxon_name
+        #     for key, value in name_dict.iteritems():
+        #         if re.match(value, examine):
+        #             replaces = re.sub(value, key, examine)
+        #             new_name_file.write('>')
+        #             new_name_file.write(replaces)
+        #             new_name_file.write('\n')
+        # OTU_name_dict = "OTU_name_dict.txt"
+        # # write dictionary of names file
+        # with open(args.dict_file, 'w') as f:
+        #     json.dump(name_dict, f)
 
 
     # takes in:

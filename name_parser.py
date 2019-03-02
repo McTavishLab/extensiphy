@@ -1,6 +1,6 @@
 #! /usr/bin/python
-# use option -d only to rename a directory of files.
-# other options are not fully functional yet
+# use options -d or -u only
+# option -o is not currently functional
 
 
 import sys
@@ -180,33 +180,11 @@ def main():
 
 
 
-
-
-        # for file in taxa_dir:
-        #     #new_name_file = open('OTU_' + str(current_OTU_count) + '.fas')
-        #     current_OTU_count+=1
-        #     new_name_file = open(args.newtaxa_dir + '/' + 'OTU_' + str(current_OTU_count) + '.fas', 'w')
-        #     look = open(args.newtaxa_dir + '/' + file,'r')
-        #     examine = look.read()
-        #     split_read = examine.split('\n')
-        #     taxon_name = split_read[0]
-        #     name_dict['OTU_' + str(current_OTU_count)] = taxon_name
-        #     for key, value in name_dict.iteritems():
-        #         if re.match(value, examine):
-        #             replaces = re.sub(value, key, examine)
-        #             new_name_file.write('>')
-        #             new_name_file.write(replaces)
-        #             new_name_file.write('\n')
-        # OTU_name_dict = "OTU_name_dict.txt"
-        # # write dictionary of names file
-        # with open(args.dict_file, 'w') as f:
-        #     json.dump(name_dict, f)
-
-
     # takes in:
     # alignment and tree tree files
     # produces:
     # renamed alignment file, renamed tree file and dictionary of old and new names
+    # TODO: FIX THIS
     elif args.o == True:
         alignment = open(args.alignment_file)
         tree = open(args.tree_file)

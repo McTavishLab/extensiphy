@@ -95,6 +95,7 @@ mkdir genomes_for_parsnp
 
 for i in $( ls -d *);
 do
+        echo $i
         cd $i ;
         pwd ;
 
@@ -111,78 +112,78 @@ mkdir excess_files
 
 mkdir masked_genomes
 
+#
+# if [ "$repetitive" -eq 1 ]; then
+# 	echo "BEGINNING REPETITIVE SEQUENCE MASKING"
+# 	for i in $( ls *.fasta);
+# 		do
+# 		trf409.legacylinux64 $i 2 7 7 80 10 50 500 -h -m
+# 		mv *.mask ./masked_genomes
+#
+# 	done
+#
+# 	parsnp -c -p 6 -d ./masked_genomes -r $ref_genome
+#
+#         mkdir alignment_fixing
+#
+#         cp ./P*/parsnp.xmfa ./alignment_fixing/
+#
+#         cd ./alignment_fixing
+#
+#
+# # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
+# # in same folder being found in path
+#         $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+#
+# # call RAxML for phylogenetic analysis on loci
+#         if [[ "$var" =~ ^-?[0-9]+$ ]]; then
+#
+#                 printf "%s threads requested" "$threads"
+#                 raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+#
+#         else
+#                 printf "no additional threads requested, using default"
+#                 raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
+#         fi
+#
+# else
+echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
+parsnp -c -p 6 -d ./ -r !
+#time parsnp -c -p 6 -d ./ -r $ref_genome
 
-if [ "$repetitive" -eq 1 ]; then
-	echo "BEGINNING REPETITIVE SEQUENCE MASKING"
-	for i in $( ls *.fasta);
-		do
-		trf409.legacylinux64 $i 2 7 7 80 10 50 500 -h -m
-		mv *.mask ./masked_genomes
+mkdir alignment_fixing
 
-	done
+cp ./P*/parsnp.xmfa ./alignment_fixing/
 
-	parsnp -c -p 6 -d ./masked_genomes -r $ref_genome
-
-        mkdir alignment_fixing
-
-        cp ./P*/parsnp.xmfa ./alignment_fixing/
-
-        cd ./alignment_fixing
+cd ./alignment_fixing
 
 
 # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
 # in same folder being found in path
-        $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+$GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+
+for i in $(cat < combo.fas); do
+  echo "${i%_*}" >> combo2.fas
+done
+
+rm combo.fas
+
+mv combo2.fas combo.fas
 
 # call RAxML for phylogenetic analysis on loci
-        if [[ "$var" =~ ^-?[0-9]+$ ]]; then
+if [[ $threads =~ ^-?[0-9]+$ ]]; then
 
-                printf "%s threads requested" "$threads"
-                raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+	printf "%s threads requested" "$threads"
+	# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
 
-        else
-                printf "no additional threads requested, using default"
-                raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
-        fi
+  raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 
 else
-	echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
-	parsnp -c -p 6 -d ./ -r !
-  #time parsnp -c -p 6 -d ./ -r $ref_genome
+	printf "no additional threads requested, using default"
+	# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
 
-	mkdir alignment_fixing
-
-	cp ./P*/parsnp.xmfa ./alignment_fixing/
-
-	cd ./alignment_fixing
-
-
-# having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
-# in same folder being found in path
-	$GON_PHYLING/parsnp_splitter.py parsnp.xmfa
-
-  for i in $(cat < combo.fas); do
-    echo "${i%_*}" >> combo2.fas
-  done
-
-  rm combo.fas
-
-  mv combo2.fas combo.fas
-
-# call RAxML for phylogenetic analysis on loci
-	if [[ $threads =~ ^-?[0-9]+$ ]]; then
-
-		printf "%s threads requested" "$threads"
-		# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
-
-    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
-
-	else
-		printf "no additional threads requested, using default"
-		# raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
-
-    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
-	fi
+  raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 fi
+#fi
 # call RAxML to assign bootstrap score
 # raxmlHPC-PTHREADS-SSE3 -z RAxML_bootstrap.core_genome_run.out -t RAxML_bipartitions.core_genome_run.out -f b -T 10 -m GTRGAMMAI -n core_genome_run_bootstrap.out

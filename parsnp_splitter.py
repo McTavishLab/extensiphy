@@ -38,11 +38,13 @@ seq_dict = {}
 loci = {}
 
 for seq_chunk in spliton:
+    print(seq_chunk)
     lines = seq_chunk.split('\n')
     taxid = lines[0].split(':')[0]
     try:
         int(taxid)
-        taxa.add(taxid)
+        if taxid != '0':
+            taxa.add(taxid)
         m = re.search("cluster\d*", lines[0])
         locus = m.group()
         loci[locus] = []

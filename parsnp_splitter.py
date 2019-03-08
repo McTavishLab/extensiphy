@@ -38,7 +38,7 @@ seq_dict = {}
 loci = {}
 
 for seq_chunk in spliton:
-    print(seq_chunk)
+    # print(seq_chunk)
     lines = seq_chunk.split('\n')
     taxid = lines[0].split(':')[0]
     try:

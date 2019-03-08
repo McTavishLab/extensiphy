@@ -150,7 +150,7 @@ if [ $bootstrapping == "ON" ]; then
   #
   # else
   echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
-  parsnp -c -p 6 -d ./ -r !
+  parsnp -c -p $threads -d ./ -r !
   #time parsnp -c -p 6 -d ./ -r $ref_genome
 
   mkdir alignment_fixing
@@ -320,7 +320,7 @@ elif [ $bootstrapping == "OFF" ]; then
   #
   # else
   echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
-  parsnp -c -p 6 -d ./ -r !
+  parsnp -c -p $threads -d ./ -r !
   #time parsnp -c -p 6 -d ./ -r $ref_genome
 
   mkdir alignment_fixing

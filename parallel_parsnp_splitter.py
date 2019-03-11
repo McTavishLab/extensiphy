@@ -35,7 +35,7 @@ with open(datafile) as fp:
 almost_clean_seq = []
 
 for item in seq:
-    num_reg = ":p\d+"
+    num_reg = ":p\d+\s"
     reg_compile = re.compile(num_reg)
     string_search = re.findall(reg_compile, item)
     if string_search:
@@ -45,9 +45,16 @@ for item in seq:
 
 newlines_left_seq = []
 for seq in almost_clean_seq:
-    new_seq = ''.join(seq).strip()
+    new_seq = ''.join(seq).replace("\n", "")
     newlines_left_seq.append(new_seq)
 
-print(newlines_left_seq)
-# clean_seq = newlines_left_seq.strip("\n")
-# print(clean_seq)
+clean_seq = []
+for seq in newlines_left_seq:
+    clean_seq.append(seq)
+    clean_seq.append("N"*100)
+
+clean_seq = ''.join(clean_seq)
+
+# new_seq_file = open("parsnp_chunk-" + sys.argv[2] + "-.fa",'w')
+# new_seq_file.write(clean_seq)
+# new_seq_file.close()

@@ -15,7 +15,7 @@ name_count = 0
 seq_name_id = "##SequenceIndex " + sys.argv[2] + "\n"
 seq_name_id_grabber = re.compile(seq_name_id)
 
-taxa_count_regex = seq_name_id = "##SequenceIndex " + "\d+"
+taxa_count_regex = "##SequenceIndex " + "\d+"
 taxa_count_compile = re.compile(taxa_count_regex)
 taxa_counter = 0
 for lin in infile:
@@ -42,7 +42,7 @@ regex1 = re.compile(string_to_convert1)
 # handles event that taxa being parsed is the last taxa in the alignment
 if int(sys.argv[2]) == taxa_counter:
     ending_num = str(1)
-    prime_regex = string_to_convert1 + "(.*?)" + "(>" + ending_num + ":|=)"
+    prime_regex = string_to_convert1 + "(.*?)" + "="
     regex2 = re.compile(prime_regex, re.S)
     print(prime_regex)
 
@@ -60,22 +60,23 @@ else:
 
 seq = []
 with open(datafile) as fp:
-    for result in re.finditer(regex2, fp.read()):
+    for result in re.findall(regex2, fp.read()):
         seq.append(result)
 
 almost_clean_seq = []
 
 for item in seq:
-    num_reg = ":p\d+\s"
+    num_reg = "(^.*:p\d+\s)"
     reg_compile = re.compile(num_reg)
     #print(reg_compile)
     #print(item.group(1))
     #print(type(item.group(1)))
-    string_search = re.finditer(reg_compile, item.group(1))
+    string_search = re.findall(reg_compile, item)
     if string_search:
-        print(item.group(1))
-        new_seq = item.split(item.group(1))
-        almost_clean_seq.append(new_seq)
+
+        new_seq = item.split(''.join(string_search))
+        almost_clean_seq.append(new_seq[1])
+
 
 newlines_left_seq = []
 for seq in almost_clean_seq:

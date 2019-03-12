@@ -160,10 +160,33 @@ if [ $bootstrapping == "ON" ]; then
   cd ./alignment_fixing
 
 
-  # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
-  # in same folder being found in path
+  # old parsnp processing command
   $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
+
+  # new parallel parsnp processing
+  # grab the number of taxa in the parsnp.xmfa output file
+  $GON_PHYLING/parsnp_taxa_count.sh > taxa_count.txt
+
+  # split each number of taxa into a set that can be iterrated over and processed in parallel
+  cat taxa_count.txt | split -a 10 -l $threads
+
+  for j in $(ls xa*); do
+    for i in $(cat $j); do
+
+      $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i
+
+    done
+    wait
+  done
+
+  # combine the split parsnp sequence files into a single file
+  cat parsnp_chunk-*-.fa > combo.txt
+
+  # remove the first newline character and turn combo.txt into a fasta file
+  tail -n +2 combo.txt > combo.fas
+
+  # trim down the taxa names
   for i in $(cat < combo.fas); do
     echo "${i%_*}" >> combo2.fas
   done
@@ -329,11 +352,33 @@ elif [ $bootstrapping == "OFF" ]; then
 
   cd ./alignment_fixing
 
+  # old parsnp processing
+  # $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
-  # having to harcode the par selecting parsnp_splitter.py as the file cant seem to be found in path despite other files
-  # in same folder being found in path
-  $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
+  # new parallel parsnp processing
+  # grab the number of taxa in the parsnp.xmfa output file
+  $GON_PHYLING/parsnp_taxa_count.sh > taxa_count.txt
+
+  # split each number of taxa into a set that can be iterrated over and processed in parallel
+  cat taxa_count.txt | split -a 10 -l $threads
+
+  for j in $(ls xa*); do
+    for i in $(cat $j); do
+
+      $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i &
+
+    done
+    wait
+  done
+
+  # combine the split parsnp sequence files into a single file
+  cat parsnp_chunk-*-.fa > combo.txt
+
+  # remove the first newline character and turn combo.txt into a fasta file
+  tail -n +2 combo.txt > combo.fas
+
+  # trim down the taxa names
   for i in $(cat < combo.fas); do
     echo "${i%_*}" >> combo2.fas
   done

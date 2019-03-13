@@ -37,6 +37,13 @@ then leave the r1_tail and r2_tail options alone so they function with the name_
 - Threads should be obvious but interacts with [Phycorder runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
   - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
 
+Creating a starting tree!
+You need a tree and alignment with any number of taxa in order to update these with new taxa.
+gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.
+
+To test gon_phyling.sh, run:
+./gon_phyling.sh ./sample_gon_phyling.cfg
+
 !!! If all you have is raw reads and you need to create a starting tree:
 1. Run name_parser.py on your reads.
 2. Move some fraction of your reads to a new folder for assembly and starting tree inference.
@@ -45,6 +52,22 @@ then leave the r1_tail and r2_tail options alone so they function with the name_
 5. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full Phycorder run.
 
 
+!!! Installation of programs necessary for Phycorder:
+Python packages:
+    	Dendropy 4.0 (pip install dendropy)
+Software in path for multi_map.sh rapid-updating:
+        bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+        fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
+        raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
+        seqtk https://github.com/lh3/seqtk
+        samtools / bcftools
+        NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
+        Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!
+Software in path for gon_phyling.sh:
+	parsnp https://harvest.readthedocs.io/en/latest/content/parsnp.html
+	spades http://spades.bioinf.spbau.ru/
+	bbmap https://sourceforge.net/projects/bbmap/
+	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
 
 
 

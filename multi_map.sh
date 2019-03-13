@@ -7,26 +7,18 @@ set -e
 set -u
 set -o pipefail
 
-
+# establishes the path to find the phycorder directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # changing location of .cfg file to a variable
 # for easy use of multiple config num_files
 source $1
 
+# handling of bootstrapping
 if [ $bootstrapping == "ON" ]; then
 
   mkdir -p $outdir
-  #cd $outdir
-  #outdir_path=$(pwd)
 
-  # cd $read_dir
-  #
-  # for i in $(ls *$r1_tail); do
-  #   echo ">$i" >> "original_file_names_phycorder.txt"
-  # done
-  #
-  # mv "original_file_names_phycorder.txt" $outdir/
 
   cd $outdir
 
@@ -83,6 +75,8 @@ if [ $bootstrapping == "ON" ]; then
 
      wd=$(pwd)
 
+     # loop through output directories and pull fasta files into /combine_and_infer
+     # for tree inference
      for i in $(ls -d *output_dir); do
        cd $i
        count=$(ls *_align.fas | wc -l)
@@ -130,16 +124,7 @@ if [ $bootstrapping == "ON" ]; then
 
 elif [ $bootstrapping == "OFF" ]; then
   mkdir -p $outdir
-  #cd $outdir
-  #outdir_path=$(pwd)
 
-  # cd $read_dir
-  #
-  # for i in $(ls *$r1_tail); do
-  #   echo ">$i" >> "original_file_names_phycorder.txt"
-  # done
-  #
-  # mv "original_file_names_phycorder.txt" $outdir/
 
   cd $outdir
 
@@ -196,6 +181,8 @@ elif [ $bootstrapping == "OFF" ]; then
 
      wd=$(pwd)
 
+     # loop through phycorder run directories and move finished fasta files to /combine_and_infer/
+     # for tree inference
      for i in $(ls -d *output_dir); do
        cd $i
        count=$(ls *_align.fas | wc -l)

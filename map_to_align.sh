@@ -11,7 +11,7 @@ set -o pipefail
 
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# BOWTIE2PATH="/home/ejmctavish/Applications/bowtie2-2.3.4.2-linux-x86_64"
+
 printf "phycorder directory is %s\n" "$PHYCORDER"
 
 
@@ -238,7 +238,7 @@ $PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir
 # grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 
 # fold -w 80 $outdir/best_ref_uneven.fas > $outdir/best_ref.fas
-# #printf ">going to fastafixer"
+
 $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 # echo '>The best reference found in your alignment was '$refnam
 # echo '>mapping reads to '$refnam

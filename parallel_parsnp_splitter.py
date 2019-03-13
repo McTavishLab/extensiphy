@@ -9,6 +9,9 @@ print(sys.argv)
 datafile = sys.argv[1]
 
 infile = open(datafile, 'r')
+
+# generate regex variables to find which taxon is associated with the number of this run
+# and to count the total number of taxa
 header = []
 i=0
 name_count = 0
@@ -18,6 +21,8 @@ seq_name_id_grabber = re.compile(seq_name_id)
 taxa_count_regex = "##SequenceIndex " + "\d+"
 taxa_count_compile = re.compile(taxa_count_regex)
 taxa_counter = 0
+
+# run regex, gather taxon name
 for lin in infile:
     if lin.startswith('#'):
         # header.append(lin)
@@ -36,17 +41,19 @@ for lin in infile:
 
 infile.close()
 
+# regex for start of taxon header
+# this will be used to grab each chunk of a sequence
 string_to_convert1 = ">" + sys.argv[2] + ":"
 regex1 = re.compile(string_to_convert1)
 
-# handles event that taxa being parsed is the last taxa in the alignment
+# handles event that taxon being parsed is the last taxon in the alignment
 if int(sys.argv[2]) == taxa_counter:
     ending_num = str(1)
     prime_regex = string_to_convert1 + "(.*?)" + "="
     regex2 = re.compile(prime_regex, re.S)
     print(prime_regex)
 
-# handles all taxa except the last taxa in the alignment
+# handles all taxa except the last taxon in the alignment
 elif int(sys.argv[2]) != taxa_counter:
     ending_num = str(int(sys.argv[2]) + 1)
     prime_regex = string_to_convert1 + "(.*?)" + ">" + ending_num + ":"
@@ -57,7 +64,8 @@ else:
     print("Problem with taxa counting")
     exit
 
-
+# this is the ugly section that grabs the sequences, removes stuff
+# and processes the file into a fasta file
 seq = []
 with open(datafile) as fp:
     for result in re.findall(regex2, fp.read()):
@@ -68,9 +76,6 @@ almost_clean_seq = []
 for item in seq:
     num_reg = "(^.*:p\d+\s)"
     reg_compile = re.compile(num_reg)
-    #print(reg_compile)
-    #print(item.group(1))
-    #print(type(item.group(1)))
     string_search = re.findall(reg_compile, item)
     if string_search:
 
@@ -90,12 +95,8 @@ for seq in newlines_left_seq:
 
 clean_seq = ''.join(clean_seq)
 
-#print(">" + header[1])
-#print(header[1])
-# print(clean_seq)
 
-
-
+# write everything to file for combining
 new_seq_file = open("parsnp_chunk-" + sys.argv[2] + "-.fa",'w')
 new_seq_file.write("\n")
 new_seq_file.write(">")

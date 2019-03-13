@@ -14,9 +14,6 @@ source $1
 if [ $bootstrapping == "ON" ]; then
 
 
-  # r1_tail="1.fastq.gz.fastq"
-  # r2_tail="2.fastq.gz.fastq"
-
   # go to the directory containing the reads
   # this is specified in the .cfg file
   cd $read_dir
@@ -161,7 +158,7 @@ if [ $bootstrapping == "ON" ]; then
 
 
   # old parsnp processing command
-  $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+  # $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
 
 
   # new parallel parsnp processing
@@ -174,7 +171,7 @@ if [ $bootstrapping == "ON" ]; then
   for j in $(ls xa*); do
     for i in $(cat $j); do
 
-      $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i
+      $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i &
 
     done
     wait

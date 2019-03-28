@@ -103,24 +103,6 @@ def main():
                 final_dict[name] = count
     print(final_dict)
 
-        # identical nucleotide logic handling section under constrution
-        # if identical_nucleotides == len(list) - 1:
-        #     # print("identical list of letters")
-        #     # print(list)
-        #     # list_of_identical_nucleotides+=1
-        #     # if list_of_identical_nucleotides == 20:
-        #     #     list_of_non_identical_nucleotides = 0
-        #     #     list_of_identical_nucleotides = 0
-        #
-        # elif non_identical_nucleotides > 1:
-            # print("non identical list of letters")
-            # print(list)
-            # list_of_non_identical_nucleotides+=1
-            # if list_of_non_identical_nucleotides == 150:
-            #     print("pretty big problems")
-            #     list_of_non_identical_nucleotides = 0
-
-
 
 
 

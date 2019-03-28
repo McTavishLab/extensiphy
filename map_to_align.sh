@@ -265,6 +265,10 @@ echo '>samtools index passed'
 echo '>Time for mpileup step:'
 bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 
+# $PHYCORDER/vcf_duplicate_dropper.py --vcf_file $outdir/best_sorted.vcf --out_file $outdir/dupes_removed_best_cns.vcf
+
+# bcftools call -c $outdir/dupes_removed_best_cns.vcf -o $outdir/best_cns.vcf
+
 bcftools call -c $outdir/best_sorted.vcf -o $outdir/best_cns.vcf
 
 vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq

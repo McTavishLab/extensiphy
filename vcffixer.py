@@ -56,6 +56,10 @@ def main():
 
     # begin looping through VCF file to look for positions that will be replaced
     # and add them to the dictionary
+    pos_duplicate_check = 0
+    current_position_no_duplicates = 0
+    pos_duplicate_count = 0
+
     with open(args.vcf_file) as vcf:
         for line_num, line in enumerate(vcf):
             if not line.startswith("#"):
@@ -63,6 +67,12 @@ def main():
                 ref_name = splitter[0:1]
                 ref_str = ''.join(ref_name)
                 pos = splitter[1:2]
+                if pos_duplicate_check != pos:
+                    pos_duplicate_check = pos
+
+                elif pos_duplicate_check == pos:
+                    pos_duplicate_count+=1
+
                 ref = splitter[3:4]
                 alt = splitter[4:5]
                 if 'N' in ref:
@@ -80,6 +90,27 @@ def main():
                         replace_nuc_dict[pos_str] = alt_nuc
                     else:
                         print('YOU HAVE A LARGE PROBLEM WITH YOUR VCFFIXER.PY')
+                # else:
+                #     ref_str = ''.join(ref)
+                #     split_multiple_nucs = list(ref_str)
+                #     ref_nuc_count = 0
+                #     for nuc in split_multiple_nucs:
+                #         ref_nuc_count+=1
+                #     if ref_nuc_count > 1:
+                #         if pos_duplicate_count == 1:
+                #             pos_str = ''.join(pos)
+                #             split_alt = ref_str.split(',')
+                #             alt_nuc = split_alt[0]
+                #             replace_nuc_dict[pos_str] = alt_nuc
+                #
+                #         elif pos_duplicate_count > 1:
+                #             pos_str = ''.join(pos)
+                #             str_alt = ''.join(alt)
+                #             split_alt = str_alt.split(',')
+                #             alt_nuc = split_alt[0]
+                #             replace_nuc_dict[pos_str] = alt_nuc
+
+
 
 
 

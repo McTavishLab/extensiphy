@@ -178,19 +178,13 @@ if [ $bootstrapping == "ON" ]; then
   done
 
   # combine the split parsnp sequence files into a single file
-  cat parsnp_chunk-*-.fa > combo.txt
+  cat parsnp_chunk-*-.fa > combo.fas
 
   # remove the first newline character and turn combo.txt into a fasta file
-  tail -n +2 combo.txt > combo.fas
+  sed -i '1d' combo.fas
 
   # trim down the taxa names
-  for i in $(cat < combo.fas); do
-    echo "${i%_*}" >> combo2.fas
-  done
-
-  rm combo.fas
-
-  mv combo2.fas combo.fas
+  sed -i 's/_[^_]*//2g' combo.fas
 
   # call RAxML for phylogenetic analysis on loci
   if [[ $threads =~ ^-?[0-9]+$ ]]; then
@@ -370,19 +364,13 @@ elif [ $bootstrapping == "OFF" ]; then
   done
 
   # combine the split parsnp sequence files into a single file
-  cat parsnp_chunk-*-.fa > combo.txt
+  cat parsnp_chunk-*-.fa > combo.fas
 
   # remove the first newline character and turn combo.txt into a fasta file
-  tail -n +2 combo.txt > combo.fas
+  sed -i '1d' combo.fas
 
   # trim down the taxa names
-  for i in $(cat < combo.fas); do
-    echo "${i%_*}" >> combo2.fas
-  done
-
-  rm combo.fas
-
-  mv combo2.fas combo.fas
+  sed -i 's/_[^_]*//2g' combo.fas
 
   # call RAxML for phylogenetic analysis on loci
   if [[ $threads =~ ^-?[0-9]+$ ]]; then

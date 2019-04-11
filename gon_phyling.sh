@@ -75,13 +75,13 @@ if [ $bootstrapping == "ON" ]; then
   # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
   # for i in $(ls *R1_001.fastq); do
   		printf "%s threads selected" "$threads"
-  		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
+  		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
   	done
   else
   	for i in $(ls *$r1_tail); do
 
   		printf "No extra threads requested, default: 1"
-  		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
+  		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
 
   	done
   fi
@@ -262,13 +262,13 @@ elif [ $bootstrapping == "OFF" ]; then
   # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
   # for i in $(ls *R1_001.fastq); do
   		printf "%s threads selected" "$threads"
-  		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
+  		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
   	done
   else
   	for i in $(ls *$r1_tail); do
 
   		printf "No extra threads requested, default: 1"
-  		spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
+  		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
 
   	done
   fi

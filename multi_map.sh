@@ -88,6 +88,18 @@ INFER=$(pwd)
  # handling of bootstrapping
 if [ $bootstrapping == "ON" ]; then
 
+# handles whether user wants to use a starting tree or not
+  if [ $tree == "NONE" ]; then
+    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL
+
+    raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345
+
+    raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus
+
+    printf "Multiple taxa update of phylogenetic tree complete\n"
+
+  elif [ $tree != "NONE" ]; then
+
    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL
 
    raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345
@@ -96,13 +108,22 @@ if [ $bootstrapping == "ON" ]; then
 
    printf "Multiple taxa update of phylogenetic tree complete\n"
 
+ fi
+
 elif [ $bootstrapping == "OFF" ]; then
 
+  # handles whether user wants to use a starting tree or not
+  if [ $tree == "NONE" ]; then
 
- raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL
+    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL
 
+  elif [ $tree != "NONE" ]; then
 
- printf "Multiple taxa update of phylogenetic tree complete\n"
+    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL
+
+    printf "Multiple taxa update of phylogenetic tree complete\n"
+
+  fi
 
 else
   printf "Switch bootstrapping option to 'ON' or 'OFF' and re-run program."

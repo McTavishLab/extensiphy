@@ -6,13 +6,9 @@
 
 GON_PHYLING=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# source $GON_PHYLING/gon_phyling.cfg
-#repetitive=0
-
 source $1
 
-#if [ $bootstrapping == "ON" ]; then
-
+printf "ref_genome = $ref_genome"
 
 # go to the directory containing the reads
 # this is specified in the .cfg file
@@ -148,13 +144,15 @@ mkdir masked_genomes
 # else
 echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
+printf "$ref_genome is ref genome selection"
+
 # CHECKING FOR REFERENCE USE
 if [ $ref_genome == "NONE" ]; then
 
   parsnp -c -p $threads -d ./ -r !
 
 elif [ $ref_genome != "NONE" ]; then
-  parsnp -c -p 6 -d ./ -r $ref_genome
+  parsnp -c -p $threads -d ./ -r $ref_genome
 
 fi
 

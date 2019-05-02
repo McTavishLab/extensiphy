@@ -8,18 +8,37 @@ GON_PHYLING=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 source $1
 
+# WD=$(pwd)
+# while getopts ":b:d:g:r:c:1:2:h" opt; do
+#   case $opt in
+#     b) bootstrapping="$OPTARG"
+#     ;;
+#     d) read_dir="$OPTARG"
+# 	  ;;
+# 	  g) ref_genome="$OPTARG"
+#     ;;
+#     r) runs="$OPTARG"
+#     ;;
+#     c) threads="$OPTARG"
+#     ;;
+#     1) r1_tail="$OPTARG"
+#     ;;
+#     2) r2_tail="$OPTARG"
+#     ;;
+#     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
+#     exit
+#     ;;
+#     \?) echo "Invalid option -$OPTARG" >&2
+#     ;;
+#   esac
+# done
+
+
 printf "ref_genome = $ref_genome"
 
 # go to the directory containing the reads
 # this is specified in the .cfg file
 cd $read_dir
-
-# make a list of the original file names
-# these will replace the eventual names of the taxa for clarity
-# and to assist easy RF tree distance comparison
-# for i in $(ls *$r1_tail); do
-#   echo ">$i" >> "original_file_names.txt"
-# done
 
 # match files to eachother and enter them into the processing programs
 for i in $(ls *$r1_tail); do
@@ -30,8 +49,17 @@ printf "made it through changing into the read directory and fastqc"
 
 mkdir trimmed_reads
 
-for i in $(ls *$r1_tail); do
-   bbduk.sh in1="$i" in2="${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=trimmed_reads/"$i" out2=trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out
+trim_pwd=$(pwd)
+
+ls *$r1_tail | split -d -l $gon_phy_runs
+
+for j in $(ls x*); do
+  for i in $(cat $j); do
+
+# for i in $(ls *$r1_tail); do
+    bbduk.sh in1=$trim_pwd/"$i" in2=$trim_pwd/"${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=$trim_pwd/trimmed_reads/"$i" out2=$trim_pwd/trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out
+  done
+  wait
 done
 
 wait
@@ -60,27 +88,35 @@ fi
 
 mkdir spades_output
 
+ls *$r1_tail | split -d -l $gon_phy_runs
+
+for j in $(ls x*); do
+  for i in $(cat $j); do
+
 #cd ./spades_output
+    printf "Read processing complete. Beginning spades.py assembly"
+    if [[ $threads =~ ^-?[0-9]+$ ]]; then
 
-if [[ $threads =~ ^-?[0-9]+$ ]]; then
+    # for loop to make a seperate output directory for each set of reads
+    	# for i in $(ls *$r1_tail); do
 
-# for loop to make a seperate output directory for each set of reads
-	for i in $(ls *$r1_tail); do
-#	mkdir working"$i"
 
-# spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
-# for i in $(ls *R1_001.fastq); do
-		printf "%s threads selected" "$threads"
-		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
-	done
-else
-	for i in $(ls *$r1_tail); do
+    # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
+    # for i in $(ls *R1_001.fastq); do
+    		printf "%s threads selected" "$threads"
+    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
+    	# done
+    else
+    	# for i in $(ls *$r1_tail); do
 
-		printf "No extra threads requested, default: 1"
-		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
+    		printf "No extra threads requested, default: 1"
+    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
 
-	done
-fi
+    	# done
+    fi
+  done
+  wait
+done
 cd ./spades_output
 
 ### TODO ADD REPETITIVE SEQUENCE MASKING FUNCTION HERE

@@ -57,7 +57,7 @@ for j in $(ls x*); do
   for i in $(cat $j); do
 
 # for i in $(ls *$r1_tail); do
-    bbduk.sh in1=$trim_pwd/"$i" in2=$trim_pwd/"${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=$trim_pwd/trimmed_reads/"$i" out2=$trim_pwd/trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out
+    bbduk.sh in1=$trim_pwd/"$i" in2=$trim_pwd/"${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=$trim_pwd/trimmed_reads/"$i" out2=$trim_pwd/trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out &
   done
   wait
 done
@@ -104,13 +104,13 @@ for j in $(ls x*); do
     # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
     # for i in $(ls *R1_001.fastq); do
     		printf "%s threads selected" "$threads"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i
+    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i &
     	# done
     else
     	# for i in $(ls *$r1_tail); do
 
     		printf "No extra threads requested, default: 1"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i
+    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i &
 
     	# done
     fi
@@ -234,13 +234,13 @@ if [ $bootstrapping == "ON" ]; then
   if [[ $threads =~ ^-?[0-9]+$ ]]; then
 
   	printf "%s threads requested" "$threads"
-  	raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
+  	time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
 
     # raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 
   else
   	printf "no additional threads requested, using default"
-  	raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
+  	time raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
 
     # raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
   fi
@@ -253,13 +253,13 @@ elif [ $bootstrapping == "OFF" ]; then
     printf "%s threads requested" "$threads"
     # raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out -T $threads
 
-    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
+    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
 
   else
     printf "no additional threads requested, using default"
     # raxmlHPC-PTHREADS -f a -p 23456 -s ./combo.fas -x 23456 -# 100 -m GTRGAMMA -n core_genome_run.out
 
-    raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
+    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s ./combo.fas -p 12345 -n core_genome_run.out
   fi
 
 else

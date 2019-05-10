@@ -104,13 +104,13 @@ for j in $(ls x*); do
     # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
     # for i in $(ls *R1_001.fastq); do
     		printf "%s threads selected" "$threads"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i &
+    		time spades.py -n gon_phyling -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i &
     	# done
     else
     	# for i in $(ls *$r1_tail); do
 
     		printf "No extra threads requested, default: 1"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i &
+    		time spades.py -n gon_phyling -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i &
 
     	# done
     fi

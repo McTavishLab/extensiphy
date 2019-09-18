@@ -192,6 +192,35 @@ else
 fi
 
 
+
+
+
+
+
+
+
+
+#if [[ ! -z $(grep "-" $align) ]]; then
+#  printf "GAP FOUND\n"
+#  sed 's/-//g' <$align >$outdir/ref_nogap.fas
+#else
+#  printf "NO GAPS FOUND SO NO REMOVAL STEP\n";
+#fi
+
+#pull all the gaps from the aligned taxa bc mappers cannot cope.
+# sed 's/-//g' <$align >$outdir/ref_nogap.fas
+
+#workd=$(pwd)
+
+#cd $outdir
+
+#if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
+#  printf "GAP FOUND AFTER REMOVAL!\n"
+#else
+#  printf "NO GAPS FOUND AFTER REMOVAL\n";
+#fi
+
+
 cd $workd
 
 # TEST OF GAP REMOVAL FINISHED
@@ -203,7 +232,7 @@ cd $workd
 
 #this is a hack that is in both scripts!! need to be passed between
 
-echo "\nPAIRED ENDS"
+echo "PAIRED ENDS"
 base=$(basename $read_one $r1_tail)
 echo "basename is $base"
 #mkdir -p ${base}_outdir
@@ -232,16 +261,10 @@ echo "refname is $refnam"
 #
 #
 
-$PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
+# $PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
+$PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
 
-# grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $outdir/ref_nogap.fas |head -n-1 > $outdir/best_ref_uneven.fas
-# grep -Pzo '(?s)>'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
-
-# fold -w 80 $outdir/best_ref_uneven.fas > $outdir/best_ref.fas
-
-$PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
-# echo '>The best reference found in your alignment was '$refnam
-# echo '>mapping reads to '$refnam
+# $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 
 # bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
 echo "Time for bowtie2-build:"

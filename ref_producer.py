@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # program produces the best reference file from the original alignment
 # currently, this program just isolates the first sequence in the file
-
+# this handles if there are new line breaks and the sequence isn't read as a single line (some genome files)
 import os
 import argparse
 

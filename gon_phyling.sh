@@ -201,7 +201,30 @@ cd ./alignment_fixing
 
 # old parsnp processing command
 # $GON_PHYLING/parsnp_splitter.py parsnp.xmfa
+if [ $output_type == "LOCUS" ]; then
 
+	mkdir locus_msa_files
+
+       cat parsnp.xmfa | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
+	
+	cd ./locus_msa_files
+
+	echo pwd
+	cat ./locus_IDs.txt | split -d -l $threads
+
+	
+
+	for j in $(ls x*); do
+		for i in $(cat $j); do
+			$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i
+		done
+		wait
+	done
+	cd ..
+
+elif [ $output_type == "LOCI" ]; then
+	printf "YOU SELECTED TO NOT SPLIT THE LOCI INTO SEPERATE FILES\n"
+fi
 
 # new parallel parsnp processing
 # grab the number of taxa in the parsnp.xmfa output file

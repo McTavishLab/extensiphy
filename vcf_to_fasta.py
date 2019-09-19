@@ -31,7 +31,10 @@ def main():
                 pos = splitter[1:2]
                 ref = splitter[3:4]
                 alt = splitter[4:5]
-                
+                #print(pos)
+                #print(type(ref[0]))
+                #print(alt[0])
+                #print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 #if int(pos[0]) != pos_tracker + 1:
                 #    new_seq = new_seq + ("N" * (int(pos[0]) - 1))
 
@@ -42,18 +45,25 @@ def main():
                 # handles adding N's to the sequence when a gap is detected in the vcf
                 if int(pos[0]) != pos_tracker + 1:
                     new_seq = new_seq + ("N" * ((int(pos[0]) - pos_tracker) - 1))
-                    print(pos)
-                    print(pos_tracker)
+                    #print(pos)
+                    #print(pos_tracker)
                     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 if int(pos[0]) == pos_tracker:
                     print("INDEL FOUND AT POS ", pos[0])
                     indel_tracker = True
+
+                if indel_tracker == False and str(ref[0][0]) == "N":
+                    new_seq = new_seq + alt[0][0]
+                    print("N FOUND AT THIS POSITION")
+                    print(pos[0])
+                    print(alt[0])
+                    print("~~~~~~~~~")
                
-                if indel_tracker == False and alt[0] not in nucleotides:
-                    new_seq = new_seq + ref[0]
+                elif indel_tracker == False and alt[0] not in nucleotides:
+                    new_seq = new_seq + ref[0][0]
 
                 elif indel_tracker == False and alt[0] in nucleotides:
-                    new_seq = new_seq + alt[0]
+                    new_seq = new_seq + alt[0][0]
                 
                 elif indel_tracker == True:
                     print("INDEL FOUND, SKIPPING")

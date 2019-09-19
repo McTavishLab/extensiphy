@@ -8,6 +8,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--vcf_file')
     parser.add_argument('--out_file')
+    parser.add_argument('--seq_name')
     return parser.parse_args()
 
 
@@ -50,11 +51,14 @@ def main():
                 
                 # Handles adding N's if there are gaps in the vcf sequence
                 pos_tracker = int(pos[0])
-
-    print(new_seq)
-                #print(alt)
-                #print("~~~~~~~~~~~~~~~")
     
+    
+    output_file = open(args.out_file, "w")
+    output_file.write(">")
+    output_file.write(args.seq_name)
+    output_file.write("\n")
+    output_file.write(new_seq)
+    output_file.close()
 
 
 

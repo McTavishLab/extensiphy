@@ -288,53 +288,62 @@ echo '>samtools index passed'
 echo '>Time for mpileup step:'
 bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 
-$PHYCORDER/vcf_duplicate_dropper.py --vcf_file $outdir/best_sorted.vcf --out_file $outdir/dupes_removed_best_cns.vcf
 
-bcftools call -c $outdir/dupes_removed_best_cns.vcf -o $outdir/best_cns.vcf
 
-# bcftools call -c $outdir/best_sorted.vcf -o $outdir/best_cns.vcf
 
-vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq
+
+
+
+#$PHYCORDER/vcf_duplicate_dropper.py --vcf_file $outdir/best_sorted.vcf --out_file $outdir/dupes_removed_best_cns.vcf
+
+#bcftools call -c $outdir/dupes_removed_best_cns.vcf -o $outdir/best_cns.vcf
+
+#vcfutils.pl vcf2fq $outdir/best_cns.vcf >  $outdir/cns.fq
 
 echo '>samtools mpileup passed'
-seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
+#seqtk seq -a $outdir/cns.fq > $outdir/cns.fa
 echo '>seqtk passed'
 
-#automatic naming names it to the ref wich is confusing
-#sed -i -e "s/>/>${nam}${read_one}_/g" $outdir/cns.fa
-
 # make copy of cns.fa for later reference of best reference for mapping
-cp $outdir/cns.fa $outdir/cns_ref.fa
+#cp $outdir/cns.fa $outdir/cns_ref.fa
 
 # get name of reference in a variable to use for removal
-refname_cns=$(head -1 $outdir/cns.fa)
+#refname_cns=$(head -1 $outdir/cns.fa)
 
-sed -i -e "s/$refname_cns/>${base}/g" $outdir/cns.fa
-echo '>sed producing cns.fa passed'
+#sed -i -e "s/$refname_cns/>${base}/g" $outdir/cns.fa
+#echo '>sed producing cns.fa passed'
 
-sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns_ref.fa
-echo '>sed producing cns_ref.fa passed'
+#sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns_ref.fa
+#echo '>sed producing cns_ref.fa passed'
 
 # use vcffixer.py to find the N's in the cns.fa and replace with the real nucleotides
 # from the reads. This seems to be a strange bug from all versions of mpileup
-$PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa --out_file $outdir/cns_fixed.fa
+#$PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa --out_file $outdir/cns_fixed.fa
 
-# sed -i -e "s/>/>QUERY_${base}_ref_/g" $outdir/cns.fa
-# echo '>sed producing cns.fa passed'
+#refnam=$(head -n 1 $outdir/ref_nogap.fas)
 
-# TODO this might be a DANGEROUS way to handle this issue. think of alternate
-# cat $align | head -1 | cut -f1 | cut -c 2- > $outdir/${base}_outdir/best_ref_gaps_name.fas
 
-#refnam=$(cat $outdir/${base}_outdir/best_ref_gaps_name.fas | head -1)
 
- refnam=$(head -n 1 $outdir/ref_nogap.fas)
+
+
 
 #pull the aligned reference from the alignement
-#grep -Pzo '(?s)>'$refnam'.*?>' $align |head -n-1 > $outdir/${base}_outdir/best_ref_gaps.fas
-#grep -Pzo '(?s)'$refnam'.*?(>|\Z)' $align |head -n-1 > $outdir/best_ref_gaps.fas
 $PHYCORDER/ref_producer.py --align_file $align --out_file $outdir/best_ref_gaps.fas
 
 echo '>grep for refnam passed'
+
+
+
+
+
+
+
+$PHYCORDER/vcf_to_fasta.py --vcf_file $outdir/best_sorted.vcf --seq_name $base --out_file $outdir/cns_fixed.fa
+
+
+
+
+
 
 printf ">beginning aligned consensus processing"
 #python

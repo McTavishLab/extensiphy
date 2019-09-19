@@ -20,6 +20,7 @@ def main():
     accepted_degenerate_bases = set("N") # this needs to be expanded
     new_seq = ''
     pos_tracker = 0
+    indel_tracker = False
     with open(args.vcf_file) as vcf:
         for line_num, line in enumerate(vcf):
 
@@ -35,22 +36,31 @@ def main():
                 #    new_seq = new_seq + ("N" * (int(pos[0]) - 1))
 
                 # Handles adding N's to the sequence if there are missing nucleotides from the start of the vcf
-                if len(new_seq) == 0 and pos > 1:
-                    new_seq = new_seq + ('N' * (int(pos[0]) - 1))
+                #if len(new_seq) == 0 and pos > 1:
+                #    new_seq = new_seq + ('N' * (int(pos[0]) - 1))
 
                 # handles adding N's to the sequence when a gap is detected in the vcf
                 if int(pos[0]) != pos_tracker + 1:
-                    new_seq = new_seq + ("N" * (int(pos[0]) - pos_tracker))
-                
-                # Handles adding the correct ref or alt nucleotide to the sequence
-                if alt[0] not in nucleotides:
+                    new_seq = new_seq + ("N" * ((int(pos[0]) - pos_tracker) - 1))
+                    print(pos)
+                    print(pos_tracker)
+                    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                if int(pos[0]) == pos_tracker:
+                    print("INDEL FOUND AT POS ", pos[0])
+                    indel_tracker = True
+               
+                if indel_tracker == False and alt[0] not in nucleotides:
                     new_seq = new_seq + ref[0]
 
-                elif alt[0] in nucleotides:
+                elif indel_tracker == False and alt[0] in nucleotides:
                     new_seq = new_seq + alt[0]
                 
+                elif indel_tracker == True:
+                    print("INDEL FOUND, SKIPPING")
+
                 # Handles adding N's if there are gaps in the vcf sequence
                 pos_tracker = int(pos[0])
+                indel_tracker = False
     
     
     output_file = open(args.out_file, "w")

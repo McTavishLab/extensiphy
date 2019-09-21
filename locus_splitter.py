@@ -9,6 +9,7 @@ def parse_args():
     parser.add_argument('--align_file')
     parser.add_argument('--out_file')
     parser.add_argument('--locus_id')
+    parser.add_argument('--locus_size')
     return parser.parse_args()
 
 
@@ -41,9 +42,30 @@ def main():
         locus_chunk = re.sub(locus_num_grabber, ">" + name , locus_chunk)
     locus_chunk = re.sub("=", "", locus_chunk)
     locus_chunk = re.sub("> ", ">", locus_chunk)
-    locus_file = open(args.out_file, "w")
-    locus_file.write(locus_chunk)
-    locus_file.close()
+    #locus_file = open(args.out_file, "w")
+    #locus_file.write(locus_chunk)
+    #locus_file.close()
+    
+    seq_len_count = 0
+    split_taxa = locus_chunk.split(">")
+    for item in split_taxa:
+        split_seq_and_name = item.split("\n", 1)
+        seq_len = len(str(split_seq_and_name[1:2]))
+        #for nuc in seq_len:
+        #    print(nuc)
+        if seq_len >= seq_len_count:
+            seq_len_count = seq_len
+    print(seq_len_count)
+    if int(seq_len_count) >= int(args.locus_size):
+        locus_file = open(args.out_file, "w")
+        locus_file.write(locus_chunk)
+        locus_file.close()
+
+    elif int(seq_len_count) < int(args.locus_size):
+        print("locus", args.locus_id, "was not long enough for inclusion.\n")
+
+
+
     alignment.close()
 
 

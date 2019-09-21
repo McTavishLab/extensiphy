@@ -131,6 +131,17 @@ else
   printf "Switch bootstrapping option to 'ON' or 'OFF' and re-run program."
 
 fi
+
+
+# handling of multiple single locus MSA files as input
+# this will be expanded as HGT detection is added
+# for now, it serves as a SNP check
+if [ $align_type="LOCUS_FASTA" ]; then
+	echo "Multiple single locus MSA file handling selected"
+elif [ $align_type="LOCI_FASTA" ]; then
+	echo "Single concatenated loci MSA file handling selected"
+fi
+
    # printf "Moving run logs into phycorder-dev-logs"
    # cd ..
    #

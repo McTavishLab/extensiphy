@@ -185,7 +185,7 @@ printf "$ref_genome is ref genome selection"
 # CHECKING FOR REFERENCE USE
 if [ $ref_genome == "NONE" ]; then
 
-  parsnp -c -p $threads -d ./ -r !
+  parsnp -c -p $threads -d ./ -r ! 
 
 elif [ $ref_genome != "NONE" ]; then
   parsnp -c -p $threads -d ./ -r $ref_genome
@@ -216,10 +216,14 @@ if [ $output_type == "LOCUS" ]; then
 
 	for j in $(ls x*); do
 		for i in $(cat $j); do
-			$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i
+			#$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+			$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 		done
 		wait
 	done
+
+	# TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE	
+
 	cd ..
 
 elif [ $output_type == "LOCI" ]; then

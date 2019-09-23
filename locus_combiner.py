@@ -62,23 +62,21 @@ def main():
                     if name_check in seq_dir:
                         seq_dir[name_check].append(seq_strip)
 
+            open_file.close()
 
-
-                    #seq_strip = seq_findall.strip(" ")
-                    #print(seq_strip)
-                    #if name_check in seq_dir:
-                    #    seq_dir[name_check]
-                
-
-
-            #if file_count == 1:
-            #    for name in name_findall:
-            #        newline_name_strip = name.strip("\n")
-            #        seq_dir[newline_name_strip] = ''
                     
+    concat_file = open(args.out_file, 'w')
+    #print(seq_dir)
+    for key, value in seq_dir.items():
+        #print(key)
+        seq = ''.join(value)
+        if len(key) > 1:
+            concat_file.write(key)
+            concat_file.write("\n")
+            concat_file.write(seq)
+            concat_file.write("\n")
 
-    print(seq_dir)
-            
+    concat_file.close()
 
 
 

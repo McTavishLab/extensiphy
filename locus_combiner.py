@@ -33,15 +33,41 @@ def main():
             if file_count == 1:
                 for name in name_findall:
                     newline_name_strip = name.strip("\n")
-                    seq_dir[newline_name_strip] = ''
-            #for name in name_findall:
+                    seq_dir[newline_name_strip] = []
                     seq_count+=1
                     seq_finder = name + "(.+?)\n>"
                     seq_finder_compiled = re.compile(seq_finder, re.S)
                     seq_findall = re.findall(seq_finder_compiled, read_file)
                     name_check = name.strip("\n")
+                    seq_findall = ' '.join(seq_findall)
+                    seq_findall = seq_findall.split()
+                    #print(seq_findall)
+                    seq_strip = ''.join(seq_findall)
                     if name_check in seq_dir:
-                        seq_dir[name_check] = '' + str(seq_findall)
+                        seq_dir[name_check].append(seq_strip)
+
+            elif file_count > 1:
+                for name in name_findall:
+                    #newline_name_strip = name.strip("\n")
+                    #seq_dir[newline_name_strip] = []
+                    seq_count+=1
+                    seq_finder = name + "(.+?)\n>"
+                    seq_finder_compiled = re.compile(seq_finder, re.S)
+                    seq_findall = re.findall(seq_finder_compiled, read_file)
+                    name_check = name.strip("\n")
+                    seq_findall = ' '.join(seq_findall)
+                    seq_findall = seq_findall.split()
+                    #print(seq_findall)
+                    seq_strip = ''.join(seq_findall)
+                    if name_check in seq_dir:
+                        seq_dir[name_check].append(seq_strip)
+
+
+
+                    #seq_strip = seq_findall.strip(" ")
+                    #print(seq_strip)
+                    #if name_check in seq_dir:
+                    #    seq_dir[name_check]
                 
 
 

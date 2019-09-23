@@ -36,7 +36,7 @@ def main():
                     seq_dir[newline_name_strip] = ''
             #for name in name_findall:
                     seq_count+=1
-                    seq_finder = name + "(.+)\n>"
+                    seq_finder = name + "(.+?)\n>"
                     seq_finder_compiled = re.compile(seq_finder, re.S)
                     seq_findall = re.findall(seq_finder_compiled, read_file)
                     name_check = name.strip("\n")

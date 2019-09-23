@@ -20,13 +20,38 @@ def main():
 
     name_finder = "(>.*\n)"
     name_finder_compiled = re.compile(name_finder)
-    
+   
+    seq_dir = {}
+    file_count = 0
+    seq_count = 0
     for file in msa_list:
         if file.endswith(args.suffix):
+            file_count+=1
             open_file = open(args.msa_folder + file, "r")
             read_file = open_file.read()
             name_findall = re.findall(name_finder, read_file)
-            print(name_findall)
+            if file_count == 1:
+                for name in name_findall:
+                    newline_name_strip = name.strip("\n")
+                    seq_dir[newline_name_strip] = ''
+            #for name in name_findall:
+                    seq_count+=1
+                    seq_finder = name + "(.+)\n>"
+                    seq_finder_compiled = re.compile(seq_finder, re.S)
+                    seq_findall = re.findall(seq_finder_compiled, read_file)
+                    name_check = name.strip("\n")
+                    if name_check in seq_dir:
+                        seq_dir[name_check] = '' + str(seq_findall)
+                
+
+
+            #if file_count == 1:
+            #    for name in name_findall:
+            #        newline_name_strip = name.strip("\n")
+            #        seq_dir[newline_name_strip] = ''
+                    
+
+    print(seq_dir)
             
 
 

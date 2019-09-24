@@ -59,10 +59,10 @@ def main():
                     print(alt[0])
                     print("~~~~~~~~~")
                
-                elif indel_tracker == False and alt[0] not in nucleotides:
+                elif indel_tracker == False and alt[0][0] not in nucleotides:
                     new_seq = new_seq + ref[0][0]
 
-                elif indel_tracker == False and alt[0] in nucleotides:
+                elif indel_tracker == False and alt[0][0] in nucleotides:
                     new_seq = new_seq + alt[0][0]
                 
                 elif indel_tracker == True:

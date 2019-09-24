@@ -59,6 +59,8 @@ def main():
     if int(seq_len_count) >= int(args.locus_size):
         locus_file = open(args.out_file, "w")
         locus_file.write(locus_chunk)
+        locus_file.write("\n")
+        locus_file.write(">")
         locus_file.close()
 
     elif int(seq_len_count) < int(args.locus_size):

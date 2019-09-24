@@ -216,19 +216,21 @@ if [ $output_type == "LOCUS" ]; then
 
 	for j in $(ls x*); do
 		for i in $(cat $j); do
-			#$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
-			$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+			$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+			#$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 		done
 		wait
 	done
 
-	# TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE	
+	# TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
+
+	$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas	
 
 	cd ..
 
 elif [ $output_type == "LOCI" ]; then
 	printf "YOU SELECTED TO NOT SPLIT THE LOCI INTO SEPERATE FILES\n"
-fi
+
 
 # new parallel parsnp processing
 # grab the number of taxa in the parsnp.xmfa output file
@@ -254,6 +256,11 @@ sed -i '1d' combo.fas
 
 # trim down the taxa names
 sed -i 's/_[^_]*//2g' combo.fas
+
+
+
+fi
+
 
 if [ $bootstrapping == "ON" ]; then
 

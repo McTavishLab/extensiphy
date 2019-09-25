@@ -38,6 +38,7 @@ for i in $(cat $j); do
     echo $i
     echo ${base}${r2_tail}
     echo $threads
+    echo $align_type
     echo "${base}_output_dir"
     echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
     echo "Time for $j Phycorder run:"
@@ -136,9 +137,19 @@ fi
 # handling of multiple single locus MSA files as input
 # this will be expanded as HGT detection is added
 # for now, it serves as a SNP check
-if [ $align_type == "LOCUS_FASTA" ]; then
+if [ $align_type == "LOCUS" ]; then
+
+	ls $INFER/*.fas | split -d -l $phycorder_runs
+
+	for j in $(ls x*); do
+		for i in $(cat $j); do
+			$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER --position_dict_file $loci_positions --concatenated_fasta $i 
+		done
+		wait
+	done
+
 	echo "Multiple single locus MSA file handling selected"
-elif [ $align_type != "LOCI_FASTA" ]; then
+elif [ $align_type != "LOCI" ]; then
 	echo "Single concatenated loci MSA file handling selected"
 fi
 

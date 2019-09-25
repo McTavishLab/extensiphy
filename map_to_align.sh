@@ -100,6 +100,8 @@ while getopts ":a:t:p:e:s:o:n:r:c:1:2:h" opt; do
     ;;
     2) r2_tail="$OPTARG"
     ;;
+    m) align_type="$OPTARG"
+    ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
     ;;
@@ -351,6 +353,16 @@ printf ">beginning aligned consensus processing"
 $PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
 
 
+#if [ $align_type == "LOCUS" ]; then
+
+#	printf "beginning accessing the locus locations to create individual locus fasta files for sequences constructed by phycorder\n"
+#	$PHYCORDER/locus_position_identifier.py --out_file_dir $outdir --position_dict_file $loci_positions --concatenated_fasta $outdir/${base}_align.fas
+
+#elif [ $align_type == "LOCI" ]; then
+
+#	printf "Passing alignment files to RAxML for Phylogenetic inference.\n"
+
+#fi
 # cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
 
 # cd $outdir

@@ -49,24 +49,6 @@ def main():
     print(loci_starts)
 
 
-    
-
-
-    
-    #for seq_number, length_and_loci_name  in pos_dict.items():
-        
-    #    if loci_count == 0:
-            
-    #        loci_starts.append(start_pos)
-    #    for leng, name in length_and_loci_name.items():
-            
-    #        start_pos = start_pos + int(leng)
-    #        loci_starts.append(start_pos)
-    #    loci_count+=1
-        #print(loci_count)
-
-    #print(loci_starts)
-
     second_loci_count = 0
     for num in loci_starts:
         second_loci_count+=1

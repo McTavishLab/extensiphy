@@ -9,7 +9,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--msa_folder')
     parser.add_argument('--out_file')
-    parser.add_argument('position_dict_file')
+    parser.add_argument('--position_dict_file')
     parser.add_argument('--suffix')
     return parser.parse_args()
 

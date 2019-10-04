@@ -14,10 +14,64 @@ PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 # for easy use of multiple config num_files
 source $1
 
+printf "###################################################\n"
+printf "$align_type\n"
+printf "$align\n"
+printf "$tree\n"
+printf "$read_dir\n"
+printf "$phycorder_runs\n"
+printf "$threads\n"
+printf "$r1_tail\n"
+printf "$r2_tail\n"
+printf "$outdir\n"
+printf "#################################################\n"
+
+
 mkdir -p $outdir
 
-
 cd $outdir
+
+if [ $align_type == "PARSNP_OUTPUT" ]; then
+
+	mkdir locus_msa_files
+
+	cat $align | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
+       	#cat parsnp.xmfa | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
+
+        cd ./locus_msa_files
+
+        echo pwd
+        cat ./locus_IDs.txt | split -d -l $threads
+
+
+
+        for j in $(ls x*); do
+                for i in $(cat $j); do
+			$PHYCORDER/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+                        #$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+                done
+                wait
+        done
+
+        # TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
+
+        $PHYCORDER/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions
+
+	align=$( realpath ../combo.fas)
+
+	printf "New alignment file produced\n"
+	printf "$align"
+
+	cd ..
+
+elif [ $align_type == "CONCAT_MSA" ]; then
+
+	printf "Concatenated Multiple Sequence Alignment selected as input. Assuming that documentation has been read\n"
+	printf "Assuming loci are all longer than 1000bp. Continuing with rapid updating\n"
+
+fi
+
+# cd $outdir
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 

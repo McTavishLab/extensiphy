@@ -31,7 +31,7 @@ mkdir -p $outdir
 
 cd $outdir
 
-if [ $align_type == "PARSNP_OUTPUT" ]; then
+if [ $align_type == "PARSNP_XMFA" ]; then
 
 	mkdir locus_msa_files
 
@@ -191,7 +191,7 @@ fi
 # handling of multiple single locus MSA files as input
 # this will be expanded as HGT detection is added
 # for now, it serves as a SNP check
-if [ $align_type == "LOCUS" ]; then
+if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
 	ls $INFER/*.fas | split -d -l $phycorder_runs
 
@@ -203,8 +203,11 @@ if [ $align_type == "LOCUS" ]; then
 	done
 
 	echo "Multiple single locus MSA file handling selected"
-elif [ $align_type != "LOCI" ]; then
+elif [ $output_type == "CONCAT_MSA" ]; then
 	echo "Single concatenated loci MSA file handling selected"
+
+
+
 fi
 
    # printf "Moving run logs into phycorder-dev-logs"

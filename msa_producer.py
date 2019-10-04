@@ -26,11 +26,15 @@ def main():
         #print(dir_of_aligns)
 
     dict_of_names_and_seqs = {}
-
+    dict_of_loci_and_len_and_order = {}
+    
+    locus_count = 0
+    locus_len = 0
     name_regex = "(>.+)\n"
     name_regex_compile = re.compile(name_regex)
 
     for file_select in os.listdir(dir_of_aligns):
+        #dict_of_loci_and_len_and_order[locus_count] = 
         full_path_to_file = dir_of_aligns + file_select
         open_file = open(full_path_to_file,'r')
         read_file = open_file.read()
@@ -47,9 +51,14 @@ def main():
                 split_name_and_seq = seq_search.group().split("\n", 1)
                 #print(split_name_and_seq)
                 contig_seq = split_name_and_seq[1].replace("\n", "")
+                locus_len = len(contig_seq)
+                #dict_of_loci_names_and_len[file_select] = locus_len
                 #print(contig_seq)
                 dict_of_names_and_seqs[name].append(contig_seq)
-        
+        loci_info_dict = {}
+        loci_info_dict[file_select] = locus_len
+        dict_of_loci_and_len_and_order[locus_count] = loci_info_dict
+        locus_count+=1
     output_file = open(args.out_file,'w')
     for name, seqs in dict_of_names_and_seqs.items():
         concat_seqs = ''.join(seqs)
@@ -59,6 +68,7 @@ def main():
         output_file.write("\n")
     output_file.close()
     
+    print(dict_of_loci_and_len_and_order)
     #print(dict_of_names_and_seqs)
 
 

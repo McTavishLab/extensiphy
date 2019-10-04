@@ -25,8 +25,19 @@ def main():
         dir_of_aligns = dir_of_aligns + "/"
         #print(dir_of_aligns)
 
-    for file in os.listdir(dir_of_aligns):
-        print(file)
+    dict_of_names_and_seqs = {}
+
+    name_regex = "(>.+)\n"
+    name_regex_compile = re.compile(name_regex)
+
+    for file_select in os.listdir(dir_of_aligns):
+        full_path_to_file = dir_of_aligns + file_select
+        open_file = open(full_path_to_file,'r')
+        read_file = open_file.read()
+        get_names = re.findall(name_regex_compile, read_file)
+        if get_names:
+            print(get_names)
+        
 
 
 

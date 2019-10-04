@@ -39,13 +39,29 @@ def main():
             for name in get_names:
                 if name not in dict_of_names_and_seqs:
                     dict_of_names_and_seqs[name] = []
-
+                seq_grabber = name + "\n(\w|\n)+"
+                seq_grabber_compile = re.compile(seq_grabber, re.S)
+                seq_search = re.search(seq_grabber, read_file)
+                #print(seq_search.group())
+                #print("################################")
+                split_name_and_seq = seq_search.group().split("\n", 1)
+                #print(split_name_and_seq)
+                contig_seq = split_name_and_seq[1].replace("\n", "")
+                #print(contig_seq)
+                dict_of_names_and_seqs[name].append(contig_seq)
+                
+    
+    
     print(dict_of_names_and_seqs)
 
     # TODO NOW START ADDING SEQUENCES TO THE LISTS ATTACHED TO THE NAMES IN THE DICT
     # ADDITIONALLY, KEEP TRACK OF LENGTHS AND OUTPUT LENGTHS AND ORDER OF SEQUENCES AS THEY ARE ADDED TO THE FINAL MSA
         
-
+    #for name, seq in dict_of_names_and_seqs.items():
+    #    seq_grabber = name + "\n(\w|\n)+"
+    #    seq_grabber_compile = re.compile(seq_grabber, re.S)
+    #    seq_search = re.search(seq_grabber, read_file)
+    #    print(seq_search.group())
 
 
 if __name__ == '__main__':

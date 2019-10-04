@@ -36,7 +36,14 @@ def main():
         read_file = open_file.read()
         get_names = re.findall(name_regex_compile, read_file)
         if get_names:
-            print(get_names)
+            for name in get_names:
+                if name not in dict_of_names_and_seqs:
+                    dict_of_names_and_seqs[name] = []
+
+    print(dict_of_names_and_seqs)
+
+    # TODO NOW START ADDING SEQUENCES TO THE LISTS ATTACHED TO THE NAMES IN THE DICT
+    # ADDITIONALLY, KEEP TRACK OF LENGTHS AND OUTPUT LENGTHS AND ORDER OF SEQUENCES AS THEY ARE ADDED TO THE FINAL MSA
         
 
 

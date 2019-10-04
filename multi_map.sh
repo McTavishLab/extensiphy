@@ -64,6 +64,15 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
 	cd ..
 
+elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
+	
+	$PHYCORDER/msa_producer.py --align_dir $align --out_file $PHYCORDER/$outdir/combo.fas
+	printf "$outdir\n"
+	printf "$PHYCORDER\n"	
+
+	align=$( realpath $PHYCORDER/$outdir/combo.fas )
+
+
 elif [ $align_type == "CONCAT_MSA" ]; then
 
 	printf "Concatenated Multiple Sequence Alignment selected as input. Assuming that documentation has been read\n"

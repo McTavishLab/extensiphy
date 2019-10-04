@@ -43,22 +43,23 @@ def main():
             for name in get_names:
                 if name not in dict_of_names_and_seqs:
                     dict_of_names_and_seqs[name] = []
+
+                # TODO: HANDLE HAVING GAPS IN THE ALIGNMENT
+                # CURRENTLY ONLY TAKES NUCLEOTIDES AND DEGENERATE BASES
+
                 seq_grabber = name + "\n(\w|\n)+"
                 seq_grabber_compile = re.compile(seq_grabber, re.S)
                 seq_search = re.search(seq_grabber, read_file)
-                #print(seq_search.group())
-                #print("################################")
                 split_name_and_seq = seq_search.group().split("\n", 1)
-                #print(split_name_and_seq)
                 contig_seq = split_name_and_seq[1].replace("\n", "")
                 locus_len = len(contig_seq)
-                #dict_of_loci_names_and_len[file_select] = locus_len
-                #print(contig_seq)
                 dict_of_names_and_seqs[name].append(contig_seq)
+
         loci_info_dict = {}
         loci_info_dict[file_select] = locus_len
         dict_of_loci_and_len_and_order[locus_count] = loci_info_dict
         locus_count+=1
+
     output_file = open(args.out_file,'w')
     for name, seqs in dict_of_names_and_seqs.items():
         concat_seqs = ''.join(seqs)
@@ -71,15 +72,6 @@ def main():
     print(dict_of_loci_and_len_and_order)
     #print(dict_of_names_and_seqs)
 
-
-    # TODO NOW START ADDING SEQUENCES TO THE LISTS ATTACHED TO THE NAMES IN THE DICT
-    # ADDITIONALLY, KEEP TRACK OF LENGTHS AND OUTPUT LENGTHS AND ORDER OF SEQUENCES AS THEY ARE ADDED TO THE FINAL MSA
-        
-    #for name, seq in dict_of_names_and_seqs.items():
-    #    seq_grabber = name + "\n(\w|\n)+"
-    #    seq_grabber_compile = re.compile(seq_grabber, re.S)
-    #    seq_search = re.search(seq_grabber, read_file)
-    #    print(seq_search.group())
 
 
 if __name__ == '__main__':

@@ -49,10 +49,18 @@ def main():
                 contig_seq = split_name_and_seq[1].replace("\n", "")
                 #print(contig_seq)
                 dict_of_names_and_seqs[name].append(contig_seq)
-                
+        
+    output_file = open(args.out_file,'w')
+    for name, seqs in dict_of_names_and_seqs.items():
+        concat_seqs = ''.join(seqs)
+        output_file.write(name)
+        output_file.write("\n")
+        output_file.write(concat_seqs)
+        output_file.write("\n")
+    output_file.close()
     
-    
-    print(dict_of_names_and_seqs)
+    #print(dict_of_names_and_seqs)
+
 
     # TODO NOW START ADDING SEQUENCES TO THE LISTS ATTACHED TO THE NAMES IN THE DICT
     # ADDITIONALLY, KEEP TRACK OF LENGTHS AND OUTPUT LENGTHS AND ORDER OF SEQUENCES AS THEY ARE ADDED TO THE FINAL MSA

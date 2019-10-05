@@ -53,7 +53,11 @@ def main():
                 split_name_and_seq = seq_search.group().split("\n", 1)
                 contig_seq = split_name_and_seq[1].replace("\n", "")
                 locus_len = len(contig_seq)
-                dict_of_names_and_seqs[name].append(contig_seq)
+                
+                # check if locus is larger than the cutoff needed for read mapping
+                # if so, add it to dict
+                if locus_len > int(args.len_filter):
+                    dict_of_names_and_seqs[name].append(contig_seq)
 
         loci_info_dict = {}
         loci_info_dict[file_select] = locus_len

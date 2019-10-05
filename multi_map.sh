@@ -66,7 +66,7 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 	
-	$PHYCORDER/msa_producer.py --align_dir $align --out_file $PHYCORDER/$outdir/combo.fas
+	$PHYCORDER/msa_producer.py --align_dir $align --len_filter 1000 --out_file $PHYCORDER/$outdir/combo.fas
 	printf "$outdir\n"
 	printf "$PHYCORDER\n"	
 

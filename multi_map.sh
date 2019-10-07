@@ -145,7 +145,7 @@ cd combine_and_infer
 # strip the unnecessary information from the taxa names in the alignment.
 # this assumes you've used the renaming tool to rename all of the reads for this experiment
 
-sed -i 's/_$//g' extended.aln
+sed -i -e 's/_[^_]*//2g' extended.aln
 
 INFER=$(pwd)
 

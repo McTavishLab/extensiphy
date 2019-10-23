@@ -3,12 +3,15 @@
 import os
 import argparse
 import re
+import json
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--align_dir')
     parser.add_argument('--out_file')
     parser.add_argument('--len_filter')
+    parser.add_argument('--position_dict_file')
     return parser.parse_args()
 
 def main():
@@ -75,6 +78,9 @@ def main():
     
     print(dict_of_loci_and_len_and_order)
     #print(dict_of_names_and_seqs)
+
+    with open(args.position_dict_file, 'w') as dict_output:
+        json.dump(dict_of_loci_and_len_and_order, dict_output)
 
 
 

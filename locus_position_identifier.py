@@ -42,7 +42,8 @@ def main():
 
     for i in range(0, loci_count):
         seq_info = pos_dict[str(i)]
-        seq_end = list(seq_info.keys())[0]
+        print(seq_info)
+        seq_end = list(seq_info.values())[0]
         print(seq_end)
         start_pos = start_pos + int(seq_end)
         loci_starts.append(start_pos)
@@ -60,7 +61,7 @@ def main():
             
             seq_info = pos_dict[str(second_loci_count - 1)]
             print(seq_info)
-            loci_name = list(seq_info.values())[0]
+            loci_name = list(seq_info.keys())[0]
             print(loci_name)
             output = open(str(args.out_file_dir) + '/' + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])
@@ -74,7 +75,7 @@ def main():
             #print(second_loci_count)
             seq_info = pos_dict[str(second_loci_count - 1)]
             print(seq_info)
-            loci_name = list(seq_info.values())[0]
+            loci_name = list(seq_info.keys())[0]
             print(loci_name)
             output = open(str(args.out_file_dir) + "/" + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])

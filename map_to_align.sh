@@ -264,7 +264,7 @@ echo "refname is $refnam"
 #
 
 # $PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
-$PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
+$PHYCORDER/ref_producer.py -s --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
 
 # $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 
@@ -330,7 +330,7 @@ refnam=$(head -n 1 $outdir/ref_nogap.fas)
 
 
 #pull the aligned reference from the alignement
-$PHYCORDER/ref_producer.py --align_file $align --out_file $outdir/best_ref_gaps.fas
+$PHYCORDER/ref_producer.py -s --align_file $align --out_file $outdir/best_ref_gaps.fas
 
 echo '>grep for refnam passed'
 

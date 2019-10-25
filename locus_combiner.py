@@ -28,10 +28,10 @@ def main():
     loci_positions_dir = {}
     file_count = 0
     seq_count = 0
-    for file in msa_list:
-        if file.endswith(args.suffix):
+    for file_name in msa_list:
+        if file_name.endswith(args.suffix):
             file_count+=1
-            open_file = open(args.msa_folder + file, "r")
+            open_file = open(args.msa_folder + file_name, "r")
             read_file = open_file.read()
             name_findall = re.findall(name_finder, read_file)
             if file_count == 1:
@@ -52,7 +52,7 @@ def main():
                         seq_dir[name_check].append(seq_strip)
                         loci_len = len(seq_strip)
                         if loci_len > 0:
-                            taxa_positions_dir[loci_len] = file
+                            taxa_positions_dir[loci_len] = file_name
             
             elif file_count > 1:
                 for name in name_findall:
@@ -71,18 +71,23 @@ def main():
                         seq_dir[name_check].append(seq_strip)
                         loci_len = len(seq_strip)
                         if loci_len > 0:
-                            taxa_positions_dir[loci_len] = file
+                            taxa_positions_dir[loci_len] = file_name
             open_file.close()
 
     print(taxa_positions_dir)                    
     concat_file = open(args.out_file, 'w')
     ordered_length_dir = {}
+    #print(seq_dir)
     for key, value in seq_dir.items():
         if len(key) > 1:
-            
+            print(key)
+            print(value)
             loci_count = 0
             for sequence in value:
                 seq_len = len(sequence)
+                #print(ordered_length_dir)
+                #ordered_length_dir[0] = 10
+                #print(ordered_length_dir)
                 ordered_length_dir[loci_count] = {seq_len : taxa_positions_dir[seq_len]}
                 
                 loci_count+=1

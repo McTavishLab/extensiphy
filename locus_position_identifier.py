@@ -28,6 +28,13 @@ def main():
     pos_dict = json.loads(read_dict)
     print(pos_dict)
 
+    #seq_file = open(args.concatenated_fasta, 'r')
+    #read_seq = seq_file.read()
+    #split_file = read_seq.split('>')
+
+    #print(split_file)
+    
+    
     seq_file = open(args.concatenated_fasta, 'r')
     read_seq = seq_file.read()
     split_file = read_seq.split('\n')
@@ -43,7 +50,7 @@ def main():
     for i in range(0, loci_count):
         seq_info = pos_dict[str(i)]
         print(seq_info)
-        seq_end = list(seq_info.values())[0]
+        seq_end = list(seq_info.keys())[0]
         print(seq_end)
         start_pos = start_pos + int(seq_end)
         loci_starts.append(start_pos)
@@ -61,12 +68,13 @@ def main():
             
             seq_info = pos_dict[str(second_loci_count - 1)]
             print(seq_info)
-            loci_name = list(seq_info.keys())[0]
+            loci_name = list(seq_info.values())[0]
             print(loci_name)
             output = open(str(args.out_file_dir) + '/' + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])
             output.write("\n")
             output.write(seq)
+            print("SECOND_LOCI_COUNT ====== LOCI_COUNT")
         
         elif second_loci_count < loci_count:
             seq = split_file[1][num:loci_starts[second_loci_count]]
@@ -75,8 +83,9 @@ def main():
             #print(second_loci_count)
             seq_info = pos_dict[str(second_loci_count - 1)]
             print(seq_info)
-            loci_name = list(seq_info.keys())[0]
+            loci_name = list(seq_info.values())[0]
             print(loci_name)
+            print("SECOND LOCI COUNT <<<<< LOCI COUNT")
             output = open(str(args.out_file_dir) + "/" + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])
             output.write("\n")

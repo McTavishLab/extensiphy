@@ -82,6 +82,49 @@ fi
 
 # cd $outdir
 
+
+###########################
+printf "align == $align\n"
+printf "phycorder dir == $PHYCORDER\n"
+#new_out=$(realpath $outdir)
+workd=$(pwd)
+#printf "new outdir == $new_out\n"
+
+if [[ ! -z $(grep "-" $align) ]]; then
+  printf "GAP FOUND BEFORE REMOVAL"
+else
+  printf "NO GAPS FOUND BEFORE REMOVAL";
+fi
+
+#printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
+
+printf "current wd\n"
+pwd
+#touch $workd/waffle.txt
+#pull all the gaps from the aligned taxa bc mappers cannot cope.
+sed 's/-//g' <$align > $workd/ref_nogap.fas
+
+#workd=$(pwd)
+
+#cd $outdir
+
+if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
+  printf "GAP FOUND AFTER REMOVAL!"
+else
+  printf "NO GAPS FOUND AFTER REMOVAL";
+fi
+
+$PHYCORDER/ref_producer.py -s --align_file $align --out_file $workd/best_ref_gaps.fas
+
+$PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
+
+hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hisatbuild.log
+
+
+#########################
+
+
+
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 
 ls ${read_dir}/*$r1_tail | split -a 10 -l $phycorder_runs
@@ -96,6 +139,7 @@ for i in $(cat $j); do
     echo $base
     echo $i
     echo $PHYCORDER
+    echo "$workd ####################################################################################################\n"
     echo $align
     echo $tree x
     echo $i
@@ -103,9 +147,9 @@ for i in $(cat $j); do
     echo $threads
     echo $align_type
     echo "${base}_output_dir"
-    echo "$PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
+    echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
     echo "Time for $j Phycorder run:"
-    time $PHYCORDER/map_to_align.sh -a $align -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &
+    time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir > parallel-$base-dev.log &
     #wait
     printf "adding new map_to_align run"
 done

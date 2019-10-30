@@ -74,7 +74,7 @@ threads=0
 
 
 WD=$(pwd)
-while getopts ":a:t:p:e:s:o:n:r:c:1:2:h" opt; do
+while getopts ":a:t:p:e:s:o:n:r:c:1:2:m:d:g:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -101,6 +101,10 @@ while getopts ":a:t:p:e:s:o:n:r:c:1:2:h" opt; do
     2) r2_tail="$OPTARG"
     ;;
     m) align_type="$OPTARG"
+    ;;
+    d) master_dir="$OPTARG"
+    ;;
+    g) gap_align="$OPTARG"
     ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
@@ -160,7 +164,7 @@ assert ()                 #  If condition false,
 }
 #######################################################################
 
-
+printf "master dir == %s\n" "$master_dir"
 printf "tail_1 is %s\n" "$r1_tail"
 printf "tail_2 is %s\n" "$r2_tail"
 printf "Argument out is %s\n" "$outdir"
@@ -174,24 +178,24 @@ echo 'Performing full mapping of reads to all sequences in alignment'
 # TEST:
 # check file for gaps, then remove gaps and check that the number of gaps == 0
 
-if [[ ! -z $(grep "-" $align) ]]; then
-  printf "GAP FOUND BEFORE REMOVAL"
-else
-  printf "NO GAPS FOUND BEFORE REMOVAL";
-fi
-
+#if [[ ! -z $(grep "-" $align) ]]; then
+#  printf "GAP FOUND BEFORE REMOVAL"
+#else
+#  printf "NO GAPS FOUND BEFORE REMOVAL";
+#fi
+#
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
-sed 's/-//g' <$align >$outdir/ref_nogap.fas
-
+#sed 's/-//g' <$align >$outdir/ref_nogap.fas
+#
 workd=$(pwd)
-
-cd $outdir
-
-if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-  printf "GAP FOUND AFTER REMOVAL!"
-else
-  printf "NO GAPS FOUND AFTER REMOVAL";
-fi
+#
+#cd $outdir
+#
+#if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
+#  printf "GAP FOUND AFTER REMOVAL!"
+#else
+#  printf "NO GAPS FOUND AFTER REMOVAL";
+#fi
 
 
 
@@ -257,27 +261,31 @@ echo "basename is $base"
 # echo '>Refining mapping and calling consensus sequence'
 # sort -rnk3 $outdir/${base}_outdir/mapping_info >  $outdir/${base}_outdir/mapping_info_sort
 #
-refnam=$(head -n 1 $outdir/ref_nogap.fas)
+#refnam=$(head -n 1 $outdir/ref_nogap.fas)
+refnam=$(head -n 1 $align)
 
 echo "refname is $refnam"
-#
-#
+
+hisat_idx=$(echo "$align" | cut -f 1 -d '.')
 
 # $PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
-$PHYCORDER/ref_producer.py -s --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
+########$PHYCORDER/ref_producer.py -s --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
 
 # $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
 
 # bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
 echo "Time for bowtie2-build:"
-bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
+
+###############hisat2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/hisatbuild.log
+#bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 echo "time for bowtie2 mapping:"
-bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
+#bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
+hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
 
-
-samtools faidx $outdir/best_ref.fas
+#samtools faidx $outdir/best_ref.fas
+samtools faidx $align
 echo '>samtools faidx passed'
 
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
@@ -288,8 +296,8 @@ samtools index $outdir/best_sorted.bam
 echo '>samtools index passed'
 
 echo '>Time for mpileup step:'
-bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
-
+#bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
+bcftools mpileup -f $align $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 
 
 
@@ -322,7 +330,7 @@ echo '>sed producing cns_ref.fa passed'
 # from the reads. This seems to be a strange bug from all versions of mpileup
 $PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/cns.fa --out_file $outdir/cns_fixed.fa
 
-refnam=$(head -n 1 $outdir/ref_nogap.fas)
+refnam=$(head -n 1 $master_dir/ref_nogap.fas)
 
 
 
@@ -330,7 +338,7 @@ refnam=$(head -n 1 $outdir/ref_nogap.fas)
 
 
 #pull the aligned reference from the alignement
-$PHYCORDER/ref_producer.py -s --align_file $align --out_file $outdir/best_ref_gaps.fas
+#$PHYCORDER/ref_producer.py -s --align_file $align --out_file $outdir/best_ref_gaps.fas
 
 echo '>grep for refnam passed'
 
@@ -350,8 +358,8 @@ echo '>grep for refnam passed'
 printf ">beginning aligned consensus processing"
 #python
 
-$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
-
+#$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
+$PHYCORDER/align_consensus.py --gapped-ref $gap_align --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
 
 #if [ $align_type == "LOCUS" ]; then
 

@@ -224,8 +224,8 @@ if [ $output_type == "LOCUS" ]; then
 
 	# TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
-	$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
-
+	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
+	$GON_PHYLING/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
 	cd ..
 
 elif [ $output_type == "LOCI" ]; then

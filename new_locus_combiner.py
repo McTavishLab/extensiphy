@@ -13,11 +13,14 @@ def parse_args():
     parser.add_argument('--out_file')
     parser.add_argument('--position_csv_file')
     parser.add_argument('--suffix')
+    parser.add_argument('--len_filter')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    len_filt = int(args.len_filter)
+    assert(type(len_filt) == int)
 
     msa_list = os.listdir(args.msa_folder)
     #print(msa_list)
@@ -47,12 +50,20 @@ def main():
                     seq = seq.replace("\n","")
                     seq_len = len(seq)
                     #print(seq_len)
-                    taxon_name_and_seqs[name].append(seq)
-                    file_name_and_seq_len_dict[file_name] = seq_len
-                    locus_len = seq_len
+                    if seq_len >= len_filt:
+                        taxon_name_and_seqs[name].append(seq)
+                        file_name_and_seq_len_dict[file_name] = seq_len
+                        locus_len = seq_len
+                        #tuple_name_and_seq_len_list.append(name_and_len)
+                        if file_name not in name_list:
+                            name_list.append(file_name)
+                    elif seq_len < len_filt:
+                        print("locus not passing length filter!")
+                    #file_name_and_seq_len_dict[file_name] = seq_len
+                    #locus_len = seq_len
                     #tuple_name_and_seq_len_list.append(name_and_len)
-                    if file_name not in name_list:
-                        name_list.append(file_name)
+                    #if file_name not in name_list:
+                    #    name_list.append(file_name)
             name_and_len = [loci_count, file_name, seq_len]
             tuple_name_and_seq_len_list.append(name_and_len)
     print(tuple_name_and_seq_len_list)

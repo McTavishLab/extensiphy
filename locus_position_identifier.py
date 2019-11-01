@@ -8,11 +8,12 @@ import os
 import argparse
 import re
 import json
+import csv
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--out_file_dir')
-    parser.add_argument('--position_dict_file')
+    parser.add_argument('--position_csv_file')
     parser.add_argument('--concatenated_fasta')
     return parser.parse_args()
 
@@ -23,11 +24,17 @@ def main():
     
     loci_count = 0
     nuc_count = 0
-    json_data = open(args.position_dict_file,'r')
-    read_dict = json_data.read()
-    pos_dict = json.loads(read_dict)
-    print(pos_dict)
+    #json_data = open(args.position_dict_file,'r')
+    #read_dict = json_data.read()
+    #pos_dict = json.loads(read_dict)
+    with open(args.position_csv_file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            print(row['locus_position_number'], row['locus_file_name'], row['locus_length'])
 
+
+    print(pos_dict)
+    
     #seq_file = open(args.concatenated_fasta, 'r')
     #read_seq = seq_file.read()
     #split_file = read_seq.split('>')

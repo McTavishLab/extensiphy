@@ -56,7 +56,7 @@ if [ $align_type == "PARSNP_XMFA" ]; then
         # TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
         #$PHYCORDER/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions
-	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions
+	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --suffix $single_locus_suffix --len_filter 1000
 	align=$( realpath ../combo.fas)
 
 	printf "New alignment file produced\n"
@@ -250,7 +250,7 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
 	for j in $(ls x*); do
 		for i in $(cat $j); do
-			$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER --position_dict_file $loci_positions --concatenated_fasta $i 
+			$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER --position_csv_file $loci_positions --concatenated_fasta $i 
 		done
 		wait
 	done

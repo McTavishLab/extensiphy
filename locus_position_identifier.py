@@ -20,8 +20,9 @@ def parse_args():
 
 def main():
     args = parse_args()
-    
-    
+
+
+    pos_list = []    
     loci_count = 0
     nuc_count = 0
     #json_data = open(args.position_dict_file,'r')
@@ -31,9 +32,11 @@ def main():
         reader = csv.DictReader(csvfile)
         for row in reader:
             print(row['locus_position_number'], row['locus_file_name'], row['locus_length'])
+            pos_list.append(row)
+    print(pos_list)
 
 
-    print(pos_dict)
+#    print(pos_dict)
     
     #seq_file = open(args.concatenated_fasta, 'r')
     #read_seq = seq_file.read()
@@ -41,28 +44,34 @@ def main():
 
     #print(split_file)
     
-    
+    os.mkdir(args.out_file_dir)
+
     seq_file = open(args.concatenated_fasta, 'r')
     read_seq = seq_file.read()
-    split_file = read_seq.split('\n')
+    split_file = read_seq.split('>')
     #print(split_file)
 
     start_pos = 0
     loci_starts = []
     loci_starts.append(start_pos)
     
-    for seq_number, length_and_loci_name in pos_dict.items():
+#    for seq_number, length_and_loci_name in pos_dict.items():
+#        loci_count+=1
+
+    locus_number = 0
+    for locus_dict in pos_list:
+        print(locus_dict)
         loci_count+=1
-
-    for i in range(0, loci_count):
-        seq_info = pos_dict[str(i)]
-        print(seq_info)
-        seq_end = list(seq_info.keys())[0]
-        print(seq_end)
-        start_pos = start_pos + int(seq_end)
-        loci_starts.append(start_pos)
+        locus_num_check = int(locus_dict['locus_position_number'])
+        print(locus_num_check)
+        assert(locus_num_check == locus_number + 1)
+        locus_end_pos = int(locus_dict['locus_length'])
+        loci_starts.append(locus_end_pos + start_pos)
+        start_pos = start_pos + locus_end_pos
+        locus_number = locus_num_check
+        print(start_pos)
     print(loci_starts)
-
+    
 
     second_loci_count = 0
     for num in loci_starts:
@@ -74,14 +83,14 @@ def main():
             #print(seq)
             
             seq_info = pos_dict[str(second_loci_count - 1)]
-            print(seq_info)
+            #print(seq_info)
             loci_name = list(seq_info.values())[0]
-            print(loci_name)
+            #print(loci_name)
             output = open(str(args.out_file_dir) + '/' + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])
             output.write("\n")
             output.write(seq)
-            print("SECOND_LOCI_COUNT ====== LOCI_COUNT")
+           #print("SECOND_LOCI_COUNT ====== LOCI_COUNT")
         
         elif second_loci_count < loci_count:
             seq = split_file[1][num:loci_starts[second_loci_count]]
@@ -89,10 +98,10 @@ def main():
             #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             #print(second_loci_count)
             seq_info = pos_dict[str(second_loci_count - 1)]
-            print(seq_info)
+            #print(seq_info)
             loci_name = list(seq_info.values())[0]
-            print(loci_name)
-            print("SECOND LOCI COUNT <<<<< LOCI COUNT")
+            #print(loci_name)
+            #print("SECOND LOCI COUNT <<<<< LOCI COUNT")
             output = open(str(args.out_file_dir) + "/" + str(split_file[0]).replace(">","") + str(loci_name), "w")
             output.write(split_file[0])
             output.write("\n")

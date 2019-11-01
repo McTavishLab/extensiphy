@@ -21,9 +21,19 @@ def main():
     args = parse_args()
     len_filt = int(args.len_filter)
     assert(type(len_filt) == int)
+    dir_of_aligns = args.msa_folder
+    # check if path ends with a "/"
+    if dir_of_aligns.endswith("/"):
+        print("Pathing acceptable")
 
-    msa_list = os.listdir(args.msa_folder)
-    #print(msa_list)
+    else:
+        print("Fixing pathing")
+        dir_of_aligns = dir_of_aligns + "/"
+        print(dir_of_aligns)
+    print(dir_of_aligns)
+    #msa_list = os.listdir(args.msa_folder)
+    msa_list = os.listdir(dir_of_aligns)
+    print(msa_list)
    
     name_list = []
     file_name_and_seq_len_dict = {}
@@ -39,7 +49,7 @@ def main():
             locus_name = file_name
             locus_len = 0
             loci_count+=1
-            open_file = open(args.msa_folder + file_name, "r")
+            open_file = open(dir_of_aligns + file_name, "r")
             read_file = open_file.read()
             split_file = read_file.split(">")
             for name_and_seq in split_file:
@@ -49,7 +59,7 @@ def main():
                     seq = name_seq_split[1]
                     seq = seq.replace("\n","")
                     seq_len = len(seq)
-                    #print(seq_len)
+                    print(seq_len)
                     if seq_len >= len_filt:
                         taxon_name_and_seqs[name].append(seq)
                         file_name_and_seq_len_dict[file_name] = seq_len
@@ -64,8 +74,9 @@ def main():
                     #tuple_name_and_seq_len_list.append(name_and_len)
                     #if file_name not in name_list:
                     #    name_list.append(file_name)
-            name_and_len = [loci_count, file_name, seq_len]
-            tuple_name_and_seq_len_list.append(name_and_len)
+            if seq_len >= len_filt:
+                name_and_len = [loci_count, file_name, seq_len]
+                tuple_name_and_seq_len_list.append(name_and_len)
     print(tuple_name_and_seq_len_list)
     #print(file_name_and_seq_len_dict)
     #print(taxon_name_and_seqs)

@@ -1,5 +1,9 @@
 # Phycorder
 
+Pipline that takes an alignment, a tree, and sets of sequencing reads from query taxa.
+
+Assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
+
 Currently you must set up the config file for use after you have tested your install.
 Phycorder allows for control over both how many phycorder runs happen
 in parallel and how many threads are allocated to each phycorder run_name

@@ -25,6 +25,8 @@ Before you do anything else, make a copy of your read data and move that copy in
 Run the name_parser.py program on that data with the following options:
 name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
 
+Additionally, limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
+
 This will rename your reads in a way that is easily parsed by Phycorder
 
 ##Some specifics about the values to change:
@@ -35,6 +37,7 @@ This will rename your reads in a way that is easily parsed by Phycorder
 - read_dir: the read directory is the directory of paired end reads that you wish to add to your tree.
 If you are renaming your reads with name_parser.py (which you absolutely should. File name schemes are generally terrible) then leave the r1_tail and r2_tail options alone so they function with the name_parser.py outputs.
 - output_type: Dictates if you want to only output a concatenated MSA fasta file or if you want to also output updated seperate loci fasta files as well. CURRENTLY ONLY USE CONCATENATED OPTION!
+- loci_positions: a csv file that delimits loci lengths in a concatenated fasta MSA. This will produced for your automatically if you input single locus MSAs or you can make one for your concatenated MSA fasta by using the format found in example_positions.csv in /testdata
 - single_locus_suffix: for use when inputting sepereate loci files.
 - outdir: the directory name to create and store your results in
 - bootstrapping: dictates whether you want a bootstrapped or single best tree. greatly affects speed. 

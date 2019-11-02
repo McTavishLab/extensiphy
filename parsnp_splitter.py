@@ -29,7 +29,7 @@ taxon_key = {}
 header = header[2:-1]
 for count in range(0,len(header),4):
     idnum = header[count].split(' ')[1].strip()
-    name = header[count + 1].split(' ')[1].lstrip('contigsworkingclean').rstrip('.fastq.fasta\n')
+    name = header[count + 1].split(' ')[1].rstrip('.fastq.fasta\n').rstrip('.fastq.fasta.re\n')
     taxon_key[idnum] = name
 
 taxa = set()

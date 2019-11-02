@@ -100,6 +100,8 @@ while getopts ":a:t:p:e:s:o:n:r:c:1:2:h" opt; do
     ;;
     2) r2_tail="$OPTARG"
     ;;
+    w) wre_map="$OPTARG"
+    ;;
     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
     exit
     ;;
@@ -123,12 +125,36 @@ if [ -f "$align" ]; then
     exit
 fi
 
+
 if [ $threads -eq 0 ]; then
      threads=2
      printf "Threads not set, defaulting to 2" >&2
 else
      echo "num threads is"
      echo $threads
+
+if [ -f "$tree" ]; then
+    printf "Tree is %s\n" "$tree"
+  else
+    printf "Tree $tree not found. Exiting\n" >&2
+    exit
+fi
+if [ $PE -eq 1 ]; then
+  if [ -f ${read_one} ]; then
+     printf "Paired end reads \n"
+     printf "read one is ${read_one}\n"
+  else
+    printf "read one ${read_one} not found. Exiting\n" >&2
+    exit
+fi
+  if [ -f ${read_two} ]; then
+     printf "Paired end reads \n"
+     printf "read two is ${read_two}\n"
+  else
+    printf "read two ${read_two} not found. Exiting\n" >&2
+    exit
+fi
+
 fi
 
 #######################################################################
@@ -181,6 +207,7 @@ fi
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align >$outdir/ref_nogap.fas
 
+
 workd=$(pwd)
 
 cd $outdir
@@ -190,6 +217,28 @@ if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
 else
   printf "NO GAPS FOUND AFTER REMOVAL";
 fi
+
+
+#pretend the alignemnt is a set of chromosomes
+bowtie2-build --threads 4 $outdir/ref_nogap.fas $outdir/ref > $outdir/bowtiebuild.log
+
+if [ $PE -eq 1 ];
+	then
+	    echo "PAIRED ENDS"
+	    bowtie2 -p 4 -x $outdir/ref -1 ${read_loc} -2 ${read_two} -S $outdir/full_alignment.sam --no-unal
+    else
+    	bowtie2 -p 4 -x $outdir/ref -U ${read_loc}-S $outdir/full_alignment.sam --no-unal
+fi
+
+samtools view -bS $outdir/full_alignment.sam > $outdir/full_alignment.bam
+samtools sort $outdir/full_alignment.bam -o $outdir/full_sorted.bam
+samtools index $outdir/full_sorted.bam
+samtools idxstats $outdir/full_sorted.bam > $outdir/mapping_info
+if [ $(sort -rnk3 $outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
+    echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
+    exit
+fi
+    #TODO this is VERY DANGEROUS
 
 
 cd $workd
@@ -248,8 +297,17 @@ echo "Time for bowtie2-build:"
 bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
+
 echo "time for bowtie2 mapping:"
 bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
+
+
+if [ $PE -eq 1 ]
+	then
+	    bowtie2 -p 4 -x $outdir/best_ref -1 ${read_one} -2 ${read_two} -S $outdir/best_map.sam --no-unal --local
+    else
+    	bowtie2 -p 4 -x $outdir/best_ref  -U ${read_loc} -S $outdir/best_map.sam --no-unal --local
+fi
 
 
 samtools faidx $outdir/best_ref.fas
@@ -258,6 +316,7 @@ echo '>samtools faidx passed'
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
 echo '>samtools view passed'
 samtools sort $outdir/best_map.bam -o $outdir/best_sorted.bam
+
 echo '>samtools sort passed'
 samtools index $outdir/best_sorted.bam
 echo '>samtools index passed'

@@ -37,7 +37,7 @@ def main():
         if refnuc == '-':
             out.write('-')
         else:
-            if refnuc.lower() in set(['a', 'c', 'g', 't', 'n']):
+            if refnuc.lower() in set(['a', 'c', 'g', 't', 'n', 'r', 'y', 'm', 's', 'w', 'k', 'v', 'd', 'h', 'b']):
                 newnuc = new.read(1)
                 if newnuc and (newnuc != '\n'):
                     i+=1
@@ -46,8 +46,9 @@ def main():
                     out.write(newnuc)
                 else:
                     out.write('n')
-            else: 
+            else:
                 if refnuc:
+                    print(refnuc)
                     assert refnuc =='\n'
                     out.write(refnuc)
     new.close()

@@ -246,14 +246,7 @@ fi
 # for now, it serves as a SNP check
 if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
-	ls $INFER/*.fas | split -d -l $phycorder_runs
-
-	for j in $(ls x*); do
-		for i in $(cat $j); do
-			$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER --position_csv_file $loci_positions --concatenated_fasta $i 
-		done
-		wait
-	done
+	$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln 
 
 	echo "Multiple single locus MSA file handling selected"
 elif [ $output_type == "CONCAT_MSA" ]; then

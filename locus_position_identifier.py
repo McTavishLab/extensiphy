@@ -46,7 +46,7 @@ def main():
 
     #print(split_file)
     
-#    os.mkdir(args.out_file_dir)
+    os.mkdir(args.out_file_dir)
 
     seq_file = open(args.concatenated_fasta, 'r')
     read_seq = seq_file.read()

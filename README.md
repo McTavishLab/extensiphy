@@ -1,10 +1,8 @@
 # Phycorder
 
-PARALLEL BRANCH command for multimap data test
-
-You must set up the config file for use after you have tested your install.
-The PARALLEL branch allows for control over both how many phycorder runs happen
-in parallel (hence the name) and how many threads are allocated to each phycorder run_name
+Currently you must set up the config file for use after you have tested your install.
+Phycorder allows for control over both how many phycorder runs happen
+in parallel and how many threads are allocated to each phycorder run_name
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
 find out how many cores you have available and calculate (cores*phycorder runs you wish to run as the same time)
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
@@ -18,24 +16,33 @@ Make a copy and then alter that for your analyses
 
 When you're ready to load your own data, adjust the variable values in the new config file
 
-IMPORTANT!!
+##IMPORTANT!!
 Before you do anything else, make a copy of your read data and move that copy into an empty directory
 Run the name_parser.py program on that data with the following options:
 name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
 
 This will rename your reads in a way that is easily parsed by Phycorder
 
-Some specifics about the values to change:
-The alignment, tree and read directory options should be pretty obvious.
-- The alignment is the one used to generate the tree you're plugging into the program as a starting tree
-- The tree is the starting tree that you wish to add taxa to.
-- the read directory is the directory of paired end reads that you wish to add to your tree.
-If you are renaming your reads with name_parser.py (which you absolutely should. File name schemes are generally terrible)
-then leave the r1_tail and r2_tail options alone so they function with the name_parser.py outputs
+##Some specifics about the values to change:
+
+- align: The alignment is the one used to generate the tree you're plugging into the program as a starting tree. Depending on the type of input, you'll need to adjust the align_type option.
+- align_type: set the input type for the alignment. Can be a parsnp.xmfa file output by parsnp, a directory of seperate loci multiple sequence alignment files in the fasta format or a single concatenated multiple sequence alignment in the fasta format.
+- tree: The tree is the starting tree that you wish to add taxa to. Set it to "PATH/TO/TREE" if you desire to update the tree. Set to "NONE" if you want a new tree inference.
+- read_dir: the read directory is the directory of paired end reads that you wish to add to your tree.
+If you are renaming your reads with name_parser.py (which you absolutely should. File name schemes are generally terrible) then leave the r1_tail and r2_tail options alone so they function with the name_parser.py outputs.
+- output_type: Dictates if you want to only output a concatenated MSA fasta file or if you want to also output updated seperate loci fasta files as well. CURRENTLY ONLY USE CONCATENATED OPTION!
+- single_locus_suffix: for use when inputting sepereate loci files.
+- outdir: the directory name to create and store your results in
+- bootstrapping: dictates whether you want a bootstrapped or single best tree. greatly affects speed. 
 - phycorder runs dictates how many taxa you want to map at a single time.
   - Say if you have 10 taxa to add to your tree, you can tell phycorder that you want to run 5 mappings at a time in order to be efficient
 - Threads should be obvious but interacts with [Phycorder runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
   - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
+
+
+##Output Files!
+	- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
+	- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 Creating a starting tree!
 You need a tree and alignment with any number of taxa in order to update these with new taxa.
@@ -56,7 +63,7 @@ To test gon_phyling.sh, run:
 Python packages:
     	Dendropy 4.0 (pip install dendropy)
 Software in path for multi_map.sh rapid-updating:
-        bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+        hisat2  https://ccb.jhu.edu/software/hisat2/index.shtml
         fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
         raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
         seqtk https://github.com/lh3/seqtk

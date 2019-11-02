@@ -80,7 +80,7 @@ def main():
     for num in loci_starts:
         if count < locus_number:
             locus_name = pos_list[count]['locus_file_name']
-            print(locus_name)
+            #print(locus_name)
             start = num
             count+=1
             stop = loci_starts[count]
@@ -102,10 +102,10 @@ def main():
                 seq_chunk = taxon_seq[start_stop_tuple[0]:start_stop_tuple[1]]
                 #print(seq_chunk)
                 locus_specific_taxon_and_seq_dict[taxon_name] = seq_chunk
-        print(locus_specific_taxon_and_seq_dict)
+        #print(locus_specific_taxon_and_seq_dict)
         count_two+=1
         for tax_name, tax_seq in locus_specific_taxon_and_seq_dict.items():
-            print(tax_seq)
+            #print(tax_seq)
             open_new_file.write(">")
             open_new_file.write(tax_name)
             open_new_file.write("\n")
@@ -116,104 +116,6 @@ def main():
 
 
 
-#    print(loci_count)
-#    locus_name_tracker = 0
-#    second_loci_count = 0
-#    for num in loci_starts:
-#        locus_specific_taxon_and_seq_dict = {}
-#        #second_loci_count+=1
-#        locus_name = pos_list[locus_name_tracker]['locus_file_name']
-#        
-#        #print(second_loci_count)
-#        #print(loci_count)
-#        if second_loci_count < loci_count:
-#            locus_name_tracker+=1
-#            for taxon_and_seq in split_file:
-#                if len(taxon_and_seq) > 1:
-#                    split_taxon_and_seq = taxon_and_seq.split("\n")
-#                    #print(split_taxon_and_seq)
-#                    name = split_taxon_and_seq[0]
-#                    seq = split_taxon_and_seq[1]
-#                    #if second_loci_count < loci_count:
-#                    #print(num)
-#                    #print(loci_starts[second_loci_count])
-#                    #seq_length_to_get = loci_starts[second_loci_count] - num
-#                    seq_length_to_get = loci_starts[second_loci_count + 1] - num
-#                    print(seq_length_to_get)
-#                    locus_specific_taxon_and_seq_dict[name] = seq[num:seq_length_to_get]
-#                        #print(name)
-#                        #locus_name = pos_list[locus_name_tracker]['locus_file_name']
-#        elif second_loci_count == loci_count:
-#            locus_name_tracker+=1
-#            for taxon_and_seq in split_file:
-#                if len(taxon_and_seq) > 1:
-#                    split_taxon_and_seq = taxon_and_seq.split("\n")
-#                    #print(split_taxon_and_seq)
-#                    #print(split_taxon_and_seq)
-#                    name = split_taxon_and_seq[0]
-#                    seq = split_taxon_and_seq[1]
-#                    #if second_loci_count < loci_count:
-#                    #print(num)
-#                    #print(loci_starts[second_loci_count])
-#                    #seq_length_to_get = loci_starts[num] - loci_starts[num - 1]
-#
-#
-#        #print(locus_name)
-#        open_new_file = open(args.out_file_dir + "/" + locus_name,'w')
-#        for taxon_name, taxon_seq in locus_specific_taxon_and_seq_dict.items():
-#            #print(taxon_name)
-#            #print(taxon_seq)
-#            open_new_file.write(">")
-#            open_new_file.write(taxon_name)
-#            open_new_file.write("\n")
-#            open_new_file.write(taxon_seq)
-#            open_new_file.write("\n")
-#        open_new_file.close()
-#        #print(locus_specific_taxon_and_seq_dict)
-
-
-
-#        if second_loci_count == loci_count:
-#            for taxon_and_seq in split_file:
-#                if len(taxon_and_seq) > 1:
-#                    split_taxon_and_seq = taxon_and_seq.split("\n")
-#                    #print(split_taxon_and_seq)
-#                    name = split_taxon_and_seq[0]
-#                    seq = split_taxon_and_seq[1]
-                    
-
-#            seq = split_file[1][num:]
-#            #print(seq)           
-#            seq_info = pos_dict[str(second_loci_count - 1)]
-#            #print(seq_info)
-#            loci_name = list(seq_info.values())[0]
-#            #print(loci_name)
-#            output = open(str(args.out_file_dir) + '/' + str(split_file[0]).replace(">","") + str(loci_name), "w")
-#            output.write(split_file[0])
-#            output.write("\n")
-#            output.write(seq)
-#           #print("SECOND_LOCI_COUNT ====== LOCI_COUNT")
-#        
-#        elif second_loci_count < loci_count:
-
-
-
-
-
-
-#            seq = split_file[1][num:loci_starts[second_loci_count]]
-#            #print(seq)
-#            #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#            #print(second_loci_count)
-#            seq_info = pos_dict[str(second_loci_count - 1)]
-#            #print(seq_info)
-#            loci_name = list(seq_info.values())[0]
-#            #print(loci_name)
-#            #print("SECOND LOCI COUNT <<<<< LOCI COUNT")
-#            output = open(str(args.out_file_dir) + "/" + str(split_file[0]).replace(">","") + str(loci_name), "w")
-#            output.write(split_file[0])
-#            output.write("\n")
-#            output.write(seq)
 
 if __name__ == '__main__':
     main() 

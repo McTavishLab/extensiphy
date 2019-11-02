@@ -36,7 +36,6 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 	mkdir locus_msa_files
 
 	cat $align | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
-       	#cat parsnp.xmfa | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
 
         cd ./locus_msa_files
 
@@ -48,14 +47,12 @@ if [ $align_type == "PARSNP_XMFA" ]; then
         for j in $(ls x*); do
                 for i in $(cat $j); do
 			$PHYCORDER/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 1000
-                        #$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
                 done
                 wait
         done
 
         # TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
-        #$PHYCORDER/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions
 	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --suffix $single_locus_suffix --len_filter 1000
 	align=$( realpath ../combo.fas)
 
@@ -66,7 +63,6 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 	$PHYCORDER/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $PHYCORDER/$outdir/combo.fas --position_csv_file $loci_positions --len_filter 1000
-	#$PHYCORDER/msa_producer.py --align_dir $align --len_filter 1000 --out_file $PHYCORDER/$outdir/combo.fas --position_csv_file $loci_positions 
 	printf "$outdir\n"
 	printf "$PHYCORDER\n"	
 
@@ -86,9 +82,7 @@ fi
 ###########################
 printf "align == $align\n"
 printf "phycorder dir == $PHYCORDER\n"
-#new_out=$(realpath $outdir)
 workd=$(pwd)
-#printf "new outdir == $new_out\n"
 
 if [[ ! -z $(grep "-" $align) ]]; then
   printf "GAP FOUND BEFORE REMOVAL"
@@ -100,13 +94,9 @@ fi
 
 printf "current wd\n"
 pwd
-#touch $workd/waffle.txt
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align > $workd/ref_nogap.fas
 
-#workd=$(pwd)
-
-#cd $outdir
 
 if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
   printf "GAP FOUND AFTER REMOVAL!"
@@ -119,10 +109,6 @@ $PHYCORDER/ref_producer.py -s --align_file $align --out_file $workd/best_ref_gap
 $PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
 
 hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hisatbuild.log
-
-
-#########################
-
 
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs

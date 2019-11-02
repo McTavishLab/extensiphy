@@ -174,59 +174,7 @@ mkdir -p $outdir
 #Check that tipnames in alignemnet are the same as tipnames in tree
 
 echo 'Performing full mapping of reads to all sequences in alignment'
-
-# TEST:
-# check file for gaps, then remove gaps and check that the number of gaps == 0
-
-#if [[ ! -z $(grep "-" $align) ]]; then
-#  printf "GAP FOUND BEFORE REMOVAL"
-#else
-#  printf "NO GAPS FOUND BEFORE REMOVAL";
-#fi
-#
-#pull all the gaps from the aligned taxa bc mappers cannot cope.
-#sed 's/-//g' <$align >$outdir/ref_nogap.fas
-#
 workd=$(pwd)
-#
-#cd $outdir
-#
-#if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-#  printf "GAP FOUND AFTER REMOVAL!"
-#else
-#  printf "NO GAPS FOUND AFTER REMOVAL";
-#fi
-
-
-
-
-
-
-
-
-
-
-#if [[ ! -z $(grep "-" $align) ]]; then
-#  printf "GAP FOUND\n"
-#  sed 's/-//g' <$align >$outdir/ref_nogap.fas
-#else
-#  printf "NO GAPS FOUND SO NO REMOVAL STEP\n";
-#fi
-
-#pull all the gaps from the aligned taxa bc mappers cannot cope.
-# sed 's/-//g' <$align >$outdir/ref_nogap.fas
-
-#workd=$(pwd)
-
-#cd $outdir
-
-#if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-#  printf "GAP FOUND AFTER REMOVAL!\n"
-#else
-#  printf "NO GAPS FOUND AFTER REMOVAL\n";
-#fi
-
-
 cd $workd
 
 # TEST OF GAP REMOVAL FINISHED
@@ -241,50 +189,19 @@ cd $workd
 echo "PAIRED ENDS"
 base=$(basename $read_one $r1_tail)
 echo "basename is $base"
-#mkdir -p ${base}_outdir
-# bowtie2 -p $threads --very-fast -x $outdir/ref -1 $i -2 ${i%$r1_tail}$r2_tail -S $outdir/${base}_outdir/full_alignment.sam --no-unal
-# printf ">map PE 1 passed"
-#
-# samtools view -bS $outdir/${base}_outdir/full_alignment.sam > $outdir/${base}_outdir/full_alignment.bam
-#
-# samtools sort $outdir/${base}_outdir/full_alignment.bam -o $outdir/${base}_outdir/full_sorted.bam
-#
-# samtools index $outdir/${base}_outdir/full_sorted.bam
-#
-# samtools idxstats $outdir/${base}_outdir/full_sorted.bam > $outdir/${base}_outdir/mapping_info
-#
-# if [ $(sort -rnk3 $outdir/${base}_outdir/mapping_info | head -1 | cut -f3) -lt 10 ]; then
-#     echo 'LESS THAN TEN READS MAPPED TO ANY TAXON. Try a different input alignment?' >&2
-#     exit
-# fi
-#
-# echo '>Refining mapping and calling consensus sequence'
-# sort -rnk3 $outdir/${base}_outdir/mapping_info >  $outdir/${base}_outdir/mapping_info_sort
-#
-#refnam=$(head -n 1 $outdir/ref_nogap.fas)
 refnam=$(head -n 1 $align)
 
 echo "refname is $refnam"
 
 hisat_idx=$(echo "$align" | cut -f 1 -d '.')
 
-# $PHYCORDER/ref_producer.py --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref_uneven.fas
-########$PHYCORDER/ref_producer.py -s --align_file $outdir/ref_nogap.fas --out_file $outdir/best_ref.fas
-
-# $PHYCORDER/fastafixer.py $outdir/best_ref_uneven.fas $outdir/best_ref.fas #starightens out line lengths
-
-# bowtie2-build --threads $threads $outdir/${base}_outdir/best_ref.fas $outdir/${base}_outdir/best_ref >> $outdir/${base}_outdir/bowtiebuild.log
 echo "Time for bowtie2-build:"
-
-###############hisat2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/hisatbuild.log
-#bowtie2-build --threads $threads $outdir/best_ref.fas $outdir/best_ref >> $outdir/bowtiebuild.log
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 echo "time for bowtie2 mapping:"
 #bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
 hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
 
-#samtools faidx $outdir/best_ref.fas
 samtools faidx $align
 echo '>samtools faidx passed'
 
@@ -298,11 +215,6 @@ echo '>samtools index passed'
 echo '>Time for mpileup step:'
 #bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 bcftools mpileup -f $align $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
-
-
-
-
-
 
 $PHYCORDER/vcf_duplicate_dropper.py --vcf_file $outdir/best_sorted.vcf --out_file $outdir/dupes_removed_best_cns.vcf
 
@@ -332,54 +244,12 @@ $PHYCORDER/vcffixer.py --vcf_file $outdir/best_sorted.vcf --align_file $outdir/c
 
 refnam=$(head -n 1 $master_dir/ref_nogap.fas)
 
-
-
-
-
-
-#pull the aligned reference from the alignement
-#$PHYCORDER/ref_producer.py -s --align_file $align --out_file $outdir/best_ref_gaps.fas
-
-echo '>grep for refnam passed'
-
-
-
-
-
-
-
 #$PHYCORDER/vcf_to_fasta.py --vcf_file $outdir/best_sorted.vcf --seq_name $base --out_file $outdir/cns_fixed.fa
-
-
-
-
-
 
 printf ">beginning aligned consensus processing"
 #python
 
-#$PHYCORDER/align_consensus.py --gapped-ref $outdir/best_ref_gaps.fas --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
 $PHYCORDER/align_consensus.py --gapped-ref $gap_align --consensus $outdir/cns_fixed.fa --outfile $outdir/${base}_align.fas
-
-#if [ $align_type == "LOCUS" ]; then
-
-#	printf "beginning accessing the locus locations to create individual locus fasta files for sequences constructed by phycorder\n"
-#	$PHYCORDER/locus_position_identifier.py --out_file_dir $outdir --position_dict_file $loci_positions --concatenated_fasta $outdir/${base}_align.fas
-
-#elif [ $align_type == "LOCI" ]; then
-
-#	printf "Passing alignment files to RAxML for Phylogenetic inference.\n"
-
-#fi
-# cat ${align} $outdir/aligned_cns.fas >  $outdir/extended.aln
-
-# cd $outdir
-# run full raxml? tooo sloooo
-# raxmlHPC-PTHREADS-SSE3 -m GTRGAMMA -s extended.aln -t $tree -p 12345 -n consensusFULL
-
-# cd $WD
-
-#todo strip all fq to fa
 
 
 

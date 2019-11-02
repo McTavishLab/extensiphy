@@ -91,6 +91,7 @@ def main():
     count_two = 0
     for start_stop_tuple in start_stop_pos_list:
         locus_specific_taxon_and_seq_dict = {}
+        #print(locus_specific_taxon_and_seq_dict)
         locus_name = pos_list[count_two]['locus_file_name']
         open_new_file = open(args.out_file_dir + "/" + locus_name,'w')
         for taxon_and_seq in split_file:
@@ -99,14 +100,16 @@ def main():
                 taxon_name = split_taxon_and_seq[0]
                 taxon_seq = split_taxon_and_seq[1]
                 seq_chunk = taxon_seq[start_stop_tuple[0]:start_stop_tuple[1]]
-                print(seq_chunk)
+                #print(seq_chunk)
                 locus_specific_taxon_and_seq_dict[taxon_name] = seq_chunk
+        print(locus_specific_taxon_and_seq_dict)
         count_two+=1
         for tax_name, tax_seq in locus_specific_taxon_and_seq_dict.items():
+            print(tax_seq)
             open_new_file.write(">")
-            open_new_file.write(taxon_name)
+            open_new_file.write(tax_name)
             open_new_file.write("\n")
-            open_new_file.write(taxon_seq)
+            open_new_file.write(tax_seq)
             open_new_file.write("\n")
         open_new_file.close()
 

@@ -17,50 +17,50 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 
 
 #Check for dependencies
-if [ $(which bcftools | wc -l) -lt 1 ]
-    then
-        printf "Requires bcftools" >&2
-     #   exit 0
-    else
-        printf "Correct version of bfctools found.\n"
-fi
-if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
-    then
-        printf "Requires samtools" >&2
-      #  exit 0
-    else
-        printf "Correct version of samtools found.\n"
-fi
-if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "seqtk not found\n" >&2
-    else
-        printf "seqtk found\n"
-fi
-if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "bowtie2 not found. Install and/or add to path\n" >&2
-    else
-        printf "bowtie2 found\n"
-fi
-if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
-    else
-        printf "raxmlHPC found\n"
-fi
-if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "fastx toolkit not found. Install and/or add to path\n" >&2
-    else
-        printf "fastx toolkit found\n"
-fi
-if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
-    then
-        printf "vcfutils.pl not found. Install and/or add to path\n" >&2
-    else
-        printf "vcfutils.pl found\n"
-fi
+#if [ $(which bcftools | wc -l) -lt 1 ]
+#    then
+#        printf "Requires bcftools" >&2
+#     #   exit 0
+#    else
+#        printf "Correct version of bfctools found.\n"
+#fi
+#if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
+#    then
+#        printf "Requires samtools" >&2
+#      #  exit 0
+#    else
+#        printf "Correct version of samtools found.\n"
+#fi
+#if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+#    then
+#        printf "seqtk not found\n" >&2
+#    else
+#        printf "seqtk found\n"
+#fi
+#if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+#    then
+#        printf "bowtie2 not found. Install and/or add to path\n" >&2
+#    else
+#        printf "bowtie2 found\n"
+#fi
+#if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+#    then
+#        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
+#    else
+#        printf "raxmlHPC found\n"
+#fi
+#if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+#    then
+#        printf "fastx toolkit not found. Install and/or add to path\n" >&2
+#    else
+#        printf "fastx toolkit found\n"
+#fi
+#if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
+#    then
+#        printf "vcfutils.pl not found. Install and/or add to path\n" >&2
+#    else
+#        printf "vcfutils.pl found\n"
+#fi
 
 PE=0
 outdir=phycorder_run
@@ -136,13 +136,14 @@ if [ $threads -eq 0 ]; then
 else
      echo "num threads is"
      echo $threads
-
-if [ -f "$tree" ]; then
-    printf "Tree is %s\n" "$tree"
-  else
-    printf "Tree $tree not found. Exiting\n" >&2
-    exit
 fi
+
+#if [ -f "$tree" ]; then
+#    printf "Tree is %s\n" "$tree"
+#  else
+#    printf "Tree $tree not found. Exiting\n" >&2
+#    exit
+#fi
 if [ $PE -eq 1 ]; then
   if [ -f ${read_one} ]; then
      printf "Paired end reads \n"
@@ -150,8 +151,9 @@ if [ $PE -eq 1 ]; then
   else
     printf "read one ${read_one} not found. Exiting\n" >&2
     exit
+  fi
 fi
-  if [ -f ${read_two} ]; then
+if [ -f ${read_two} ]; then
      printf "Paired end reads \n"
      printf "read two is ${read_two}\n"
   else
@@ -159,34 +161,8 @@ fi
     exit
 fi
 
-fi
-
-#######################################################################
-assert ()                 #  If condition false,
-{                         #+ exit from script
-                          #+ with appropriate error message.
-  E_PARAM_ERR=98
-  E_ASSERT_FAILED=99
 
 
-  if [ -z "$2" ]          #  Not enough parameters passed
-  then                    #+ to assert() function.
-    return $E_PARAM_ERR   #  No damage done.
-  fi
-
-  lineno=$2
-
-  if [ ! $1 ]
-  then
-    echo "Assertion failed:  \"$1\""
-    echo "File \"$0\", line $lineno"    # Give name of file and line number.
-    exit $E_ASSERT_FAILED
-  # else
-  #   return
-  #   and continue executing the script.
-  fi
-}
-#######################################################################
 
 printf "master dir == %s\n" "$master_dir"
 printf "tail_1 is %s\n" "$r1_tail"

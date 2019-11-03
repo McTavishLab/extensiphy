@@ -46,3 +46,50 @@ Additionally, Phycorder comes with an additional pipeline for generating a phylo
 
 Phycorder will need to automatically look for these programs in your computers PATH. If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of. The following is a basic tutorial on adding programs to your PATH.
 
+First you'll need to find the ```.bash_profile``` file on your computer. This file lives in your home directory when you first open a terminal. Here's how you find it:
+
+```bash
+open terminal
+$ls -a
+.bash_profile
+other_files_in_your_home_directory
+
+$echo $PATH
+home/your_name/bin:home/your_name/other_folders/in_your/path:
+
+$vim .bash_profile
+```
+At this point you'll need to add the programs you've downloaded and unpacked to your .bash_profile in the following format. Add all of this as one line, filling in the appropriate absolute pathing. If you don't see this file when using `ls -a` then you need to create it.
+
+```bash
+
+export PATH="/home/your_name/path/to/program:$PATH"
+
+```
+
+An example of what I see is:
+
+```bash
+
+export PATH="/home/jasper/src/SPAdes-3.13.0-Linux:$PATH"
+
+```
+
+Once you've added all your programs to your PATH, close the terminal window and reopen it. Then type use the `which` command to see if your computer knows where the program is located
+
+```bash
+
+$which hisat2
+
+/home/your_name/hisat2_folder/hisat2
+
+```
+
+I installed hisat2 in a bin folder so I see:
+
+```bash
+
+/home/jasper/bin/hisat2
+
+```
+

@@ -14,41 +14,6 @@ PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 # for easy use of multiple config num_files
 source $1
 
-##############################################################
-
-#while getopts ":a:t:p:e:s:o:n:r:c:1:2:m:d:g:h" opt; do
-#  case $opt in
-#    a) align="$OPTARG"
-#    ;;
-#    t) tree="$OPTARG"
-#    ;;
-#    o) outdir="$OPTARG"
-#    ;;
-#    c) threads="$OPTARG"
-#    ;;
-#    1) r1_tail="$OPTARG"
-#    ;;
-#    2) r2_tail="$OPTARG"
-#    ;;
-#    m) align_type="$OPTARG"
-#    ;;
-#    d) master_dir="$OPTARG"
-#    ;;
-#    g) gap_align="$OPTARG"
-#    ;;
-#    h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
-#    exit
-#    ;;
-#   # \?) echo "Invalid option -$OPTARG" >&2
-#    ;;
-#  esac
-#done
-
-
-
-#################################################################
-
-
 
 printf "###################################################\n"
 printf "$align_type\n"

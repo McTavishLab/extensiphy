@@ -12,7 +12,138 @@ PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # changing location of .cfg file to a variable
 # for easy use of multiple config num_files
-source $1
+#source $1
+
+
+############################################################
+
+#Check for dependencies
+if [ $(which bcftools | wc -l) -lt 1 ]
+    then
+        printf "Requires bcftools" >&2
+     #   exit 0
+    else
+        printf "Correct version of bfctools found.\n"
+fi
+if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
+    then
+        printf "Requires samtools" >&2
+      #  exit 0
+    else
+        printf "Correct version of samtools found.\n"
+fi
+if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "seqtk not found\n" >&2
+    else
+        printf "seqtk found\n"
+fi
+if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "bowtie2 not found. Install and/or add to path\n" >&2
+    else
+        printf "bowtie2 found\n"
+fi
+if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
+    else
+        printf "raxmlHPC found\n"
+fi
+if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "fastx toolkit not found. Install and/or add to path\n" >&2
+    else
+        printf "fastx toolkit found\n"
+fi
+if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
+    then
+        printf "vcfutils.pl not found. Install and/or add to path\n" >&2
+    else
+        printf "vcfutils.pl found\n"
+fi
+
+printf "\n\n\n\n"
+
+outdir="phycorder_run"
+threads=0
+r1_tail="R1.fq"
+r2_tail="R2.fq"
+phycorder_runs=2
+align_type="CONCAT_MSA"
+output_type="CONCAT_MSA"
+single_locus_suffix=".fasta"
+loci_positions="$outdir/loci_positions.csv"
+bootstrapping="OFF"
+tree="NONE"
+
+while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
+  case $opt in
+    a) align="$OPTARG"
+    ;;
+    t) tree="$OPTARG"
+    ;;
+    o) outdir="$OPTARG"
+    ;;
+    c) threads="$OPTARG"
+    ;;
+    p) phycorder_runs="$OPTARG"
+    ;;
+    1) r1_tail="$OPTARG"
+    ;;
+    2) r2_tail="$OPTARG"
+    ;;
+    m) align_type="$OPTARG"
+    ;;
+    d) read_dir="$OPTARG"
+    ;;
+    g) output_type="$OPTARG"
+    ;;
+    s) single_locus_suffix="$OPTARG"
+    ;;
+    f) loci_positions="$OPTARG"
+    ;;
+    b) bootstrapping="$OPTARG"
+    ;;
+    h) printf  " alignment in fasta format (-a),\n alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m),\n directory name to hold results (-o),\n tree in Newick format or specify NONE to perform new inference (-t),\n number of taxa to process in parallel (-p),\n number of threads per taxon being processes (-c),\n suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2),\n directory of paired end fastq read files for all query taxa (-d),\n output format (CONCAT_MSA) (-g),\n if using single locus MSA files as input,\n specify the suffix (.fa, .fasta, etc) (-s),\n csv file name to keep track of individual loci when concatenated (-f),\n bootstrapping tree ON or OFF (-b)\n"
+    exit
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+if [ -z "$align" ] || [ -z "$tree" ]; then
+   "alignment (-a), tree (-t), and paired-end reads (-d)"
+   exit
+fi
+
+#Ttest if files actually exist
+#Check to make sure mapping has occured if re-mapping
+
+#if [ -f "$align" ]; then
+#    printf "Alignment is %s\n" "$align"
+#  else
+#    printf "Alignment $align not found. Exiting\n" >&2
+#    exit
+#fi
+
+
+if [ $threads -eq 0 ]; then
+     threads=2
+     printf "Threads not set, defaulting to 2" >&2
+else
+     echo "num threads is"
+     echo $threads
+fi
+
+
+############################################################
+
+
+
+
+
 
 printf "###################################################\n"
 printf "$align_type\n"

@@ -56,7 +56,7 @@ To test gon_phyling.sh, run:
 Python packages:
     	Dendropy 4.0 (pip install dendropy)
 Software in path for multi_map.sh rapid-updating:
-        bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+        hisat2 https://ccb.jhu.edu/software/hisat2/index.shtml
         fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
         raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
         seqtk https://github.com/lh3/seqtk

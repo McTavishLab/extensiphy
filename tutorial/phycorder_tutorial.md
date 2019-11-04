@@ -93,3 +93,102 @@ I installed hisat2 in a bin folder so I see:
 
 ```
 
+
+
+####Running Phycorder
+
+Phycorder (on branch overhaul_dev) takes command line arguments to update a phylogenetic tree with new taxa sequences. Lets look at the options used by Phycorder. Phycorder use revolves around calling the 
+
+```bash
+multi_map.sh
+```
+
+command followed by flags (dashes next to a letter corresponding the command you wish to use or input).
+
+```bash
+multi_map.sh -h
+```
+
+has the following output:
+
+```bash
+
+ alignment in fasta format (-a),
+ alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m),
+ directory name to hold results (-o),
+ tree in Newick format or specify NONE to perform new inference (-t),
+ number of taxa to process in parallel (-p),
+ number of threads per taxon being processes (-c),
+ suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2),
+ directory of paired end fastq read files for all query taxa (-d),
+ output format (CONCAT_MSA) (-g),
+ if using single locus MSA files as input, specify the suffix (.fa, .fasta, etc) (-s),
+ csv file name to keep track of individual loci when concatenated (-f),
+ bootstrapping tree ON or OFF (-b)
+
+```
+
+Phycorder has a number of default settings for these so you will not always have to explicitly use all of these options for every run. The use of these flags depends on the input you wish to use and the output you desire to have at the end of a run.
+
+First lets try a basic test case. Within the Phycorder folder is a folder called 
+
+```bash
+testdata
+```
+
+This folder contains a variety of files for testing your installation and use of Phycorder.
+
+Lets use Phycorder to update a multiple sequence alignment with some new data. Run this command:
+
+```bash
+
+multi_map.sh -a /path/to/phycorder/testdata/combo.fas -d /path/to/phycorder/testdata
+
+```
+
+This command takes in an alignment file (combo.fas) and a directory containing some paired-end read files. The other flags use their default values in this case. The result of this is that phycorder will add the taxa sequences from the read files to combo.fas and will infer a new phylogenetic tree. You can examine the results by looking at these files:
+
+```bash
+~/phycorder_run/combine_and_infer/extended.aln
+~/phycorder_run/combine_and_infer/RAxML_bestTree.consensusFULL
+```
+
+If the run completed successfully you'll see a full phylogenetic tree that looks like this: ![this](images/tree_image_1.png?raw=true)
+
+
+We just added 3 new taxa to a starting multiple sequence alignment and inferred a tree. Lets try starting with multiple single locus files instead of a single, concatenated sequence file. Use the following commands to look at our single locus files:
+
+```bash
+$ls /testdata/single_locus_align_dir/
+/testdata/single_locus_align_dir/single_locus_1_.fasta
+/testdata/single_locus_align_dir/single_locus_2_.fasta
+```
+
+Both of these files contain the homologous sequence for a number of taxa. The first one is a rather big sequence of over 10,000 bases. The second one is a smaller sequence of 4 bases. Take a look at them like so:
+
+```bash
+$head -2 /testdata/single_locus_align_dir/single_locus_1_.fasta
+$head -2 /testdata/single_locus_align_dir/single_locus_2_.fasta
+```
+
+You'll see that one file's sequence is indeed very large while the second file's sequence is only a few letters. This is deliberate to display a function of Phycorder when selecting which data to input. Phycorder should only be used with loci over 1,000 bases long. If taking these files are input, the smaller sequence file will be identified and removed before construction of a concatenated sequence. Lets run a new analyses.
+
+First, remove the folder with the output we just generated
+
+```bash
+$rm -r phycorder_run
+```
+
+Now, enter the following command:
+
+```bash
+multi_map.sh -a /path/to/phycorder/testdata/single_locus_align_dir -d /path/to/phycorder/testdata -m SINGLE_LOCUS_FILES
+```
+
+This run will take the single loci MSA files, check for loci longer than the cut-off of 1,000 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the
+
+```bash
+loci_positions.csv
+```
+
+file. This file is a comma delimited file capturing the loci's position in the concatenated alignment, the loci's file name and the loci's length.

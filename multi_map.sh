@@ -73,7 +73,7 @@ phycorder_runs=2
 align_type="CONCAT_MSA"
 output_type="CONCAT_MSA"
 single_locus_suffix=".fasta"
-loci_positions="$outdir/loci_positions.csv"
+loci_positions="loci_positions.csv"
 bootstrapping="OFF"
 tree="NONE"
 
@@ -162,6 +162,8 @@ mkdir -p $outdir
 
 cd $outdir
 
+workd=$(pwd)
+
 if [ $align_type == "PARSNP_XMFA" ]; then
 
 	mkdir locus_msa_files
@@ -184,7 +186,7 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
         # TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
-	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --suffix $single_locus_suffix --len_filter 1000
+	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000
 	align=$( realpath ../combo.fas)
 
 	printf "New alignment file produced\n"
@@ -193,11 +195,11 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 	cd ..
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
-	$PHYCORDER/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $PHYCORDER/$outdir/combo.fas --position_csv_file $loci_positions --len_filter 1000
+	$PHYCORDER/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 1000
 	printf "$outdir\n"
 	printf "$PHYCORDER\n"	
 
-	align=$( realpath $PHYCORDER/$outdir/combo.fas )
+	align=$( realpath $workd/combo.fas )
 
 
 elif [ $align_type == "CONCAT_MSA" ]; then
@@ -213,7 +215,7 @@ fi
 ###########################
 printf "align == $align\n"
 printf "phycorder dir == $PHYCORDER\n"
-workd=$(pwd)
+#workd=$(pwd)
 
 if [[ ! -z $(grep "-" $align) ]]; then
   printf "GAP FOUND BEFORE REMOVAL"

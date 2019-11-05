@@ -38,13 +38,13 @@ if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "seqtk found\n"
 fi
-if [ $(which bowtie2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which hisat2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
-        printf "bowtie2 not found. Install and/or add to path\n" >&2
+        printf "hisat2 not found. Install and/or add to path\n" >&2
     else
-        printf "bowtie2 found\n"
+        printf "hisat2 found\n"
 fi
-if [ $(which raxmlHPC-PTHREADS-SSE3 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
     else
@@ -105,7 +105,7 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
     ;;
     b) bootstrapping="$OPTARG"
     ;;
-    h) printf  " alignment in fasta format (-a),\n alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m),\n directory name to hold results (-o),\n tree in Newick format or specify NONE to perform new inference (-t),\n number of taxa to process in parallel (-p),\n number of threads per taxon being processes (-c),\n suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2),\n directory of paired end fastq read files for all query taxa (-d),\n output format (CONCAT_MSA) (-g),\n if using single locus MSA files as input,\n specify the suffix (.fa, .fasta, etc) (-s),\n csv file name to keep track of individual loci when concatenated (-f),\n bootstrapping tree ON or OFF (-b)\n"
+    h) printf  " alignment in fasta format (-a),\n alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m),\n directory name to hold results (-o),\n tree in Newick format or specify NONE to perform new inference (-t),\n number of taxa to process in parallel (-p),\n number of threads per taxon being processes (-c),\n suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2),\n directory of paired end fastq read files for all query taxa (-d),\n output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (-g),\n if using single locus MSA files as input,\n specify the suffix (.fa, .fasta, etc) (-s),\n csv file name to keep track of individual loci when concatenated (-f),\n bootstrapping tree ON or OFF (-b)\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -200,7 +200,7 @@ elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 	printf "$PHYCORDER\n"	
 
 	align=$( realpath $workd/combo.fas )
-
+	loci_positions=$( realpath $loci_positions)
 
 elif [ $align_type == "CONCAT_MSA" ]; then
 

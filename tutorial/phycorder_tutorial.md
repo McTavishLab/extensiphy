@@ -30,8 +30,8 @@ You need:
 ##### You want multiple single locus files and a tree from all of those alignment files
 You need:
 * Multiple seperate locus MSA files **OR**
-..* A single concatenated MSA file 
-..* A CSV file illustrating locus lengths and positions
+  * A single concatenated MSA file 
+  * A CSV file illustrating locus lengths and positions
 * Directory of paired-end read files
 * (Optional) a tree generated from combining all the loci
 

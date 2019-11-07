@@ -17,7 +17,26 @@ This tutorial will walk you through installing and using **Phycorder**, a progra
 
 Phycorder is a tool for updating an existing multiple sequence alignment and a phylogeny inferred from that alignment. Say you built a phylogeny for a group of bacteria during an outbreak and then received some new sequencing data that you wish to quickly incorporate into the phylogeny. Phycorder makes it convenient to do this while also ensuring you can easily do this again any time you acquire new data.
 
-#### Dependencies
+### Use cases and required files
+
+You can use Phycorder in multiple ways. Depending on the input and output you wish to receive, you will need different data in different formats.Here are some example use cases:
+
+##### You want an alignment with new taxa added and a tree from that alignment
+You need:
+* Alignment file (fasta format)
+* Directory of paired-end read files
+
+##### You want multiple single locus files and a tree from all of those alignment files
+You need:
+* Multiple seperate locus MSA files **OR**
+ * A single concatenated MSA file 
+ * A CSV file illustrating locus lengths and positions
+* Directory of paired-end read files
+
+##### You want
+
+
+### Dependencies
 
 Unfortunately, Phycorder requires some dependencies. You know what they say about not reinventing the wheel. We'll walk through the basics of installation and adding the installed programs to your path so that Phycorder can use them.
 
@@ -42,7 +61,7 @@ Additionally, Phycorder comes with an additional pipeline for generating a phylo
 4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
 
-#### Pathing
+### Pathing
 
 Phycorder will need to automatically look for these programs in your computers PATH. If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of. The following is a basic tutorial on adding programs to your PATH.
 
@@ -95,7 +114,7 @@ I installed hisat2 in a bin folder so I see:
 
 
 
-#### Running Phycorder
+### Running Phycorder
 
 Phycorder (on branch overhaul_dev) takes command line arguments to update a phylogenetic tree with new taxa sequences. Lets look at the options used by Phycorder. Phycorder use revolves around calling the 
 
@@ -111,7 +130,7 @@ multi_map.sh -h
 
 has the following output:
 
-```bash
+```
 
  alignment in fasta format (-a),
  alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m),

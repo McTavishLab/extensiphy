@@ -94,5 +94,28 @@ Software in path for gon_phyling.sh:
 - bbmap https://sourceforge.net/projects/bbmap/
 - raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
 
+### Dependencies
+
+Unfortunately, RapUp requires some dependencies. You know what they say about not reinventing the wheel. We'll walk through the basics of installation and adding the installed programs to your path so that RapUp can use them.
+
+Using RapUp is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
+
+Dependencies (Separate programs you'll need to install):
+
+1. [Python 3](https://www.python.org/)
+2. [Hisat2](https://ccb.jhu.edu/software/hisat2/index.shtml)
+3. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
+4. [Seqtk](https://github.com/lh3/seqtk)
+5. [Samtools](http://www.htslib.org/)
+6. [Bcftools](http://www.htslib.org/)
+7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
+8. [Dendropy](https://dendropy.org/)
+
+Additionally, RapUp comes with an additional pipeline for generating a phylogenetic tree from scratch: **Gon\_phyling**. These programs are not required for running Phycorder itself but Gon\ling can be useful if you have a lot of data and aren't interested in hand selecting the loci/genes you include in your alignment. Gon\_phyling's dependencies are as follows:
+
+1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
+2. [Spades](https://github.com/ablab/spades)
+3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/)
+4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML
 
 

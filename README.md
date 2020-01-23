@@ -30,7 +30,7 @@ Make a copy and then alter that for your analyses
 
 When you're ready to load your own data, adjust the variable values in the new config file
 
-##IMPORTANT!!
+### IMPORTANT!!
 Before you do anything else, make a copy of your read data and move that copy into an empty directory
 Run the name_parser.py program on that data with the following options:
 	- name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
@@ -67,7 +67,7 @@ You need a tree and alignment with any number of taxa in order to update these w
 gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.
 
 To test gon_phyling.sh, run:
-./gon_phyling.sh ./sample_gon_phyling.cfg
+	- ./gon_phyling.sh ./sample_gon_phyling.cfg
 
 ## If all you have is raw reads and you need to create a starting tree:
 1. Run name_parser.py on your reads.

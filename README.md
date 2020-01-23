@@ -79,20 +79,20 @@ To test gon_phyling.sh, run:
 
 ## Dependencies:
 Python packages:
-    	Dendropy 4.0 (pip install dendropy)
+- Dendropy 4.0 (pip install dendropy)
 Software in path for multi_map.sh rapid-updating:
-        hisat2  https://ccb.jhu.edu/software/hisat2/index.shtml
-        fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
-        raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
-        seqtk https://github.com/lh3/seqtk
-        samtools / bcftools
+- hisat2  https://ccb.jhu.edu/software/hisat2/index.shtml
+- fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
+- raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
+- seqtk https://github.com/lh3/seqtk
+- samtools / bcftools
         NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
         Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!
 Software in path for gon_phyling.sh:
-	parsnp https://harvest.readthedocs.io/en/latest/content/parsnp.html
-	spades http://spades.bioinf.spbau.ru/
-	bbmap https://sourceforge.net/projects/bbmap/
-	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
+- parsnp https://harvest.readthedocs.io/en/latest/content/parsnp.html
+- spades http://spades.bioinf.spbau.ru/
+- bbmap https://sourceforge.net/projects/bbmap/
+- raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
 
 
 

@@ -29,13 +29,11 @@ You need:
 
 ##### You want multiple single locus files and a tree from all of those alignment files
 You need:
-* Multiple seperate locus MSA files **OR**
-  * A single concatenated MSA file 
+* Multiple seperate locus multiple sequence alignment files (fasta format) **OR**
+  * A single concatenated multiple sequence alignment file 
   * A CSV file illustrating locus lengths and positions
 * Directory of paired-end read files
 * (Optional) a tree generated from combining all the loci
-
-##### You want
 
 
 ### Dependencies
@@ -61,6 +59,32 @@ Additionally, Phycorder comes with an additional pipeline for generating a phylo
 2. [Spades](https://github.com/ablab/spades)
 3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/)
 4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
+
+
+### Quick dependency install
+Use conda for fastest dependency install.
+
+Add appropriate channels to your conda install:
+
+```bash
+conda config --prepend channels conda-forge
+conda config --prepend channels bioconda
+```
+
+Run this command to add the necessary dependencies to your conda environment:
+
+```bash
+conda create -n phycorder samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
+```
+
+Activate your installation
+
+```bash
+conda activate phycorder
+```
+
+Conda install recipe on the way.
+
 
 
 ### Pathing

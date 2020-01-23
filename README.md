@@ -1,11 +1,11 @@
 # RapUp
-## Overview
+### Overview
 
 RapUp assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
 
 RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
 
-## Setup and Use
+### Setup and Use
 
 Currently you must set up the config file for use after you have tested your install.
 RapUp allows for control over both how many RapUp runs happen
@@ -15,7 +15,7 @@ find out how many cores you have available and calculate (cores*RapUp runs you w
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
 
-## First Run
+### First Run
 
 If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
 
@@ -30,7 +30,7 @@ Make a copy and then alter that for your analyses
 
 When you're ready to load your own data, adjust the variable values in the new config file
 
-### IMPORTANT!!
+#### IMPORTANT!!
 Before you do anything else, make a copy of your read data and move that copy into an empty directory
 Run the name_parser.py program on that data with the following options:
 	- name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
@@ -39,7 +39,7 @@ Additionally, limit the loci you include for updating to sequences with lengths 
 
 This will rename your reads in a way that is easily parsed by RapUp
 
-## Some specifics about the values to change:
+### Some specifics about the values to change:
 
 - align: The alignment is the one used to generate the tree you're plugging into the program as a starting tree. Depending on the type of input, you'll need to adjust the align_type option.
 - align_type: set the input type for the alignment. Can be a parsnp.xmfa file output by parsnp, a directory of seperate loci multiple sequence alignment files in the fasta format or a single concatenated multiple sequence alignment in the fasta format.
@@ -57,7 +57,7 @@ If you are renaming your reads with name_parser.py (which you absolutely should.
   - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
 
 
-## Output Files!
+### Output Files!
 	- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
 	- Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
 	- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
@@ -76,23 +76,6 @@ To test gon_phyling.sh, run:
 4. run: ./gon_phyling.sh ./[GON_PHYLING_CONFIG_FILE] in the RapUp directory.
 5. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full RapUp run.
 
-
-## Dependencies:
-Python packages:
-- Dendropy 4.0 (pip install dendropy)
-Software in path for multi_map.sh rapid-updating:
-- hisat2  https://ccb.jhu.edu/software/hisat2/index.shtml
-- fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html
-- raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
-- seqtk https://github.com/lh3/seqtk
-- samtools / bcftools
-        NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/
-        Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!
-Software in path for gon_phyling.sh:
-- parsnp https://harvest.readthedocs.io/en/latest/content/parsnp.html
-- spades http://spades.bioinf.spbau.ru/
-- bbmap https://sourceforge.net/projects/bbmap/
-- raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html
 
 ### Dependencies
 
@@ -116,6 +99,28 @@ Additionally, RapUp comes with an additional pipeline for generating a phylogene
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)
 3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/)
-4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML
+4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
+### Quick dependency install
+Use conda for fastest dependency install.
 
+Add appropriate channels to your conda install:
+
+```bash
+conda config --prepend channels conda-forge
+conda config --prepend channels bioconda
+```
+
+Run this command to add the necessary dependencies to your conda environment:
+
+```bash
+conda create -n phycorder samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
+```
+
+Activate your installation
+
+```bash
+conda activate phycorder
+```
+
+Conda install recipe on the way.

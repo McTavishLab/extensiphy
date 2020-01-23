@@ -3,7 +3,7 @@
 
 RapUp assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
 
-Pipeline that takes an alignment, a tree, and sets of sequencing reads from query taxa.
+RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
 
 ## Setup and Use
 
@@ -14,9 +14,16 @@ Make sure you dont ask your computer to work too hard by adding more runs and th
 find out how many cores you have available and calculate (cores*RapUp runs you wish to run as the same time)
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
-First, use the following command as RapUp should be able to find the included test datafiles
 
-./multi_map.sh ./sample_RapUp.cfg
+## First Run
+
+If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
+
+	- ./gon_phyling.sh ./sample_gon_phyling.cfg
+
+If you only plan on using RapUp to add data to an existing alignment and tree, use the following command as RapUp should be able to find the included test datafiles
+
+	- ./multi_map.sh ./sample_rapup.cfg
 
 It is recommended that you leave the sample_RapUp.cfg file alone so you always have a reference
 Make a copy and then alter that for your analyses
@@ -26,7 +33,7 @@ When you're ready to load your own data, adjust the variable values in the new c
 ##IMPORTANT!!
 Before you do anything else, make a copy of your read data and move that copy into an empty directory
 Run the name_parser.py program on that data with the following options:
-name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
+	- name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
 
 Additionally, limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
 
@@ -52,6 +59,7 @@ If you are renaming your reads with name_parser.py (which you absolutely should.
 
 ## Output Files!
 	- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
+	- Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
 	- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 Creating a starting tree!

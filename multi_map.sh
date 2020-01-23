@@ -1,13 +1,13 @@
 #! /bin/bash
 # inputs: a sequence alignment and a tree inferred from that alignment.
 # inputs: a directory of paired end reads for new taxa to be added to the alignment and corresponding tree.
-# example command: ./multi_map.sh ./sample_phycorder.cfg
+# example command: ./multi_map.sh ./sample_rapup.cfg
 
 set -e
 set -u
 set -o pipefail
 
-# establishes the path to find the phycorder directory
+# establishes the path to find the rapup directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # changing location of .cfg file to a variable
@@ -20,7 +20,7 @@ printf "$align_type\n"
 printf "$align\n"
 printf "$tree\n"
 printf "$read_dir\n"
-printf "$phycorder_runs\n"
+printf "$rapup_runs\n"
 printf "$threads\n"
 printf "$r1_tail\n"
 printf "$r2_tail\n"
@@ -82,7 +82,7 @@ fi
 
 ###########################
 printf "align == $align\n"
-printf "phycorder dir == $PHYCORDER\n"
+printf "rapup dir == $PHYCORDER\n"
 workd=$(pwd)
 
 if [[ ! -z $(grep "-" $align) ]]; then
@@ -112,9 +112,9 @@ $PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --out_file $work
 hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hisatbuild.log
 
 
-# ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
+# ls ${read_dir}/*$r1_tail | split -a 5 -l $rapup_runs
 
-ls ${read_dir}/*$r1_tail | split -a 10 -l $phycorder_runs
+ls ${read_dir}/*$r1_tail | split -a 10 -l $rapup_runs
 
 
 printf "Number of cores allocated enough to process all read sets\n"
@@ -147,11 +147,11 @@ printf "Individual Phycorder runs finished. Combining aligned query sequences an
 
 mkdir -p combine_and_infer
 
-mkdir -p phycorder-dev-logs
+mkdir -p rapup-dev-logs
 
 wd=$(pwd)
 
-# loop through phycorder run directories and move finished fasta files to /combine_and_infer/
+# loop through rapup run directories and move finished fasta files to /combine_and_infer/
 # for tree inference
 for i in $(ls -d *output_dir); do
  cd $i
@@ -243,7 +243,7 @@ elif [ $output_type == "CONCAT_MSA" ]; then
 
 fi
 
-   # printf "Moving run logs into phycorder-dev-logs"
+   # printf "Moving run logs into rapup-dev-logs"
    # cd ..
    #
-   # mv *-dev.log $outdir/phycorder-dev-logs
+   # mv *-dev.log $outdir/rapup-dev-logs

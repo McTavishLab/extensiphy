@@ -12,7 +12,7 @@ set -o pipefail
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 
-printf "phycorder directory is %s\n" "$PHYCORDER"
+printf "rapup directory is %s\n" "$PHYCORDER"
 
 
 
@@ -63,7 +63,7 @@ printf "phycorder directory is %s\n" "$PHYCORDER"
 #fi
 
 PE=0
-outdir=phycorder_run
+outdir=rapup_run
 nam=QUERY
 read_align=0
 re_map=1

@@ -1,21 +1,24 @@
-# Phycorder
+# RapUp
+## Overview
 
-Pipline that takes an alignment, a tree, and sets of sequencing reads from query taxa.
+RapUp assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
 
-Assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
+Pipeline that takes an alignment, a tree, and sets of sequencing reads from query taxa.
+
+## Setup and Use
 
 Currently you must set up the config file for use after you have tested your install.
-Phycorder allows for control over both how many phycorder runs happen
-in parallel and how many threads are allocated to each phycorder run_name
+RapUp allows for control over both how many RapUp runs happen
+in parallel and how many threads are allocated to each RapUp run
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
-find out how many cores you have available and calculate (cores*phycorder runs you wish to run as the same time)
+find out how many cores you have available and calculate (cores*RapUp runs you wish to run as the same time)
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
-First, use the following command as Phycorder should be able to find the included test datafiles
+First, use the following command as RapUp should be able to find the included test datafiles
 
-./multi_map.sh ./sample_phycorder.cfg
+./multi_map.sh ./sample_RapUp.cfg
 
-It is recommended that you leave the sample_phycorder.cfg file alone so you always have a reference
+It is recommended that you leave the sample_RapUp.cfg file alone so you always have a reference
 Make a copy and then alter that for your analyses
 
 When you're ready to load your own data, adjust the variable values in the new config file
@@ -27,9 +30,9 @@ name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
 
 Additionally, limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
 
-This will rename your reads in a way that is easily parsed by Phycorder
+This will rename your reads in a way that is easily parsed by RapUp
 
-##Some specifics about the values to change:
+## Some specifics about the values to change:
 
 - align: The alignment is the one used to generate the tree you're plugging into the program as a starting tree. Depending on the type of input, you'll need to adjust the align_type option.
 - align_type: set the input type for the alignment. Can be a parsnp.xmfa file output by parsnp, a directory of seperate loci multiple sequence alignment files in the fasta format or a single concatenated multiple sequence alignment in the fasta format.
@@ -41,13 +44,13 @@ If you are renaming your reads with name_parser.py (which you absolutely should.
 - single_locus_suffix: for use when inputting sepereate loci files.
 - outdir: the directory name to create and store your results in
 - bootstrapping: dictates whether you want a bootstrapped or single best tree. greatly affects speed. 
-- phycorder runs dictates how many taxa you want to map at a single time.
-  - Say if you have 10 taxa to add to your tree, you can tell phycorder that you want to run 5 mappings at a time in order to be efficient
-- Threads should be obvious but interacts with [Phycorder runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
+- RapUp_runs dictates how many taxa you want to map at a single time.
+  - Say if you have 10 taxa to add to your tree, you can tell RapUp that you want to run 5 mappings at a time in order to be efficient
+- Threads should be obvious but interacts with [RapUp runs] by dictating how many threads are given to each program IN AN INDIVIDUAL Run
   - So if you had 5 runs going at a time and you assigned 4 threads per run, this requires 20 threads in order to run.
 
 
-##Output Files!
+## Output Files!
 	- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
 	- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
@@ -58,15 +61,15 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
 To test gon_phyling.sh, run:
 ./gon_phyling.sh ./sample_gon_phyling.cfg
 
-!!! If all you have is raw reads and you need to create a starting tree:
+## If all you have is raw reads and you need to create a starting tree:
 1. Run name_parser.py on your reads.
 2. Move some fraction of your reads to a new folder for assembly and starting tree inference.
 3. Make a copy of the sample_gon_phyling.cfg file and alter the variable for the read directory to be assembled.
-4. run: ./gon_phyling.sh ./[GON_PHYLING_CONFIG_FILE] in the Phycorder directory.
-5. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full Phycorder run.
+4. run: ./gon_phyling.sh ./[GON_PHYLING_CONFIG_FILE] in the RapUp directory.
+5. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full RapUp run.
 
 
-!!! Installation of programs necessary for Phycorder:
+## Dependencies:
 Python packages:
     	Dendropy 4.0 (pip install dendropy)
 Software in path for multi_map.sh rapid-updating:
@@ -85,72 +88,3 @@ Software in path for gon_phyling.sh:
 
 
 
-
-Old README info
----------------------------------------------------------------------
-
-Pipline that takes an alignment, a tree, and set of sequencing reads form a query taxon.
-
-
-Assembles  homologous locus, if possible, using closest match as reference,
-calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
-
-
-Example run:
-
-    ./map_to_align.sh -a example.aln -t tree.tre -p SRR610374_1.fastq -e SRR610374_2.fastq
-
-NOTE: This example requires downloading SRR610374_1.fastq and SRR610374_2.fastq from  
-http://www.ebi.ac.uk/ena/data/view/SRR610374&display=html  
-or   
-http://www.ncbi.nlm.nih.gov/sra/?term=SRR610374  
-
-
-##Arguments:
-###required
- -a alignment in DNA fasta format. Use 'preprocessing.py' if not available as fasta  (required)  
- -t tree in newick format. Tip lables must match alignment labels, and polytomies must be resolved. Use 'preprocessing.py' to do so if necessary.
- (required)  
- -p paired end query reads fastq (read 1)
- -e paired end query reads fastq (read 2)
-    or  
- -s query reads (stub of single end read names. File should be named stub.fastq)  
- (required)  
-###optional arguments   
- -o output directory. Optional default is phycorder_run  
- -n run_name.  Optional, default is QUERY.  
- -r Boolean. Align and place reads. Default is 0, set to 1 if you want to align and place reads. Can be SLOWWWW if lots map.  
- -m Boolean. Map reads. Default is 1, set to 0 only if you have already mapped reads.  
- -b Boolean. Align reads to best reference in alignment, call and place consensus sequence. Default is 1, set to 0 if you only want to align and place reads.  
- -w Boolean. Try creating consensus from non optimal (worse) reference locus. Useful for investigating effects of refence choice.  
-
-##Output files:
- (with -n QUERY)  
-  ref_nogap.fas : The refence alignement will all gap characters removed, used as potential mapping reference loci  
-  {}.bt : bowtie2 refences  
-  full_alignment.sam : reads mapped to all loci in refence alignement (same full_sorted.bam, full_sorted.bam.bai)  
-  mapping_info : listing of how many reads mapped to each locus. Used in determining best refence locus  
-  matches : list of reads that mapped to any locus  
-  matches.fq : fastq of all reads mapped to any locus  
-  matches.fa : fasta of all reads mapped to any locus  
-  matches_unique.fa : matches.fa with duplicate reads removed  
-  {alignname}.phy : reference alignement in phylip format for PaPaRa  
-  papara_{}.reads : PaPaRa read alignment output files  
-  papara_alignment.reads : Alignment of reads in fasta  
-  RAxML_{}.QUERY_reads_EPA : RAxML reads output files  
-
-
-##Requirements:
-
-runs on linux, probably not anywhere else  
-(Too many probably...)   
-Python packages:
-    Dendropy 4.0 (pip install dendropy)  
-Software in path:
-	bowtie2  http://bowtie-bio.sourceforge.net/bowtie2/index.shtml  
-	fastx  http://hannonlab.cshl.edu/fastx_toolkit/download.html  
-	raxmlHPC http://sco.h-its.org/exelixis/web/software/raxml/index.html  
-	seqtk https://github.com/lh3/seqtk  
-	samtools / bcftools  
-	NOTE: requires samtools and bcftools 1.0 - not currently avail via apt-get. Install from http://www.htslib.org/  
-	Installs nicely but to /usr/local unlike apt-get - make sure paths are correct!  

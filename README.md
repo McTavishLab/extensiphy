@@ -19,11 +19,15 @@ then adjust to your optimum setting.
 
 If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
 
-	- ./gon_phyling.sh ./sample_gon_phyling.cfg
+```bash
+./gon_phyling.sh ./sample_gon_phyling.cfg
+```
 
 If you only plan on using RapUp to add data to an existing alignment and tree, use the following command as RapUp should be able to find the included test datafiles
 
-	- ./multi_map.sh ./sample_rapup.cfg
+```bash
+./multi_map.sh ./sample_rapup.cfg
+```
 
 It is recommended that you leave the sample_RapUp.cfg file alone so you always have a reference
 Make a copy and then alter that for your analyses
@@ -33,7 +37,10 @@ When you're ready to load your own data, adjust the variable values in the new c
 #### IMPORTANT!!
 Before you do anything else, make a copy of your read data and move that copy into an empty directory
 Run the name_parser.py program on that data with the following options:
-	- name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
+
+```bash
+name_parser.py -d --newtaxa_dir [PATH/TO/DIRECTORY/OF/READS]
+```
 
 Additionally, limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
 
@@ -58,16 +65,18 @@ If you are renaming your reads with name_parser.py (which you absolutely should.
 
 
 ### Output Files!
-	- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
-	- Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
-	- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
+- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
+- Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
+- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 Creating a starting tree!
 You need a tree and alignment with any number of taxa in order to update these with new taxa.
 gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.
 
 To test gon_phyling.sh, run:
-	- ./gon_phyling.sh ./sample_gon_phyling.cfg
+```bash
+./gon_phyling.sh ./sample_gon_phyling.cfg
+```
 
 ## If all you have is raw reads and you need to create a starting tree:
 1. Run name_parser.py on your reads.

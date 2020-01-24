@@ -1,7 +1,7 @@
 # RapUp
 ### Overview
 
-RapUp is a pipeline that assembles homologous loci by aligning reads to a reference from the alignment, calls consensus, adds to the existing alignment, and places the new lineages in the tree using EPA in RAxML.
+RapUp is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment, and places the new lineages in a phylogeny using EPA in RAxML.
 
 RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
 

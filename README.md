@@ -1,7 +1,7 @@
 # RapUp
 ### Overview
 
-RapUp assembles homologous loci by mapping to a reference from the alignment, calls consensus, adds to existing alignment, and places in the tree using EPA in RAxML.
+RapUp is a pipeline that assembles homologous loci by aligning reads to a reference from the alignment, calls consensus, adds to the existing alignment, and places the new lineages in the tree using EPA in RAxML.
 
 RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
 
@@ -11,11 +11,12 @@ Currently you must set up the config file for use after you have tested your ins
 RapUp allows for control over both how many RapUp runs happen
 in parallel and how many threads are allocated to each RapUp run
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
-find out how many cores you have available and calculate (cores*RapUp runs you wish to run as the same time)
+find out how many cores you have available and calculate (cores * rapup_runs) you wish to run as the same time
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
 
 ### First Run
+Once you've cloned this repo and installed all dependencies to your PATH, begin here. Dependencies are outlined at the bottom of this readme.
 
 If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
 
@@ -23,13 +24,13 @@ If you plan to generate a starting alignment and tree that you wish to add seque
 ./gon_phyling.sh ./sample_gon_phyling.cfg
 ```
 
-If you only plan on using RapUp to add data to an existing alignment and tree, use the following command as RapUp should be able to find the included test datafiles
+If you only plan on using RapUp to add data to an existing alignment and tree, use the following command, as RapUp should be able to find the included test datafiles
 
 ```bash
 ./multi_map.sh ./sample_rapup.cfg
 ```
 
-It is recommended that you leave the sample_RapUp.cfg file alone so you always have a reference
+It is recommended that you leave the sample_rapup.cfg file alone so you always have a reference
 Make a copy and then alter that for your analyses
 
 When you're ready to load your own data, adjust the variable values in the new config file
@@ -88,9 +89,7 @@ To test gon_phyling.sh, run:
 
 ### Dependencies
 
-Unfortunately, RapUp requires some dependencies. You know what they say about not reinventing the wheel. We'll walk through the basics of installation and adding the installed programs to your path so that RapUp can use them.
-
-Using RapUp is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
+**Using RapUp is limited to Linux at the moment.** Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
 
 Dependencies (Separate programs you'll need to install):
 

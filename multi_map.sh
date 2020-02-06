@@ -245,13 +245,14 @@ hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hi
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 
-ls ${read_dir}/*$r1_tail | split -a 10 -l $phycorder_runs
+#ls ${read_dir}/*$r1_tail | split -a 10 -l $phycorder_runs
 
+ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 
 printf "Number of cores allocated enough to process all read sets\n"
 printf "Beginning Phycorder runs\n"
 
-for j in $(ls xa*); do
+for j in $(ls x*); do
 for i in $(cat $j); do
     base=$(basename $i $r1_tail)
     echo $base

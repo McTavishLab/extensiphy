@@ -63,7 +63,7 @@ if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcf
         printf "vcfutils.pl found\n"
 fi
 
-printf "\n\n\n\n"
+printf "\n\n"
 
 outdir="rapup_run"
 threads=0
@@ -105,7 +105,7 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
     ;;
     b) bootstrapping="$OPTARG"
     ;;
-    h) printf  " EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format (-a),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (-o) (DEFAULT: creates rapup_run),\n (-t) tree in Newick format or specify NONE to perform new inference (-t) (DEFAULT: NONE),\n (-p) number of taxa to process in parallel (-p),\n (-c) number of threads per taxon being processes (-c),\n (-1, -2) suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2) (DEFAULTS: R1.fq and R2.fq),\n (-d) directory of paired end fastq read files for all query taxa (-d),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (-g) (DEFAULT: CONCAT_MSA),\n if using single locus MSA files as input,\n (-s) specify the suffix (.fa, .fasta, etc) (-s) (DEFAULT: .fasta),\n (-f) csv file name to keep track of individual loci when concatenated (-f) (DEFAULT: loci_positions.csv),\n (-b) bootstrapping tree ON or OFF (-b) (DEFAULT: OFF)\n"
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format (-a),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (-o) (DEFAULT: creates rapup_run),\n (-t) tree in Newick format or specify NONE to perform new inference (-t) (DEFAULT: NONE),\n (-p) number of taxa to process in parallel (-p),\n (-c) number of threads per taxon being processes (-c),\n (-1, -2) suffix (ex: R1.fasta or R2.fasta) for both sets of paired end files (-1, -2) (DEFAULTS: R1.fq and R2.fq),\n (-d) directory of paired end fastq read files for all query taxa (-d),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (-g) (DEFAULT: CONCAT_MSA),\n if using single locus MSA files as input,\n (-s) specify the suffix (.fa, .fasta, etc) (-s) (DEFAULT: .fasta),\n (-f) csv file name to keep track of individual loci when concatenated (-f) (DEFAULT: loci_positions.csv),\n (-b) bootstrapping tree ON or OFF (-b) (DEFAULT: OFF)\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -184,7 +184,6 @@ if [ $align_type == "PARSNP_XMFA" ]; then
                 wait
         done
 
-        # TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
 	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000
 	align=$( realpath ../combo.fas)

@@ -180,7 +180,8 @@ mkdir masked_genomes
 # else
 echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
-for i in $(ls -1); do mv $i $(echo $i | sed 's/_R1.fastq.fasta//') ; done
+# STRIP ADDED UNNECESSARY FILE FORMAT INFO FROM FILE NAMES
+for i in $(ls -1); do mv $i $(echo $i | sed "s/_$r1_tail.fasta//") ; done
 
 printf "$ref_genome is ref genome selection"
 

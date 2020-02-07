@@ -76,6 +76,7 @@ single_locus_suffix=".fasta"
 loci_positions="loci_positions.csv"
 bootstrapping="OFF"
 tree="NONE"
+ref_select="RANDOM"
 
 while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
   case $opt in
@@ -236,10 +237,12 @@ else
   printf "NO GAPS FOUND AFTER REMOVAL";
 fi
 
-$PHYCORDER/ref_producer.py -s --align_file $align --out_file $workd/best_ref_gaps.fas
+# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
+$PHYCORDER/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas
 
-$PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
+$PHYCORDER/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
 
+# BUILD REFERENCE ALIGNMENT LIBRARY
 hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hisatbuild.log
 
 

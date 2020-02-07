@@ -78,7 +78,7 @@ bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
 
-while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
+while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:r:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -106,7 +106,9 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
     ;;
     b) bootstrapping="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
+    r) ref_select="$OPTARG"
+    ;;
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -151,6 +153,7 @@ printf "$align_type\n"
 printf "$align\n"
 printf "$tree\n"
 printf "$read_dir\n"
+printf "$ref_select\n"
 printf "$phycorder_runs\n"
 printf "$threads\n"
 printf "$r1_tail\n"
@@ -237,12 +240,22 @@ else
   printf "NO GAPS FOUND AFTER REMOVAL";
 fi
 
-# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
-$PHYCORDER/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas
+if [ $ref_select != "RANDOM" ]; then
 
-$PHYCORDER/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
+        $PHYCORDER/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas
 
-# BUILD REFERENCE ALIGNMENT LIBRARY
+        $PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas
+
+
+elif [ $ref_select == "RANDOM" ]; then
+	# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
+	$PHYCORDER/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas
+
+	$PHYCORDER/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas
+
+fi
+
+	# BUILD REFERENCE ALIGNMENT LIBRARY
 hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hisatbuild.log
 
 

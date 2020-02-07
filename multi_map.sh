@@ -105,7 +105,7 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:h" opt; do
     ;;
     b) bootstrapping="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format (-a),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (-m) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (-o) (DEFAULT: creates rapup_run),\n (-t) tree in Newick format or specify NONE to perform new inference (-t) (DEFAULT: NONE),\n (-p) number of taxa to process in parallel (-p),\n (-c) number of threads per taxon being processes (-c),\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (-1, -2) (DEFAULTS: R1.fq and R2.fq),\n (-d) directory of paired end fastq read files for all query taxa (-d),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (-g) (DEFAULT: CONCAT_MSA),\n if using single locus MSA files as input,\n (-s) specify the suffix (.fa, .fasta, etc) (-s) (DEFAULT: .fasta),\n (-f) csv file name to keep track of individual loci when concatenated (-f) (DEFAULT: loci_positions.csv),\n (-b) bootstrapping tree ON or OFF (-b) (DEFAULT: OFF)\n"
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -247,6 +247,8 @@ hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/hi
 
 #ls ${read_dir}/*$r1_tail | split -a 10 -l $phycorder_runs
 
+# SPLIT UP READ FILES NAMES INTO SEPARATE FILES THAT CONSTITUTE RAPUP RUNS
+# X01 IS A SINGLE RUN, X02, etc
 ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 
 printf "Number of cores allocated enough to process all read sets\n"
@@ -307,7 +309,7 @@ cd combine_and_infer
 
 # strip the unnecessary information from the taxa names in the alignment.
 # this assumes you've used the renaming tool to rename all of the reads for this experiment
-
+# COMMENTED OUT DUE TO CHANGES TO HOW NAME HANDLING IS WORK MOVING FORWARD
 #sed -i -e 's/_[^_]*//2g' extended.aln
 
 INFER=$(pwd)

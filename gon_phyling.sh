@@ -180,6 +180,8 @@ mkdir masked_genomes
 # else
 echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
+for i in $(ls -1); do mv $i $(echo $i | sed 's/_R1.fastq.fasta//') ; done
+
 printf "$ref_genome is ref genome selection"
 
 # CHECKING FOR REFERENCE USE
@@ -222,11 +224,12 @@ if [ $output_type == "LOCUS" ]; then
 		wait
 	done
 
-	# TODO: ADD COLLECTION SCRIPT THAT ASSEMBLES SINGLE LOCUS FILES INTO CONCATENATED FILE
 
 	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
 	$GON_PHYLING/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
 	cd ..
+
+	# STRIP TAILS FROM NAMES FOR CLEANER TAXON NAMES
 
 elif [ $output_type == "LOCI" ]; then
 	printf "YOU SELECTED TO NOT SPLIT THE LOCI INTO SEPERATE FILES\n"
@@ -255,8 +258,7 @@ cat parsnp_chunk-*-.fa > combo.fas
 sed -i '1d' combo.fas
 
 # trim down the taxa names
-sed -i 's/_[^_]*//2g' combo.fas
-
+#sed -i 's/_[^_]*//2g' combo.fas
 
 
 fi

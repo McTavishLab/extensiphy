@@ -4,34 +4,80 @@
 # user specifies the directory, currently hard coding for files that end with R1_001.fastq.gz
 # this will change in future version but currently, users must alter their files to end in R1_001.fastq.gz and R2_001.fastq.gz as we are assuming paired end reads
 
+set -e
+set -u
+set -o pipefail
+
 GON_PHYLING=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source $1
+#source $1
 
-# WD=$(pwd)
-# while getopts ":b:d:g:r:c:1:2:h" opt; do
-#   case $opt in
-#     b) bootstrapping="$OPTARG"
-#     ;;
-#     d) read_dir="$OPTARG"
-# 	  ;;
-# 	  g) ref_genome="$OPTARG"
-#     ;;
-#     r) runs="$OPTARG"
-#     ;;
-#     c) threads="$OPTARG"
-#     ;;
-#     1) r1_tail="$OPTARG"
-#     ;;
-#     2) r2_tail="$OPTARG"
-#     ;;
-#     h) echo  "alignment in fasta format (-a), tree in Newick format (-t), and reads in fastq (-p -e paired_end_base_filenames or -s single_end_base_filename required)"
-#     exit
-#     ;;
-#     \?) echo "Invalid option -$OPTARG" >&2
-#     ;;
-#   esac
-# done
+#Check for dependencies
+if [ $(which parsnp | wc -l) -lt 1 ]
+    then
+        printf "Requires parsnp" >&2
+     #   exit 0
+    else
+        printf "Correct version of parsnp found.\n"
+fi
+if [  $(which spades.py | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
+    then
+        printf "Requires spades.py" >&2
+      #  exit 0
+    else
+        printf "Correct version of spades.py found.\n"
+fi
+if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "raxmlHPC-PTHREADS not found\n" >&2
+    else
+        printf "raxmlHPC-PTHREADS found\n"
+fi
+if [ $(which bbduk.sh | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+    then
+        printf "bbduk.sh not found. Install and/or add to path\n" >&2
+    else
+        printf "bbduk.sh found\n"
+fi
+
+printf "\n\n"
+
+
+ref_genome="NONE"
+gon_phy_runs="2"
+threads="2"
+bootstrapping="OFF"
+output_type="LOCI"
+loci_positions="gon_phy_locus_positions.csv"
+r1_tail="R1.fastq"
+r2_tail="R2.fastq"
+
+WD=$(pwd)
+while getopts ":b:d:g:r:c:1:2:l:h" opt; do
+   case $opt in
+     b) bootstrapping="$OPTARG"
+     ;;
+     d) read_dir="$OPTARG"
+     ;;
+     g) ref_genome="$OPTARG"
+     ;;
+     r) gon_phy_runs="$OPTARG"
+     ;;
+     c) threads="$OPTARG"
+     ;;
+     1) r1_tail="$OPTARG"
+     ;;
+     2) r2_tail="$OPTARG"
+     ;;
+     l) loci_positions="$OPTARG"
+     ;;
+     h) printf  "gon_phyling is a program to assemble sets of paired-end short high-throughput reads into genomes, automatically select homologous loci and construct a phylogenetic tree.\n\n\n EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX]\n\n, INPUT OPTIONS:\n (-d) directory of paired end reads. All output folders and files will be contained here\n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)\n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)\n\n OUTPUT\n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)\n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)\n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)\n\n RUNNING PROGRAM\n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)\n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)\n\n OUTPUT FILES\n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out\n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
+     exit
+     ;;
+     \?) echo "Invalid option -$OPTARG" >&2
+     ;;
+   esac
+ done
 
 
 printf "ref_genome = $ref_genome"

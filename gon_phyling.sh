@@ -333,9 +333,12 @@ elif [ $output_type == "LOCI" ]; then
 $GON_PHYLING/parsnp_taxa_count.sh > taxa_count.txt
 
 # split each number of taxa into a set that can be iterrated over and processed in parallel
-cat taxa_count.txt | split -a 10 -l $threads
+#cat taxa_count.txt | split -a 10 -l $threads
+cat taxa_count.txt | split -d -l $threads
 
-for j in $(ls xa*); do
+sed -i -e 's/.fasta//g' ./parsnp.xmfa
+
+for j in $(ls x*); do
   for i in $(cat $j); do
 
     $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i &

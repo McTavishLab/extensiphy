@@ -53,7 +53,7 @@ r1_tail="R1.fastq"
 r2_tail="R2.fastq"
 
 WD=$(pwd)
-while getopts ":b:d:g:r:c:1:2:l:h" opt; do
+while getopts ":b:d:g:r:c:1:2:l:o:h" opt; do
    case $opt in
      b) bootstrapping="$OPTARG"
      ;;
@@ -70,6 +70,8 @@ while getopts ":b:d:g:r:c:1:2:l:h" opt; do
      2) r2_tail="$OPTARG"
      ;;
      l) loci_positions="$OPTARG"
+     ;;
+     o) output_type="$OPTARG"
      ;;
      h) printf  "gon_phyling is a program to assemble sets of paired-end short high-throughput reads into genomes, automatically select homologous loci and construct a phylogenetic tree.\n\n\n EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX]\n\n, INPUT OPTIONS:\n (-d) directory of paired end reads. All output folders and files will be contained here\n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)\n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)\n\n OUTPUT\n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)\n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)\n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)\n\n RUNNING PROGRAM\n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)\n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)\n\n OUTPUT FILES\n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out\n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
      exit
@@ -119,17 +121,31 @@ printf "made it through bbduk step"
 
 cd ./trimmed_reads
 
+printf "\nCHANGED DIR TO TRIMMED_READS\n"
+
 # begin assembly section with spades
-check=$(ls *.gz | wc -l)
+#check=$(ls *.gz | wc -l)
 
 
-if [[ $check -ge 1 ]]; then
+#if [[ $check -ge 1 ]]; then
 
-  gzip -d *.gz
+#  gzip -d *.gz
 
-else
-  ls
-fi
+#else
+#  ls
+#fi
+
+#check=$(ls -l | grep -o ".gz" | wc -l)
+
+#if [[ $check != 0 ]]; then
+
+#  printf "\n\n FOUND .GZ FILES!!\n\n"
+#  printf "\n$check\n"
+#  gzip -d *.gz
+
+#else
+#  printf "\nNO .GZ FILES FOUND!\n"
+#fi
 
 
 mkdir spades_output
@@ -138,7 +154,10 @@ ls *$r1_tail | split -d -l $gon_phy_runs
 
 for j in $(ls x*); do
   for i in $(cat $j); do
-
+    
+    printf "\n$i\n"
+    name_base=$(basename $i $r1_tail)
+    printf "\nname_base\n"
 #cd ./spades_output
     printf "Read processing complete. Beginning spades.py assembly"
     if [[ $threads =~ ^-?[0-9]+$ ]]; then
@@ -150,13 +169,15 @@ for j in $(ls x*); do
     # spades.py -1 <first/left read file> -2 <second/right read file> -t <threads> -o <output directory>
     # for i in $(ls *R1_001.fastq); do
     		printf "%s threads selected" "$threads"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i &
+    		#time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$i &
+		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t $threads -o ./spades_output/$name_base &
     	# done
     else
     	# for i in $(ls *$r1_tail); do
 
     		printf "No extra threads requested, default: 1"
-    		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i &
+    		#time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$i &
+		time spades.py -1 "$i" -2 "${i%$r1_tail}$r2_tail" -t 1 -o ./spades_output/$name_base &
 
     	# done
     fi
@@ -170,16 +191,41 @@ cd ./spades_output
 
 mkdir genomes_for_parsnp
 
-for i in $( ls -d *);
-do
-        echo $i
-        cd $i ;
-        pwd ;
+#for i in $( ls -d *);
+#do
+#        echo $i
+#        cd $i ;
+#        pwd ;
+#
+#        cp contigs.fasta  ../genomes_for_parsnp/$i.fasta
+#        cd .. ;
 
-        cp contigs.fasta  ../genomes_for_parsnp/$i.fasta
-        cd .. ;
+#done
+
+for i in $(ls -d */);
+do
+        slash_strip=$(basename $i /)
+        if [[ $i == "genomes_for_parsnp/" ]]; then
+                printf "\n$i SKIPPED\n"
+        else
+                printf "\nmoving contigs from $i\n"
+                cd $i
+                cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+                cd ..
+        fi
+        #cd $i
+
+        #if [[ $dir_check != 0 ]]; then
+        #pwd ;
+
+        #cp contigs.fasta  ../genomes_for_parsnp/$i.fasta
+        #cd .. ;
 
 done
+
+
+
+
 
 #location for repetitive sequence masker
 
@@ -227,7 +273,7 @@ mkdir masked_genomes
 echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
 # STRIP ADDED UNNECESSARY FILE FORMAT INFO FROM FILE NAMES
-for i in $(ls -1); do mv $i $(echo $i | sed "s/_$r1_tail.fasta//") ; done
+#for i in $(ls -1); do mv $i $(echo $i | sed "s/_$r1_tail.fasta//") ; done
 
 printf "$ref_genome is ref genome selection"
 

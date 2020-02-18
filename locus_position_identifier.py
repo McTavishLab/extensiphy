@@ -96,9 +96,12 @@ def main():
         open_new_file = open(args.out_file_dir + "/" + locus_name,'w')
         for taxon_and_seq in split_file:
             if len(taxon_and_seq) > 1:
-                split_taxon_and_seq = taxon_and_seq.split("\n")
+                #print(taxon_and_seq)
+                split_taxon_and_seq = taxon_and_seq.split("\n", 1)
                 taxon_name = split_taxon_and_seq[0]
                 taxon_seq = split_taxon_and_seq[1]
+                taxon_seq = taxon_seq.replace("\n","")
+                #print(taxon_seq)
                 seq_chunk = taxon_seq[start_stop_tuple[0]:start_stop_tuple[1]]
                 #print(seq_chunk)
                 locus_specific_taxon_and_seq_dict[taxon_name] = seq_chunk

@@ -289,6 +289,8 @@ fi
 
 mkdir alignment_fixing
 
+sed -i -e 's/.fasta//g' ./P*/parsnp.xmfa
+
 cp ./P*/parsnp.xmfa ./alignment_fixing/
 
 cd ./alignment_fixing

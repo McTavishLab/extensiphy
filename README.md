@@ -21,7 +21,7 @@ Once you've cloned this repo and installed all dependencies to your PATH, begin 
 If you only plan on using RapUp to add data to an existing alignment and tree, use the following command:
 
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata
 ```
 
 If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:

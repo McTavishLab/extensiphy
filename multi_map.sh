@@ -143,9 +143,13 @@ fi
 
 ############################################################
 
+tmp_align=$(realpath $align)
+tmp_tree=$(realpath $tree)
+tmp_read_dir=$(realpath $read_dir)
 
-
-
+align=$tmp_align
+tree=$tmp_tree
+read_dir=$tmp_read_dir
 
 
 printf "###################################################\n"

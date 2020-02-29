@@ -123,13 +123,13 @@ conda config --prepend channels bioconda
 Run this command to add the necessary dependencies to your conda environment:
 
 ```bash
-conda create -n phycorder samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
+conda create -n rapup samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
 Activate your installation
 
 ```bash
-conda activate phycorder
+conda activate rapup
 ```
 
 Conda install recipe on the way.

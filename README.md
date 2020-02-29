@@ -34,7 +34,7 @@ If you plan to generate a starting alignment and tree that you wish to add seque
 
 RapUp requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
 
-### Controls and Flags For Use:
+### RapUp Controls and Flags For Use:
 
 - (-a) alignment in fasta format,
 - (-d) directory of paired end fastq read files for all query taxa,
@@ -57,14 +57,36 @@ RapUp requires that you limit the loci you include for updating to sequences wit
 - Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
 - taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
+### Gon_phyling Controls and Flags For Use
+
+INPUT OPTIONS:
+- (-d) directory of paired end reads. All output folders and files will be contained here
+- (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)
+- (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)
+
+ OUTPUT
+- (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)
+- (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)
+- (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)
+
+ RUNNING PROGRAM
+- (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)
+- (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
+
 ## If all you have is raw reads and you need to create a starting tree:
 Creating a starting tree!
 You need a tree and alignment with any number of taxa in order to update these with new taxa.
 gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.
 
 1. Move some fraction of your reads to a new directory for assembly and starting tree inference.
-2. run: ./gon_phyling.sh -d [PATH/TO/NEW/READ/DIRECTORY]
-3. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full RapUp run by running multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
+2. run: 
+```bash
+./gon_phyling.sh -d [PATH/TO/NEW/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2]
+```
+3. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full RapUp run by running:
+```bash
+ multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
+```
 
 ### Dependencies
 

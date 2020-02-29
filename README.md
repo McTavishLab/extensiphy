@@ -1,4 +1,40 @@
-# Phycorder
+# RapUp
+### Overview
+
+RapUp is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment, and places the new lineages in a phylogeny using EPA in RAxML.
+
+RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
+
+### Setup and Use
+
+RapUp now takes inputs in the commandline without requiring a config file.
+RapUp allows for control over both how many RapUp runs happen
+in parallel and how many threads are allocated to each RapUp run
+Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
+find out how many cores you have available and calculate (cores * rapup_runs) you wish to run as the same time
+if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
+then adjust to your optimum setting.
+
+### First Run
+Once you've cloned this repo and installed all dependencies to your PATH, begin here. Dependencies are outlined at the bottom of this readme.
+
+If you only plan on using RapUp to add data to an existing alignment and tree, use the following command:
+
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 PARALLEL BRANCH command for multimap data test
 

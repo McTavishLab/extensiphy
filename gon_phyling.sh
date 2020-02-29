@@ -81,6 +81,11 @@ while getopts ":b:d:g:r:c:1:2:l:o:h" opt; do
    esac
  done
 
+tmp_read_dir=$(realpath $read_dir)
+tmp_ref_genome=$(realpath $ref_genome)
+
+read_dir=$tmp_read_dir
+ref_genome=$tmp_ref_genome
 
 printf "ref_genome = $ref_genome"
 

@@ -88,6 +88,10 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
  multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
 
+### Tutorial
+
+For a more indepth walkthrough of how to install dependencies for use with RapUp and how to run RapUp using different data types and options, try the tutorial in the tutorial folder. You can copy code snippets into your terminal window.
+
 ### Dependencies
 
 **Using RapUp is limited to Linux at the moment.** Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.

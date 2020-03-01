@@ -11,7 +11,8 @@ output: html_document
 
 Hello!
 
-This tutorial will walk you through installing and using **RapUp**, a program for rapidly updating phylogenies and multiple sequence alignments.
+This tutorial will walk you through installing and using **RapUp**, a program for rapidly updating phylogenies and multiple sequence alignments. I try not to assume too much knowledge of programming and program use standards so this tutorial should be accessable for beginning and advanced bioinformaticians.
+
 
 ## Description
 
@@ -25,7 +26,7 @@ You can use RapUp in multiple ways. Depending on the input and output you wish t
 You need:
 * Alignment file (fasta format)
 * Directory of paired-end read files
-* (Optional) a tree generated from input alignment
+* (Optional but recommended) a tree generated from input alignment
 
 ##### You want multiple single locus files and a tree from all of those alignment files
 You need:
@@ -33,7 +34,16 @@ You need:
   * A single concatenated multiple sequence alignment file 
   * A CSV file illustrating locus lengths and positions
 * Directory of paired-end read files
-* (Optional) a tree generated from combining all the loci
+* (Optional but recommended) a tree generated from combining all the loci
+
+
+### A Few Notes on Code Examples
+
+The code snippets I have included in this tutorial can be copied straight into your terminal unless they include something like: 
+```bash
+path/to/file/or/program
+```
+This notation indicates that you should replace this string segment with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see '$' (dollar signs) in front of code snippets. These should not be included when you copy and past the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
 
 
 ### Dependencies
@@ -67,20 +77,20 @@ Use conda for fastest dependency install.
 Add appropriate channels to your conda install:
 
 ```bash
-conda config --prepend channels conda-forge
-conda config --prepend channels bioconda
+$conda config --prepend channels conda-forge
+$conda config --prepend channels bioconda
 ```
 
 Run this command to add the necessary dependencies to your conda environment:
 
 ```bash
-conda create -n rapup samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
+$conda create -n rapup samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
 Activate your installation
 
 ```bash
-conda activate rapup
+$conda activate rapup
 ```
 
 Conda install recipe on the way.
@@ -146,13 +156,13 @@ I installed hisat2 in a bin folder so I see:
 RapUp (on branch overhaul_dev) takes command line arguments to update a phylogenetic tree with new taxa sequences. Lets look at the options used by RapUp. RapUp use revolves around calling the 
 
 ```bash
-multi_map.sh
+$./multi_map.sh
 ```
 
 command followed by flags (dashes next to a letter corresponding the command you wish to use or input).
 
 ```bash
-multi_map.sh -h
+$./multi_map.sh -h
 ```
 
 has the following output:
@@ -198,29 +208,21 @@ Lets use RapUp to update a multiple sequence alignment with some new data. Run t
 
 ```bash
 
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_rapup_run
 
 ```
 
-This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The other flags use their default values in this case. The result of this is that RapUp will add the taxa sequences from the read files to combo.fas and will infer a new phylogenetic tree. You can examine the results by looking at these files:
+This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that RapUp will add the taxa sequences from the read files to combo.fas and will infer a new phylogenetic tree. You can examine the results by looking at these files:
 
 ```bash
-~/rapup_run/combine_and_infer/extended.aln
-~/rapup_run/combine_and_infer/RAxML_bestTree.consensusFULL
+~/first_rapup_run/combine_and_infer/extended.aln
+~/first_rapup_run/combine_and_infer/RAxML_bestTree.consensusFULL
 ```
 
 Primarily, RapUp should be used for adding new sequences to an alignment AND a tree produced from that alignment. Lets run a command to take as intput the same alignment and a tree that was produced from that alignment before adding new sequences. Run the following command:
 
-First, remove the folder with the output we just generated. In the rapup folder, run:
-
 ```bash
-$rm -r ./rapup_run
-```
-
-Then run:
-
-```bash
-./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata
+$./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o second_rapup_run
 ```
 
 The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a randomly generated tree.
@@ -249,38 +251,32 @@ $head -2 /testdata/single_locus_align_dir/single_locus_2_.fasta
 
 You'll see that one file's sequence is indeed very large while the second file's sequence is only a few letters. This is deliberate to display a function of RapUp when selecting which data to input. RapUp should only be used with loci over 1,000 bases long. If taking these files as input, the smaller sequence file will be identified and removed before construction of a concatenated sequence. Lets run a new analyses.
 
-First, remove the folder with the output we just generated. In the rapup folder, run:
-
-```bash
-$rm -r ./rapup_run
-```
-
 Now, enter the following command:
 
 ```bash
-./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES
+$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES -o third_rapup_run
 ```
 
-This run will take the single loci MSA files, check for loci longer than the cut-off of 1,000 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the
+The -m flag allows you to specify a number of input options. by using -m SINGLE_LOCUS_FILES, we are indicating that the alignment option (-a) will point to a directory containing multiple single locus alignment files that share all the sample taxon names. It is VERY important that all the taxa labels have the same names or this function will not work. This run will take the single loci MSA files, check for loci longer than the cut-off of 1,000 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the
 
 ```bash
 loci_positions.csv
 ```
 
-file. This file is a comma delimited file capturing the loci's position in the concatenated alignment, the loci's file name and the loci's length. This will be useful if you decide to split your concatenated multiple sequence alignment back into single locus (gene) alignment files.
+file. This file is a comma delimited file capturing the loci's position in the concatenated alignment, the loci's file name and the loci's length. This will be useful if you decide to split your concatenated multiple sequence alignment back into single locus (gene) alignment files or just want to know how long each locus in your concatenated alignment is.
 
-Lets do that now!
-Run the following command to split your files back into individual locus alignment files that now include your newly added taxa. We'll also give our new RapUp run output folder a new name so we can distinguish it from our old run that contains only concatenated alignemnts.
+
+If you have already produced a species-tree from multiple single locus alignments, RapUp can take that tree as input along with your separate locus files. Run the following command to read in some multiple single locus alignments and the tree corresponding to the relationships inferred from all of the combined loci. We'll also give our new RapUp run output folder a new name so we can distinguish it from our old run.
 
 ```bash
-./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o new_rapup_run
+$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o split_rapup_run
 
 ```
 
-The -m flag allows you to specify a number of alignment input options (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA). The -o flag allows you to specify the name and location of your new output folder.
+Maybe you also want to output single locus alignment files that have been updated with your new query sequences. Run this command to do that:
 
 ```bash
-./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_rapup_run
+$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_rapup_run
 
 ```
 
@@ -289,7 +285,8 @@ The -g flag allows you to specify the format you wish your output alignments to 
 From the RapUp folder, run:
 
 ```bash
-ls ./locus_out_rapup_run/combine_and_infer/updated_single_loci/
+$ls ./locus_out_rapup_run/combine_and_infer/updated_single_loci/
+single_locus_1_.fasta
 ```
 
 You'll notice that there is only a single file here corresponding to a single locus alignment. This is because one of the loci we tried to input into RapUp was only 4 nucleotides long, far short of the 1000 nucleotide cutoff for using RapUp!
@@ -297,8 +294,8 @@ You'll notice that there is only a single file here corresponding to a single lo
 As an additional use-case, RapUp can take Parsnp output files as inputs. This time, we'll use a raw Parsnp file (parsnp.xmfa) file as our input alignment. Parsnp is an automatic homologous locus selection tool for bacterial sequences. The output is not in a standard .fasta format so there is normally some additional processing necessary. Alternatively, RapUp will convert the .xmfa file to a fasta file when you add new sequences to the alignment. Use this command:
 
 ```bash
-./multi_map.sh -a ./testdata/parsnp.xmfa -d ./testdata -t ./testdata/combo.tre -m PARSNP_XMFA -o parsnp_rapup_run
+$./multi_map.sh -a ./testdata/parsnp.xmfa -d ./testdata -t ./testdata/combo.tre -m PARSNP_XMFA -o parsnp_rapup_run
 
 ```
 
-
+This concludes the tutorial. Hopefully you understand a little more about using RapUp and how to apply RapUp to your use-case and data.

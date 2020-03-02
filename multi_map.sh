@@ -148,9 +148,16 @@ tmp_tree=$(realpath $tree)
 tmp_read_dir=$(realpath $read_dir)
 
 align=$tmp_align
-tree=$tmp_tree
+#tree=$tmp_tree
 read_dir=$tmp_read_dir
 
+if [ $tree == "NONE" ]; then
+	tmp_tree="NONE"
+elif [ $tree != "NONE" ]; then
+	tmp_tree=$(realpath $tree)
+fi
+
+tree=$tmp_tree
 
 printf "###################################################\n"
 printf "$align_type\n"

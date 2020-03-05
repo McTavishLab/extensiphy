@@ -21,44 +21,49 @@ PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 if [ $(which bcftools | wc -l) -lt 1 ]
     then
         printf "Requires bcftools" >&2
-     #   exit 0
+        exit 0
     else
         printf "Correct version of bfctools found.\n"
 fi
 if [  $(which samtools | wc -l) -lt 1 ] #TODO steup for greater than 1.2? this  is a sloppppy approach
     then
         printf "Requires samtools" >&2
-      #  exit 0
+        exit 0
     else
         printf "Correct version of samtools found.\n"
 fi
 if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "seqtk not found\n" >&2
+	exit 0
     else
         printf "seqtk found\n"
 fi
 if [ $(which hisat2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "hisat2 not found. Install and/or add to path\n" >&2
+	exit 0
     else
         printf "hisat2 found\n"
 fi
 if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
+	exit 0
     else
         printf "raxmlHPC found\n"
 fi
 if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
         printf "fastx toolkit not found. Install and/or add to path\n" >&2
+	exit 0
     else
         printf "fastx toolkit found\n"
 fi
 if [ $(which vcfutils.pl | wc -l) -lt 1 ] #TODO needs different install than bcftools?
     then
         printf "vcfutils.pl not found. Install and/or add to path\n" >&2
+	exit 0
     else
         printf "vcfutils.pl found\n"
 fi

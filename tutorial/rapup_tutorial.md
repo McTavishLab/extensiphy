@@ -191,6 +191,45 @@ Now, if either run completed successfully you'll see a full phylogenetic tree th
 
 We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.
 
+Selecting a particular reference from the alignment may be important to a particular analysis. You can select a reference by using the -r flag followed by the name of the taxon/sequence. First, lets look at a list of our included taxa. Run the following command in the RapUp directory:
+
+```bash
+grep ">" ./testdata/combo.fas
+```
+
+You should see something like this:
+
+```bash
+>taxon_12
+>taxon_16.ref
+>taxon_22
+>taxon_25
+>taxon_10
+>taxon_17
+>taxon_20
+>taxon_23
+>taxon_21
+>taxon_18
+>taxon_13
+>taxon_15
+>taxon_14
+>taxon_27
+>taxon_11
+>taxon_1
+>taxon_28
+>taxon_26
+>taxon_19
+>taxon_24
+```
+
+Lets take one of our taxa and use that sequence as the reference. I chose taxon_11 because its on a long branch far from where we expect our sequences to placed in the tree. Make sure you leave off the carrot (>) from the taxon name. Run this command:
+
+```bash
+$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -t ./testdata/combo.tre -o third_rapup_run -r taxon_11
+```
+
+Did you get the same tree as the output of our original run?
+
 
 
 ### Starting with Multiple Single Locus Alignments

@@ -88,7 +88,7 @@ export PATH="/home/jasper/src/SPAdes-3.13.0-Linux:$PATH"
 
 ```
 
-Once you've added all your programs to your PATH, close the terminal window and reopen it. Then type use the `which` command to see if your computer knows where the program is located
+Once you've added all your programs to your PATH, close the terminal window and reopen it. Then use the `which` command to see if your computer knows where the program is located
 
 ```bash
 
@@ -185,9 +185,11 @@ $./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o
 
 The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a randomly generated tree.
 
-If either run completed successfully you'll see a full phylogenetic tree that looks like this: ![this](images/tree_image_1.png?raw=true)
+Lets look at the original tree that DOESN'T included our new sequences: ![sequences](images/tree_image_3.png?raw=true)
 
-We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa.
+Now, if either run completed successfully you'll see a full phylogenetic tree that looks like this: ![this](images/tree_image_2.png?raw=true)
+
+We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.
 
 
 

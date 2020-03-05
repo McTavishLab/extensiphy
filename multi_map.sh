@@ -393,6 +393,7 @@ else
 
 fi
 
+output_dir=$(pwd)
 
 # handling of multiple single locus MSA files as input
 # this will be expanded as HGT detection is added
@@ -402,8 +403,14 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 	$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln 
 
 	echo "Multiple single locus MSA file handling selected"
+	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
+	printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+	printf "\nSingle locus alignment files are in: "$output_dir/"updated_single_loci\n"
+
 elif [ $output_type == "CONCAT_MSA" ]; then
 	echo "Single concatenated loci MSA file handling selected"
+	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
+        printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
 
 
 

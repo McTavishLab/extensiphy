@@ -114,7 +114,29 @@ Additionally, RapUp comes with an additional pipeline for generating a phylogene
 3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/)
 4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
-### Quick dependency install
+
+### Apt-get dependency install
+All programs for running RapUp are available with apt-get. Run the commands found below to install:
+
+```bash
+apt-get install hisat2
+apt-get install raxml
+apt-get install seqtk
+apt-get install samtools
+apt-get install bcftools
+apt-get install fastx-toolkit
+pip install dendropy
+```
+
+Installs with apt-get for Gon\_phyling are almost all available. Run the commands found below to install:
+
+```bash
+apt-get install parsnp
+apt-get install spades
+apt-get install raxml
+```
+
+### Conda dependency install
 Use conda for fastest dependency install.
 
 Add appropriate channels to your conda install:

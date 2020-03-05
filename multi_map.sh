@@ -126,6 +126,7 @@ if [ -z "$align" ] || [ -z "$tree" ]; then
    exit
 fi
 
+
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
 
@@ -176,6 +177,12 @@ printf "$r1_tail\n"
 printf "$r2_tail\n"
 printf "$outdir\n"
 printf "#################################################\n"
+
+
+if [ -d $outdir ]; then
+	printf "Output folder exists. Choose a different name.\n"
+	exit       
+fi
 
 
 mkdir -p $outdir

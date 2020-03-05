@@ -52,49 +52,7 @@ Unfortunately, RapUp requires some dependencies. You know what they say about no
 
 Using RapUp is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
 
-Dependencies (Separate programs you'll need to install):
-
-1. [Python 3](https://www.python.org/)
-2. [Hisat2](https://ccb.jhu.edu/software/hisat2/index.shtml)
-3. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
-4. [Seqtk](https://github.com/lh3/seqtk)
-5. [Samtools](http://www.htslib.org/)
-6. [Bcftools](http://www.htslib.org/)
-7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
-8. [Dendropy](https://dendropy.org/)
-
-Additionally, RapUp comes with an additional pipeline for generating a phylogenetic tree from scratch: **Gon\_phyling**. These programs are not required for running RapUp itself but Gon\ling can be useful if you have a lot of data and aren't interested in hand selecting the loci/genes you include in your alignment. Gon\_phyling's dependencies are as follows:
-
-1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
-2. [Spades](https://github.com/ablab/spades)
-3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/)
-4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
-
-
-### Quick dependency install
-Use conda for fastest dependency install.
-
-Add appropriate channels to your conda install:
-
-```bash
-$conda config --prepend channels conda-forge
-$conda config --prepend channels bioconda
-```
-
-Run this command to add the necessary dependencies to your conda environment:
-
-```bash
-$conda create -n rapup samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
-```
-
-Activate your installation
-
-```bash
-$conda activate rapup
-```
-
-Conda install recipe on the way.
-
+[Dependencies](https://github.com/McTavishLab/RapUp) (Links to separate programs you'll need to install can be found at the bottom of the RapUp readme):
 
 
 ### Pathing

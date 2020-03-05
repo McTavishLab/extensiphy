@@ -99,7 +99,7 @@ For a more indepth walkthrough of how to install dependencies for use with RapUp
 Dependencies (Separate programs you'll need to install):
 
 1. [Python 3](https://www.python.org/)
-2. [Hisat2](https://ccb.jhu.edu/software/hisat2/index.shtml)
+2. [Hisat2](https://daehwankimlab.github.io/hisat2/download/)
 3. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 4. [Seqtk](https://github.com/lh3/seqtk)
 5. [Samtools](http://www.htslib.org/)

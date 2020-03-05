@@ -201,7 +201,7 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
         cd ./locus_msa_files
 
-        echo pwd
+        #echo pwd
         cat ./locus_IDs.txt | split -d -l $threads
 
 
@@ -217,15 +217,15 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
 	align=$( realpath ../combo.fas)
 
-	printf "New alignment file produced\n"
+	printf "\nNew alignment file produced\n"
 	printf "$align"
 
 	cd ..
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 	$PHYCORDER/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
-	printf "$outdir\n"
-	printf "$PHYCORDER\n"	
+	#printf "$outdir\n"
+	#printf "$PHYCORDER\n"	
 
 	align=$( realpath $workd/combo.fas )
 	loci_positions=$( realpath $loci_positions)
@@ -237,32 +237,27 @@ elif [ $align_type == "CONCAT_MSA" ]; then
 
 fi
 
-# cd $outdir
-
 
 ###########################
-printf "align == $align\n"
-printf "phycorder dir == $PHYCORDER\n"
-#workd=$(pwd)
 
 if [[ ! -z $(grep "-" $align) ]]; then
-  printf "GAP FOUND BEFORE REMOVAL"
+  printf "\nGAP FOUND BEFORE REMOVAL\n"
 else
-  printf "NO GAPS FOUND BEFORE REMOVAL";
+  printf "\nNO GAPS FOUND BEFORE REMOVAL\n";
 fi
 
 #printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
 
-printf "current wd\n"
-pwd
+#printf "current wd\n"
+#pwd
 #pull all the gaps from the aligned taxa bc mappers cannot cope.
 sed 's/-//g' <$align > $workd/ref_nogap.fas
 
 
 if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-  printf "GAP FOUND AFTER REMOVAL!"
+  printf "\nGAP FOUND AFTER REMOVAL!\n"
 else
-  printf "NO GAPS FOUND AFTER REMOVAL";
+  printf "\nNO GAPS FOUND AFTER REMOVAL\n";
 fi
 
 if [ $ref_select != "RANDOM" ]; then
@@ -292,8 +287,8 @@ hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/ra
 # X01 IS A SINGLE RUN, X02, etc
 ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 
-printf "Number of cores allocated enough to process all read sets\n"
-printf "Beginning Phycorder runs\n"
+printf "\nNumber of cores allocated enough to process all read sets\n"
+printf "\nBeginning RapUp runs\n"
 
 
 for j in $(ls x*); do
@@ -315,12 +310,12 @@ for i in $(cat $j); do
     time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
     #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
     #wait
-    printf "adding new map_to_align run"
+    printf "\nadding new map_to_align run\n"
 done
 wait
 done
 
-printf "Individual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
+printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
 mkdir -p combine_and_infer
 
@@ -341,11 +336,11 @@ for i in $(ls -d *output_dir); do
  cd ..
 done
 
-printf "skipping renaming step"
+printf "\nskipping renaming step\n"
 cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 # fi
 
-printf "Extended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
+printf "\nExtended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
 
 cd combine_and_infer
 
@@ -358,7 +353,7 @@ INFER=$(pwd)
 
  # handling of bootstrapping
 
-printf "Alignment updating complete. Moving to phylogenetic inference."
+printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
 if [ $bootstrapping == "ON" ]; then
 
 # handles whether user wants to use a starting tree or not
@@ -369,7 +364,7 @@ if [ $bootstrapping == "ON" ]; then
 
     time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
 
-    printf "Multiple taxa update of phylogenetic tree complete\n"
+    printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
   elif [ $tree != "NONE" ]; then
 
@@ -379,7 +374,7 @@ if [ $bootstrapping == "ON" ]; then
 
    time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
 
-   printf "Multiple taxa update of phylogenetic tree complete\n"
+   printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
  fi
 
@@ -394,12 +389,12 @@ elif [ $bootstrapping == "OFF" ]; then
 
     time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
 
-    printf "Multiple taxa update of phylogenetic tree complete\n"
+    printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
   fi
 
 else
-  printf "Switch bootstrapping option to 'ON' or 'OFF' and re-run program."
+  printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
 
 fi
 
@@ -412,13 +407,13 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
 	$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/rapup_dev_log.txt 2>&1
 
-	echo "Multiple single locus MSA file handling selected"
+	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
 	printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
 	printf "\nSingle locus alignment files are in: "$output_dir/"updated_single_loci\n"
 
 elif [ $output_type == "CONCAT_MSA" ]; then
-	echo "Single concatenated loci MSA file handling selected"
+	printf "\nSingle concatenated loci MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
         printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
 

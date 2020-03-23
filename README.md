@@ -127,7 +127,7 @@ apt-get install fastx-toolkit
 pip install dendropy
 ```
 
-Installs with apt-get for Gon\_phyling are not currently available available. You will have to install these programs manually or with conda.
+Installs with apt-get for Gon\_phyling are not currently available. You will have to install these programs manually or with conda.
 
 
 ### Conda dependency install

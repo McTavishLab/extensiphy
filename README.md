@@ -116,10 +116,9 @@ Additionally, RapUp comes with an additional pipeline for generating a phylogene
 
 
 ### Apt-get dependency install
-All programs for running RapUp are available with apt-get. Run the commands found below to install:
+Almost all programs for running RapUp are available with apt-get. Hisat2 is not available with apt-get. Run the commands found below to install:
 
 ```bash
-apt-get install hisat2
 apt-get install raxml
 apt-get install seqtk
 apt-get install samtools
@@ -128,13 +127,8 @@ apt-get install fastx-toolkit
 pip install dendropy
 ```
 
-Installs with apt-get for Gon\_phyling are almost all available. Run the commands found below to install:
+Installs with apt-get for Gon\_phyling are not currently available available. You will have to install these programs manually or with conda.
 
-```bash
-apt-get install parsnp
-apt-get install spades
-apt-get install raxml
-```
 
 ### Conda dependency install
 Use conda for fastest dependency install.

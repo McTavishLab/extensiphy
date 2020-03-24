@@ -74,7 +74,7 @@ outdir="rapup_run"
 threads=0
 r1_tail="R1.fq"
 r2_tail="R2.fq"
-end_setting="SE"
+end_setting="PE"
 phycorder_runs=2
 align_type="CONCAT_MSA"
 output_type="CONCAT_MSA"
@@ -116,7 +116,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:h" opt; do
     ;;
     r) ref_select="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-e) sets read-type as single end as opposed to pair-end (DEFAULT: paired-end reads)\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -128,7 +128,6 @@ if [ -z "$align" ]; then
    "alignment file (-a) required"
    exit
 fi
-
 
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
@@ -151,6 +150,18 @@ fi
 
 
 ############################################################
+if [ ! -f $align ]; then
+	printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
+	exit
+fi
+
+if [ $tree != "NONE" ]; then
+	if [ ! -f "$tree" ]; then
+		printf "\nTree file doesn't exist or pathing is incorrect.\n"
+		exit
+	fi
+fi
+
 
 tmp_align=$(realpath $align)
 tmp_tree=$(realpath $tree)
@@ -167,6 +178,7 @@ elif [ $tree != "NONE" ]; then
 fi
 
 tree=$tmp_tree
+
 
 # CHECK READ FILES SUFFIX
 printf "\nBeginning check of read and suffix accuracy\n"

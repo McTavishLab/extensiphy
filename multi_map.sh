@@ -142,14 +142,18 @@ fi
 
 if [ $threads -eq 0 ]; then
      threads=2
-     printf "Threads not set, defaulting to 2" >&2
+     #printf "Threads not set, defaulting to 2" >&2
 else
-     echo "num threads is"
-     echo $threads
+     #echo "num threads is"
+     #echo $threads
+     :
 fi
 
+if [ -d $outdir ]; then
+        printf "Output folder exists. Choose a different name.\n"
+        exit
+fi
 
-############################################################
 if [ ! -f $align ]; then
 	printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
 	exit
@@ -162,6 +166,10 @@ if [ $tree != "NONE" ]; then
 	fi
 fi
 
+if [ ! -d $read_dir ]; then
+        printf "Directory of read sequences can't be found. Check name and pathing.\n"
+        exit
+fi
 
 tmp_align=$(realpath $align)
 tmp_tree=$(realpath $tree)
@@ -182,18 +190,11 @@ tree=$tmp_tree
 
 # CHECK READ FILES SUFFIX
 printf "\nBeginning check of read and suffix accuracy\n"
-#printf "\n$end_setting\n"
-#read_set_1=$( ls "$read_dir" | grep -o "$r1_tail" )
-#read_set_2=$( ls "$read_dir" | grep -o "$r2_tail" )
-#printf "\n$r1_tail\n"
-#printf "\n$r2_tail\n"
-#printf "\n$end_setting\n"
 if [ "$end_setting" == "PE" ]; then
-	printf "\npaired end\n"
-	#$(ls "$read_dir" | grep -q "$r1_tail")
 	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
 	then
-		printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
+		:
+		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
 	else
 		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
 		exit
@@ -202,37 +203,35 @@ if [ "$end_setting" == "PE" ]; then
 elif [ "$end_setting" == "SE" ]; then
 	if ls $read_dir | grep -q "$r1_tail"
 		then
-                printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
+		:
+                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
         else
                 printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
                 exit
         fi
-	#if [ -z "$read_set_1" ]; then
-#	printf "\nSingle-end reads with the input suffixes not found in read folder. Make sure you have the correct suffixes for your reads\n"
-#	exit
 	
 fi
 
 
 ###########################################################
 printf "\n###################################################\n"
-printf "$align_type\n"
-printf "$align\n"
-printf "$tree\n"
-printf "$read_dir\n"
-printf "$ref_select\n"
-printf "$phycorder_runs\n"
-printf "$threads\n"
-printf "$r1_tail\n"
-printf "$r2_tail\n"
-printf "$outdir\n"
+printf "alignment type = $align_type\n"
+printf "alignment file = $align\n"
+printf "tree file = $tree\n"
+printf "directory of reads = $read_dir\n"
+printf "reference selection = $ref_select\n"
+printf "number of RapUp runs = $phycorder_runs\n"
+printf "number of threads per RapUp run = $threads\n"
+printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
+printf "suffix for right reads (if paired end only) = $r2_tail\n"
+printf "output directory = $outdir\n"
 printf "#################################################\n"
-exit
 
-if [ -d $outdir ]; then
-	printf "Output folder exists. Choose a different name.\n"
-	exit       
-fi
+
+#if [ -d $outdir ]; then
+#	printf "Output folder exists. Choose a different name.\n"
+#	exit       
+#fi
 
 
 mkdir -p $outdir

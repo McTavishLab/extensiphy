@@ -187,12 +187,46 @@ fi
 
 tree=$tmp_tree
 
+#CHECK ALIGNMENT IN FASTA FORMAT
+#THIS SHOULD BE EXPANDED
+if head -1 $align | grep -q "^>"; then
+	:
+else
+	printf "\nAlignment file $align doesn't appear to be a fasta format file. Please input a fasta file.\n"
+	exit
+fi
+
+#CHECK TREE FILE FOR CORRECT NEWICK FORMAT
+if grep -q "^(.*:.*):" $tree ; then
+	:
+else
+	printf "\nTree file $tree appears to not be in newick format.\n"
+	exit
+fi
 
 # CHECK READ FILES SUFFIX
 printf "\nBeginning check of read and suffix accuracy\n"
 if [ "$end_setting" == "PE" ]; then
 	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
 	then
+		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
+			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
+				:
+			else
+				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+				exit
+			fi
+		done
+		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
+                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
+                                :
+                        else
+                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceed
+ing\n"
+                                exit
+                        fi
+                done
+				
 		:
 		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
 	else
@@ -226,7 +260,7 @@ printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
 printf "suffix for right reads (if paired end only) = $r2_tail\n"
 printf "output directory = $outdir\n"
 printf "#################################################\n"
-
+exit
 
 #if [ -d $outdir ]; then
 #	printf "Output folder exists. Choose a different name.\n"

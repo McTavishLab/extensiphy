@@ -339,30 +339,56 @@ ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 printf "\nNumber of cores allocated enough to process all read sets\n"
 printf "\nBeginning RapUp runs\n"
 
+if [ "$end_setting" == "PE" ]; then 
+	for j in $(ls x*); do
+		for i in $(cat $j); do
+    			base=$(basename $i $r1_tail)
+    			#echo $base
+    			#echo $i
+    			#echo $PHYCORDER
+    			#echo "$workd ####################################################################################################\n"
+    			#echo $align
+    			#echo $tree x
+    			#echo $i
+    			#echo ${base}${r2_tail}
+    			#echo $threads
+    			#echo $align_type
+    			#echo "${base}_output_dir"
+    			#echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
+    			#echo "Time for $j Phycorder run:"
+    			time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
+    			#> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
+    			#wait
+    			printf "\nadding new map_to_align run\n"
+		done
+		wait
+	done
 
-for j in $(ls x*); do
-for i in $(cat $j); do
-    base=$(basename $i $r1_tail)
-    #echo $base
-    #echo $i
-    #echo $PHYCORDER
-    #echo "$workd ####################################################################################################\n"
-    #echo $align
-    #echo $tree x
-    #echo $i
-    #echo ${base}${r2_tail}
-    #echo $threads
-    #echo $align_type
-    #echo "${base}_output_dir"
-    #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
-    #echo "Time for $j Phycorder run:"
-    time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
-    #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
-    #wait
-    printf "\nadding new map_to_align run\n"
-done
-wait
-done
+elif [ "$end_setting" == "SE" ]; then
+	for j in $(ls x*); do
+                for i in $(cat $j); do
+                        base=$(basename $i $r1_tail)
+                        #echo $base
+                        #echo $i
+                        #echo $PHYCORDER
+                        #echo "$workd ####################################################################################################\n"
+                        #echo $align
+                        #echo $tree x
+                        #echo $i
+                        #echo ${base}${r2_tail}
+                        #echo $threads
+                        #echo $align_type
+                        #echo "${base}_output_dir"
+                        #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
+                        #echo "Time for $j Phycorder run:"
+                        time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 &
+                        #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
+                        #wait
+                        printf "\nadding new map_to_align run\n"
+                done
+                wait
+        done
+fi
 
 printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 

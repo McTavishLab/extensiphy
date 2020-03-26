@@ -15,10 +15,14 @@ def main():
     taxa = dendropy.TaxonNamespace()
     mle = dendropy.Tree.get(path=args.tree_file, schema='newick', taxon_namespace=taxa)
     mle_len = mle.length()
-    print("tree length is", mle_len)
     print(dir(mle))
     print(mle.bipartition_edge_map)
+    print("tree length is", mle_len)
+    #print(dir(mle))
+    #print(mle.bipartition_edge_map)
     mle.encode_bipartitions()
+    pdc = mle.phylogenetic_distance_matrix()
+
     
     taxa_count = 0
     for name in taxa:
@@ -32,6 +36,7 @@ def main():
     new_mle = dendropy.Tree.get(data=mle_1, schema='newick', taxon_namespace=taxa)
     new_mle.encode_bipartitions()
     split_count_2 = 0
+    splits_branch_length = 0.0
     for split in mle.bipartition_encoding:
         split_count_2+=1
         if split_count_2 == split_count:
@@ -40,8 +45,16 @@ def main():
         #print(split)
         print(mle.bipartition_edge_map[split].length)
         #print(dir(mle.bipartition_edge_map[split]))
-        print(mle.bipartition_edge_map[split].leafset_bitmask)
+        #print(mle.bipartition_edge_map[split].leafset_bitmask)
         print(mle.bipartition_edge_map[split].bipartition)
+        
+        split_edge_ratio = float(mle.bipartition_edge_map[split].length) / float(mle_len)
+        #REMEMBER THAT BIPARTITION SPLITS ARE BACKWARDS COMPARED TO THE LIST PRODUCED BY NAMESPACE
+        print("branch length as ratio of tree: %f" % (split_edge_ratio))
+        #CURRENT IDEA: LOOK AT SPLIT, SEE WHAT THE DISTANCE IS TO THE SPLIT THAT CONTAINS THIS SPLIT
+        #IF LONG: USE SPLIT
+        #IF SHORT: CONSIDER CONTAINER SPLIT
+
         #print(split.split_bitmask)
         #print(split.split_as_newick_string.__getattribute__)
         #print(dir(split.split_as_newick_string))
@@ -49,6 +62,10 @@ def main():
         #print(type(split))
         #print(dir(split))
         pass
+
+    for i, t1 in enumerate(mle.taxon_namespace[:-1]):
+        for t2 in mle.taxon_namespace[i+1:]:
+            print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
     #print(mle.bipartition_edge_map)
     #for edge in mle.bipartition_edge_map:

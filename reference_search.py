@@ -45,24 +45,25 @@ def separate_remaining_splits(all_biparts, large_splits, single_taxon_splits):
 #THESE SPLITS CONTAIN SO MANY TAXA THAT BRANCH LENGTHS MUST BE SHORT 
 #FOR A REFERENCE TO REPRESENT ALL TAXA IN THE SPLIT
 def separate_large_splits(all_biparts, total_taxa_num):
-    print(total_taxa_num)
+    #print(total_taxa_num)
     large_split_list = []
     cutoff = 0.55
     for split in all_biparts:
         taxon_count = 0
         #print(type(split[0]))
         #print(taxon_count)
-        in_taxon = '1'
+        in_taxon = "1"
         for taxon in split:
-            print(in_taxon)
-            print(type(in_taxon))
-            print(taxon)
-            print(type(taxon))
-            print(int(taxon) + int(in_taxon))
+            #print(in_taxon)
+            #print(type(in_taxon))
+            #print(taxon)
+            #print(type(taxon))
+            #print(int(taxon) + int(in_taxon))
             if int(taxon) == int(in_taxon):
                 taxon_count+=1
-                print("WAFFLE")
-        proportion_of_all_taxa = float(taxon_count / total_taxa_num)
+                #print("WAFFLE")
+        #print(taxon_count)
+        proportion_of_all_taxa = float(float(taxon_count) / float(total_taxa_num))
         #print(proportion_of_all_taxa)
         if proportion_of_all_taxa > cutoff:
             large_split_list.append(split)
@@ -177,12 +178,13 @@ def main():
     
     print("WAFFLE")
     big_splits = separate_large_splits(grouped_splits, total_taxa)
-    print(big_splits)
+    #print(big_splits)
 
     single_taxons = separate_single_taxon_splits(grouped_splits)
 
     workable_splits = separate_remaining_splits(grouped_splits, big_splits, single_taxons) 
-    #print(workable_splits)
+    for split in workable_splits:
+        print(split)
 
 
 if __name__ == '__main__':

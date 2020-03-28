@@ -21,20 +21,60 @@ def splits_iter(splits_and_len_dict, bipart_list):
                 tuple_list.append(bipart_tuple)
     return tuple_list
 
-def splits_compare(split_tuple_list, split_and_branch_len_dict):
-    #COMPARE BIPARTITIONS TO IDENTIFY NESTED BIPARTITIONS
-    for bipart_tuple in split_tuple_list:
-        first_bipart_positions = []
-        second_bipart_positions = []
+#SEPARATE OUT ALL SPLITS CONTAINING A SINGLE TAXON AND RETURN THAT LIST OF SPLITS
+def separate_single_taxon_splits(all_biparts):
+    single_taxon_node_list = []
+    for split in all_biparts:
+        taxon_count = 0
+        for taxon in split:
+            if taxon == '1':
+                taxon_count+=1
+        if taxon_count == 1:
+            single_taxon_node_list.append(split)
+    return single_taxon_node_list
 
-        #for pos, value in enumerate(bipart_tuple[0]):
-        #    first_bipart_positions[pos] = value
-        #for pos, value in enumerate(bipart_tuple[1]):
-        #    second_bipart_positions[pos] = value
-        #print(first_bipart_positions)
-        #print(second_bipart_positions)
-        #print("WAFFLE")
-        
+def separate_remaining_splits(all_biparts, large_splits, single_taxon_splits):
+    remaining_splits = []
+    for split in all_biparts:
+        if split not in large_splits:
+            if split not in single_taxon_splits:
+                remaining_splits.append(split)
+    return remaining_splits
+
+#SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
+#THESE SPLITS CONTAIN SO MANY TAXA THAT BRANCH LENGTHS MUST BE SHORT 
+#FOR A REFERENCE TO REPRESENT ALL TAXA IN THE SPLIT
+def separate_large_splits(all_biparts, total_taxa_num):
+    print(total_taxa_num)
+    large_split_list = []
+    cutoff = 0.55
+    for split in all_biparts:
+        taxon_count = 0
+        #print(type(split[0]))
+        #print(taxon_count)
+        in_taxon = '1'
+        for taxon in split:
+            print(in_taxon)
+            print(type(in_taxon))
+            print(taxon)
+            print(type(taxon))
+            print(int(taxon) + int(in_taxon))
+            if int(taxon) == int(in_taxon):
+                taxon_count+=1
+                print("WAFFLE")
+        proportion_of_all_taxa = float(taxon_count / total_taxa_num)
+        #print(proportion_of_all_taxa)
+        if proportion_of_all_taxa > cutoff:
+            large_split_list.append(split)
+    return large_split_list
+
+def count_taxa(namespace_list):
+    total_taxa_count = 0
+    #print(namespace_list)
+    for taxon in namespace_list:
+        total_taxa_count+=1
+        print(total_taxa_count)
+    return total_taxa_count
 
 def main():
     args = parse_args()
@@ -102,12 +142,15 @@ def main():
     
     print(taxa)
 
+
     second_splits_branch_length = 0.0
     second_splits_branch_length_percent_of_tree = 0.0
     grouped_splits = []
     split_n_lens = {}
+    total_taxa = 0
     split_encode = mle.bipartition_encoding
     for split in split_encode:
+        taxa_in_split_count = 0
         split_branch_len = mle.bipartition_edge_map[split].length
         bipart = mle.bipartition_edge_map[split].bipartition
         split_edge_ratio = float(split_branch_len) / float(mle_len)
@@ -115,16 +158,31 @@ def main():
         second_splits_branch_length_percent_of_tree+=split_edge_ratio
         #print(type(bipart))
         str_bipart = str(bipart)
-        print(str_bipart)
+        #print(str_bipart)
         #print(type(str_bipart))
         split_n_lens[str_bipart] = split_edge_ratio
         grouped_splits.append(str_bipart)
-        
-    pair_bipartitions = splits_iter(split_n_lens, grouped_splits)
-    #print(pair_bipartitions)
+        for taxa in str_bipart:
+            #print(taxa)
+            taxa_in_split_count+=1
+        total_taxa = taxa_in_split_count
+    #for split in multiple_taxon_leaf_splits:
+    #    print(split)
+    #pair_bipartitions = splits_iter(split_n_lens, grouped_splits)
+   
 
-    #bipart_analysis = splits_compare(pair_bipartitions, split_n_lens)
+    #print(total_taxa)
+    tax_count = count_taxa(taxa) 
+    #print(tax_count)
+    
+    print("WAFFLE")
+    big_splits = separate_large_splits(grouped_splits, total_taxa)
+    print(big_splits)
 
+    single_taxons = separate_single_taxon_splits(grouped_splits)
+
+    workable_splits = separate_remaining_splits(grouped_splits, big_splits, single_taxons) 
+    #print(workable_splits)
 
 
 if __name__ == '__main__':

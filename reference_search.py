@@ -41,6 +41,48 @@ def separate_remaining_splits(all_biparts, large_splits, single_taxon_splits):
                 remaining_splits.append(split)
     return remaining_splits
 
+def split_nesting(filtered_split_list):
+    big_split_list = []
+    current_split = ''
+    previous_split = ''
+    first_split = ''
+    split_count = 0
+    first_split = 0
+    previous_split_count = 0
+    for split in filtered_split_list:
+        
+        if first_split == 0:
+            first_split+=1
+            first_split = split
+            #previous_split = split
+        elif first_split >= 1:
+            print(filtered_split_list[split_count])
+            print(split)
+            prev_split_loc = int(split_count - 1)
+            #print(prev_split_loc)
+            #print(split_count)
+            current_split = split
+            previous_split = filtered_split_list[split_count]
+            combine = list(map(list, zip(current_split, previous_split)))
+            print(combine)
+            for comparison in combine:
+                same_taxa(comparison)
+            print("reset")
+            split_count+=1
+        #current_split = split
+        #previous_split = filtered_split_list[split_count - 1]
+        #print(current_split)
+        #print(previous_split)
+
+def same_taxa(taxon_positions_list):
+    if taxon_positions_list[0] == taxon_positions_list[1]:
+        print("SAME")
+        return "SAME"
+    else:
+        print("DIFF")
+        return "DIFF"
+
+
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
 #THESE SPLITS CONTAIN SO MANY TAXA THAT BRANCH LENGTHS MUST BE SHORT 
 #FOR A REFERENCE TO REPRESENT ALL TAXA IN THE SPLIT
@@ -185,6 +227,9 @@ def main():
     workable_splits = separate_remaining_splits(grouped_splits, big_splits, single_taxons) 
     for split in workable_splits:
         print(split)
+    print("WAFFLE2")
+    split_analysis = split_nesting(workable_splits)
+
 
 
 if __name__ == '__main__':

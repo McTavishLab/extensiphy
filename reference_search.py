@@ -85,7 +85,7 @@ def split_nesting(filtered_split_list):
                     #TODO: HANDLE MULTIPLE INNER NESTED SETS OF SPLITS NOT STACKED ON TOP OF EACHOTHER
                 nested_count = 0
                 big_split_list.append(current_nested_splits_list)
-            print("reset")
+            #print("reset")
             split_count+=1
     return big_split_list
 
@@ -99,6 +99,14 @@ def same_taxa(taxon_positions_list):
     else:
         #print("DIFF")
         return 0
+
+def nested_lens(splits_with_lens_dict, nested_splits_list):
+    nested_splits_with_lens = {}
+    #print(splits_with_lens_dict)
+    #print(nested_splits_list)
+    for num, split_set in enumerate(nested_splits_list):
+        for split in split_set:
+            print(splits_with_lens_dict[split])
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
@@ -250,6 +258,7 @@ def main():
     for split in split_analysis:
         print(split)
 
+    find_nested_lens = nested_lens(split_n_lens, split_analysis)
 
 if __name__ == '__main__':
     main()

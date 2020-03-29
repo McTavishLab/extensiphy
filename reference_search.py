@@ -64,9 +64,21 @@ def split_nesting(filtered_split_list):
             current_split = split
             previous_split = filtered_split_list[split_count]
             combine = list(map(list, zip(current_split, previous_split)))
-            print(combine)
-            for comparison in combine:
-                same_taxa(comparison)
+            #print(combine)
+            check_combine = list(map(same_taxa, combine))
+            #print(''.join(check_combine))
+            print(check_combine)
+            #print(list(map(type, check_combine)))
+            int_prev = list(map(int, previous_split))
+            print(int_prev)
+            if check_combine == int_prev:
+                #DO SOMETHING WITH SPLIT BECAUSE ITS NESTED
+                print("nested")
+            else:
+                print("not nested")
+            #for comparison in combine:
+            #    pos_compare = same_taxa(comparison)
+            #    print(pos_compare)
             print("reset")
             split_count+=1
         #current_split = split
@@ -75,12 +87,15 @@ def split_nesting(filtered_split_list):
         #print(previous_split)
 
 def same_taxa(taxon_positions_list):
-    if taxon_positions_list[0] == taxon_positions_list[1]:
-        print("SAME")
-        return "SAME"
+    if taxon_positions_list[1] == '1':
+        if taxon_positions_list[0] == taxon_positions_list[1]:
+            #print("SAME")
+            return 1
+        else:
+            return 0
     else:
-        print("DIFF")
-        return "DIFF"
+        #print("DIFF")
+        return 0
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,

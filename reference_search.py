@@ -48,16 +48,17 @@ def split_nesting(filtered_split_list):
     first_split = ''
     split_count = 0
     first_split = 0
+    nested_count = 0
     previous_split_count = 0
     for split in filtered_split_list:
-        
+                
         if first_split == 0:
             first_split+=1
             first_split = split
             #previous_split = split
         elif first_split >= 1:
-            print(filtered_split_list[split_count])
-            print(split)
+            #print(filtered_split_list[split_count])
+            #print(split)
             prev_split_loc = int(split_count - 1)
             #print(prev_split_loc)
             #print(split_count)
@@ -67,24 +68,26 @@ def split_nesting(filtered_split_list):
             #print(combine)
             check_combine = list(map(same_taxa, combine))
             #print(''.join(check_combine))
-            print(check_combine)
+            #print(check_combine)
             #print(list(map(type, check_combine)))
             int_prev = list(map(int, previous_split))
-            print(int_prev)
+            #print(int_prev)
             if check_combine == int_prev:
                 #DO SOMETHING WITH SPLIT BECAUSE ITS NESTED
-                print("nested")
+                #print("nested")
+                nested_count+=1
             else:
-                print("not nested")
-            #for comparison in combine:
-            #    pos_compare = same_taxa(comparison)
-            #    print(pos_compare)
+                #print("not nested")
+                current_nested_splits_list = []
+                for specific_split in range((split_count - nested_count), (split_count + 1)):
+                    #print(filtered_split_list[specific_split])
+                    current_nested_splits_list.append(filtered_split_list[specific_split])
+                    #TODO: HANDLE MULTIPLE INNER NESTED SETS OF SPLITS NOT STACKED ON TOP OF EACHOTHER
+                nested_count = 0
+                big_split_list.append(current_nested_splits_list)
             print("reset")
             split_count+=1
-        #current_split = split
-        #previous_split = filtered_split_list[split_count - 1]
-        #print(current_split)
-        #print(previous_split)
+    return big_split_list
 
 def same_taxa(taxon_positions_list):
     if taxon_positions_list[1] == '1':
@@ -244,7 +247,8 @@ def main():
         print(split)
     print("WAFFLE2")
     split_analysis = split_nesting(workable_splits)
-
+    for split in split_analysis:
+        print(split)
 
 
 if __name__ == '__main__':

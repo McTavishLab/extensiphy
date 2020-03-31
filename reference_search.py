@@ -128,17 +128,25 @@ def nest_leaves(single_taxon_splits, nested_splits):
 
 
 def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
-    nested_splits_with_lens = {}
+    nested_splits_with_len_ratio_list = []
     #print(splits_with_lens_dict)
     #print(nested_splits_list)
     print(tree_len)
     for num, split_set in enumerate(nested_splits_list):
-        print(split_set)
+        splits_with_len_ratio_dict = {}
+        #print(split_set)
         for split in split_set:
             #print(splits_with_lens_dict[split])
             split_edge_ratio = float(splits_with_lens_dict[split]) / float(tree_len)
-            print(split_edge_ratio)
-        print("end of nested split")
+            splits_with_len_ratio_dict[split] = split_edge_ratio
+        #print("end of nested split")
+        nested_splits_with_len_ratio_list.append(splits_with_len_ratio_dict)
+    return nested_splits_with_len_ratio_list
+
+#TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
+#OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
+def output_refs(list_of_nested_splits_len_ratios):
+
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
@@ -276,7 +284,7 @@ def main():
     tax_count = count_taxa(taxa) 
     #print(tax_count)
     
-    print("WAFFLE")
+    #print("WAFFLE")
     big_splits = separate_large_splits(grouped_splits, total_taxa)
     #print(big_splits)
 
@@ -295,7 +303,8 @@ def main():
     add_singles = nest_leaves(single_taxons, split_analysis)
 
     find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
-    #print(find_nested_lens)
+    #for nested_splits in find_nested_lens:
+    #    print(nested_splits)
 
 if __name__ == '__main__':
     main()

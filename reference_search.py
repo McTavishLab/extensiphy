@@ -106,11 +106,25 @@ def same_taxa(taxon_positions_list):
         #print("DIFF")
         return 0
 
+#TAKE A SET OF NESTED SPLITS THAT DONT CONTAIN THE SPLITS LEADING TO A SINGLE TAXON AND A LIST OF SINGLE TAXON SPLITS
+#MATCH SINGLE TAXON SPLITS TO APPROPRIATE NESTED SPLITS
 def nest_leaves(single_taxon_splits, nested_splits):
     for nested_set in nested_splits:
         for bigger_split in nested_set:
             for split in single_taxon_splits:
                 combine = list(map(list, zip(bigger_split, split)))
+                check_combine = list(map(same_taxa, combine))
+                #print(check_combine)
+                if 1 in check_combine:
+                    if split not in nested_set:
+                        nested_set.append(split)
+                else:
+                    continue
+    return(nested_splits)
+    #for nested_set in nested_splits:
+    #    #print("##########################################################################")
+    #    for split in nested_set:
+    #        print(split)
 
 
 def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
@@ -119,11 +133,12 @@ def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
     #print(nested_splits_list)
     print(tree_len)
     for num, split_set in enumerate(nested_splits_list):
+        print(split_set)
         for split in split_set:
             #print(splits_with_lens_dict[split])
             split_edge_ratio = float(splits_with_lens_dict[split]) / float(tree_len)
-            #print(split_edge_ratio)
-        #print("end of nested split")
+            print(split_edge_ratio)
+        print("end of nested split")
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
@@ -268,17 +283,19 @@ def main():
     single_taxons = separate_single_taxon_splits(grouped_splits)
 
     workable_splits = separate_remaining_splits(grouped_splits, big_splits, single_taxons) 
-    for split in workable_splits:
-        print(split)
-    print("WAFFLE2")
+    #for split in workable_splits:
+    #    print(split)
+    #print("WAFFLE2")
+    
     split_analysis = split_nesting(workable_splits)
-    for split in split_analysis:
-        print(split)
+    #for split in split_analysis:
+    #    print(split)
 
     #ADD BACK IN SINGLE TAXON SPLITS AND FIND WHICH NEST GROUP THEY BELONG TO
     add_singles = nest_leaves(single_taxons, split_analysis)
 
-    find_nested_lens = nested_lens(split_n_lens, split_analysis, mle_len)
+    find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
+    #print(find_nested_lens)
 
 if __name__ == '__main__':
     main()

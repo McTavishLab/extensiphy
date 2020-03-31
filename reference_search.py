@@ -147,41 +147,59 @@ def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
         nested_splits_with_len_ratio_list.append(splits_with_len_ratio_dict)
     return nested_splits_with_len_ratio_list
 
+def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
+    output_dict = {}
+    multiple_taxa_long_branch_split_count = 0
+    multiple_taxa_long_branch_split_list = []
+    single_taxa_long_branch_count = 0
+    single_taxa_long_branch_list = []
+    no_long_branches_count = 0
+    no_long_branches_list = []
+    for split, len_ratio in dict_of_splits_n_len_ratios.items():
+        taxa_count = 0
+        for position in split:
+            if position == '1':
+                taxa_count+=1
+        if taxa_count > 1:
+            if float(len_ratio) >= float(1.0):
+                multiple_taxa_long_branch_split_count+=1
+                multiple_taxa_long_branch_split_list.append(split)
+            elif float(len_ratio) > float(1.0):
+                no_long_branches_count+=1
+                no_long_branches_list.append(split)
+        elif taxa_count == 1:
+            if float(len_ratio) >= float(1.0):
+                single_taxa_long_branch_count+=1
+                single_taxa_long_branch_list.append(split)
+            elif float(len_ratio) < float(1.0):
+                no_long_branches_count+=1
+                no_long_branches_list.append(split)
+
+    if multiple_taxa_long_branch_split_count == 1:
+        if single_taxa_long_branch_count == 0:
+            output_dict['status'] = 'long_branch_to_multiple_short'
+            output_dict['short_branches'] = no_long_branches_list
+            output_dict['long_branch'] = multiple_taxa_long_brach_split_list
+
+
+
 
 #TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
 #OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
 #THIS IS UGLY A HELL
 def output_refs(list_of_nested_splits_len_ratios):
     output_dict = {}
-    long_branches_dict = {}
-    short_branch_taxa_dict = {}
     for group in list_of_nested_splits_len_ratios:
-        #long_branches_dict = {}
-        #short_branch_taxa_dict = {}
         print("group")
-        single_num_taxa = 0
-        multi_taxa_splits_with_long_branches = 0
-        multi_taxa_splits_with_long_branches_dict = {}
-        single_taxa_splits_dict = {}
+        groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
+        multiple_taxa_long_branch_split_count = 0
         for split, len_ratio in group.items():
-            num_taxa = 0
+            tax_in_split_count = 0
             print("split '%s' and and branch length ratio '%s'" % (split, len_ratio))
-            for taxon in split:
-                if taxon == '1':
-                    num_taxa+=1
-            if num_taxa > 1 and len_ratio >= float(1.0):
-                #multi_taxa_splits_with_long_branches+=1
-                multi_taxa_splits_with_long_branches_dict[split] = len_ratio
-            elif num_taxa == 1:
-                single_taxa_splits_dict[split] = len_ratio
-
-        if len(multi_taxa_splits_with_long_branches_dict) > 1:
-            for single_tax_split, ratio in single_taxa_splits_dict.items():
-                if ratio >= float(1.0):
-                    long_branches_dict[single_tax_split] = ratio
-                elif ratio < float(1.0):
-                    short_branch_taxa_dict[single_tax_split] = ratio
-            output_dict["single_tax_long_branches"] = 
+            for position in split:
+                if position == '1':
+                    tax_in_split_count+=1
+            if tax_in_split_count > 1:
 
 
 
@@ -342,8 +360,8 @@ def main():
     add_singles = nest_leaves(single_taxons, split_analysis)
 
     find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
-    #for nested_splits in find_nested_lens:
-    #    print(nested_splits)
+    for nested_splits in find_nested_lens:
+        print(nested_splits)
 
     get_refs = output_refs(find_nested_lens)
 

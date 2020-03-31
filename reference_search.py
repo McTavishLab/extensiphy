@@ -126,7 +126,8 @@ def nest_leaves(single_taxon_splits, nested_splits):
     #    for split in nested_set:
     #        print(split)
 
-
+#TODO: KEEP TRACK OF NESTED SPLITS IN RELATION TO EACHOTHER
+# TO KNOW WHICH SPLITS FIT INTO EACHOTHER
 def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
     nested_splits_with_len_ratio_list = []
     #print(splits_with_lens_dict)
@@ -135,18 +136,56 @@ def nested_lens(splits_with_lens_dict, nested_splits_list, tree_len):
     for num, split_set in enumerate(nested_splits_list):
         splits_with_len_ratio_dict = {}
         #print(split_set)
-        for split in split_set:
+        for num_2, split in enumerate(split_set):
+            #split_n_len_ratio = []
             #print(splits_with_lens_dict[split])
             split_edge_ratio = float(splits_with_lens_dict[split]) / float(tree_len)
+            #split_n_len_ratio.append(split)
+            #splitn_len_ratio.append(split)
             splits_with_len_ratio_dict[split] = split_edge_ratio
         #print("end of nested split")
         nested_splits_with_len_ratio_list.append(splits_with_len_ratio_dict)
     return nested_splits_with_len_ratio_list
 
+
 #TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
 #OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
+#THIS IS UGLY A HELL
 def output_refs(list_of_nested_splits_len_ratios):
+    output_dict = {}
+    long_branches_dict = {}
+    short_branch_taxa_dict = {}
+    for group in list_of_nested_splits_len_ratios:
+        #long_branches_dict = {}
+        #short_branch_taxa_dict = {}
+        print("group")
+        single_num_taxa = 0
+        multi_taxa_splits_with_long_branches = 0
+        multi_taxa_splits_with_long_branches_dict = {}
+        single_taxa_splits_dict = {}
+        for split, len_ratio in group.items():
+            num_taxa = 0
+            print("split '%s' and and branch length ratio '%s'" % (split, len_ratio))
+            for taxon in split:
+                if taxon == '1':
+                    num_taxa+=1
+            if num_taxa > 1 and len_ratio >= float(1.0):
+                #multi_taxa_splits_with_long_branches+=1
+                multi_taxa_splits_with_long_branches_dict[split] = len_ratio
+            elif num_taxa == 1:
+                single_taxa_splits_dict[split] = len_ratio
 
+        if len(multi_taxa_splits_with_long_branches_dict) > 1:
+            for single_tax_split, ratio in single_taxa_splits_dict.items():
+                if ratio >= float(1.0):
+                    long_branches_dict[single_tax_split] = ratio
+                elif ratio < float(1.0):
+                    short_branch_taxa_dict[single_tax_split] = ratio
+            output_dict["single_tax_long_branches"] = 
+
+
+
+        
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
@@ -244,9 +283,9 @@ def main():
     #print(splits_branch_length)
     #print(mle_len)
     #print(splits_branch_length_percent_of_tree)
-    #for i, t1 in enumerate(mle.taxon_namespace[:-1]):
-    #    for t2 in mle.taxon_namespace[i+1:]:
-    #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
+    for i, t1 in enumerate(mle.taxon_namespace[:-1]):
+        for t2 in mle.taxon_namespace[i+1:]:
+            print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
     
     print(taxa)
@@ -305,6 +344,12 @@ def main():
     find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
     #for nested_splits in find_nested_lens:
     #    print(nested_splits)
+
+    get_refs = output_refs(find_nested_lens)
+
+
+
+
 
 if __name__ == '__main__':
     main()

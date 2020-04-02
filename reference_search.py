@@ -159,6 +159,7 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         taxa_count = 0
         for position in split:
             if position == '1':
+                #print(position)
                 taxa_count+=1
         if taxa_count > 1:
             if float(len_ratio) >= float(1.0):
@@ -174,32 +175,86 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
             elif float(len_ratio) < float(1.0):
                 no_long_branches_count+=1
                 no_long_branches_list.append(split)
+    print(multiple_taxa_long_branch_split_count)
+    print(single_taxa_long_branch_count)
+    print(no_long_branches_count)
+    #IF THE SPLIT GROUP ONLY HAS ONE LONG BRANCH LEADING TO LOTS OF SHORT BRANCHES
+    if multiple_taxa_long_branch_split_count == 1 and single_taxa_long_branch_count == 0:
+        print("1 long branch, multiple short branches") 
 
-    if multiple_taxa_long_branch_split_count == 1:
-        if single_taxa_long_branch_count == 0:
-            output_dict['status'] = 'long_branch_to_multiple_short'
-            output_dict['short_branches'] = no_long_branches_list
-            output_dict['long_branch'] = multiple_taxa_long_brach_split_list
 
 
+    #IF SPLIT GROUP HAS MULTIPLE LONG NESTED SPLIT BRNACHES BUT ONLY SHORT BRANCHES WITHIN NESTED SPLITS
+    elif multiple_taxa_long_branch_split_count > 1 and single_taxa_long_branch_count == 0:
+        print("Multiple long nested branches but only short single taxon branches")
 
+    #MULTIPLE LONG BRANCH SPLITS AND MULTIPLE LONG BRANCH SINGLE TAXON SPLITS
+    elif multiple_taxa_long_branch_split_count > 1 and single_taxa_long_branch_count >= 1:
+        print("Multiple long nested splits and at least one long single taxon branch")
+        nested_branches = {}
+        for nest_split in multiple_taxa_long_branch_split_list:
+            included_single_taxa_branches = []
+            if len(single_taxa_long_branch_list) != 0:
+                for tax in single_taxa_long_branch_list:
+                    combine = combine_splits(nest_split, tax)
+                    check_combine = list(map(same_taxa, combine))
+                    int_prev = list(map(int, tax))
+                    if check_combine == int_prev:
+                        included_single_taxa_branches.append(tax)
+                        print("nested")
+                    else:
+                        print("not nested")
+            if len(no_long_branches_list) != 0:
+                for tax in no_long_branches_list:
+                    combine = combine_splits(nest_split, tax)
+                    check_combine = list(map(same_taxa, combine))
+                    int_prev = list(map(int, tax))
+                    if check_combine == int_prev:
+                        included_single_taxa_branches.append(tax)
+                        print("nested")
+                    else:
+                        print("not nested")
+            nested_branches[nest_split] = included_single_taxa_branches
+
+        print(nested_branches)
+
+        #print(nested_branches)
+        #for i, t1 in enumerate(multiple_taxa_long_branch_split_list[:-1]):
+        #    #print(t1)
+        #    for t2 in multiple_taxa_long_branch_split_list[i+1:]:
+        #        print("split '%s' and split '%s'" % (t1, t2))
+        #        combine = combine_splits(t1, t2)
+        #        print(combine)
+        #        check_combine = list(map(same_taxa, combine))
+        #        print(check_combine)
+
+
+    #NO LONG BRANCHES FOUND, NEEDS TO BE NESTED INTO BIGGER SPLIT
+    elif multiple_taxa_long_branch_split_count == 0 and single_taxa_long_branch_count == 0:
+        print("No long branches, needs nesting in bigger split")
 
 #TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
 #OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
 #THIS IS UGLY A HELL
 def output_refs(list_of_nested_splits_len_ratios):
     output_dict = {}
+    group_count = 0
     for group in list_of_nested_splits_len_ratios:
         print("group")
-        groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
+        group_count+=1
+        #groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
+        split_check = split_type_sorter(group, group_count)
         multiple_taxa_long_branch_split_count = 0
         for split, len_ratio in group.items():
             tax_in_split_count = 0
+            #split_check = split_type_sorter(dict_of_splits_n_len_ratios, group_count): 
             print("split '%s' and and branch length ratio '%s'" % (split, len_ratio))
-            for position in split:
-                if position == '1':
-                    tax_in_split_count+=1
-            if tax_in_split_count > 1:
+            #print(int(split))
+            #for position in split:
+            #    if position == '1':
+            #        tax_in_split_count+=1
+            #if tax_in_split_count > 1:
+            #    continue
 
 
 
@@ -244,63 +299,13 @@ def count_taxa(namespace_list):
 
 def main():
     args = parse_args()
-    mle_1 = '(taxon_10:0.000490504536564,(taxon_15:0.00147793977114,((taxon_22:0.00775296610854,(taxon_11:0.00233219469227,taxon_19:0.00292833772938):0.00661072260997):0.00437388771198,((taxon_17:0.00238143585578,((taxon_20:0.00040300210567,((taxon_27:0.000706168118649,taxon_23:0.000100735490224):1.00000050003e-06,(taxon_25:0.000503957096912,(taxon_26:1.00000050003e-06,taxon_21:0.000100729540367):0.000403230214661):1.00000050003e-06):1.00000050003e-06):0.000200876170437,(taxon_28:0.0011141033398,taxon_24:9.95483145232e-05):0.000507160142818):0.00184911046943):0.00339928596404,(taxon_16.ref:0.000400637478349,(taxon_13:0.000100794665489,(taxon_14:0.000706692317158,(taxon_18:1.00000050003e-06,taxon_1:1.00000050003e-06):0.000302521801106):1.00000050003e-06):0.00061029754872):0.00511761213428):0.000906053315062):0.0040106698136):0.00276938494406,taxon_12:0.00214526732704):0.0;'
     taxa = dendropy.TaxonNamespace()
     mle = dendropy.Tree.get(path=args.tree_file, schema='newick', taxon_namespace=taxa)
     mle_len = mle.length()
-    #print(dir(mle))
-    #print(mle.bipartition_edge_map)
-    #print("tree length is", mle_len)
-        #print(dir(mle))
-        #print(mle.bipartition_edge_map)
     mle.encode_bipartitions()
     pdc = mle.phylogenetic_distance_matrix()
 
     
-    taxa_count = 0
-    for name in taxa:
-        taxa_count+=1
-
-    split_count = 0
-    for split in mle.bipartition_encoding:
-        split_count+=1
-
-    #taxa = dendropy.TaxonNamespace()
-    new_mle = dendropy.Tree.get(data=mle_1, schema='newick', taxon_namespace=taxa)
-    new_mle.encode_bipartitions()
-    split_count_2 = 0
-    splits_branch_length = 0.0
-    splits_branch_length_percent_of_tree = 0.0
-    for split in mle.bipartition_encoding:
-        split_count_2+=1
-        #if split_count_2 == split_count:
-            #print(dir(mle.bipartition_edge_map[split]))
-        #print(split.edge)
-        #print(split)
-        #print(mle.bipartition_edge_map[split].length)
-            #print(dir(mle.bipartition_edge_map[split]))
-            #print(mle.bipartition_edge_map[split].leafset_bitmask)
-        #print(mle.bipartition_edge_map[split].bipartition)
-        
-        split_edge_ratio = float(mle.bipartition_edge_map[split].length) / float(mle_len)
-        #REMEMBER THAT BIPARTITION SPLITS ARE BACKWARDS COMPARED TO THE LIST PRODUCED BY NAMESPACE
-        #print("branch length as ratio of tree: %f" % (split_edge_ratio))
-        #CURRENT IDEA: LOOK AT SPLIT, SEE WHAT THE DISTANCE IS TO THE SPLIT THAT CONTAINS THIS SPLIT
-        #IF LONG: USE SPLIT
-        #IF SHORT: CONSIDER CONTAINER SPLIT
-        splits_branch_length+=mle.bipartition_edge_map[split].length
-        splits_branch_length_percent_of_tree+=split_edge_ratio
-            #print(split.split_bitmask)
-            #print(split.split_as_newick_string.__getattribute__)
-            #print(dir(split.split_as_newick_string))
-            #print(split.edge)
-            #print(type(split))
-            #print(dir(split))
-        pass
-    
-    #print(splits_branch_length)
-    #print(mle_len)
-    #print(splits_branch_length_percent_of_tree)
     for i, t1 in enumerate(mle.taxon_namespace[:-1]):
         for t2 in mle.taxon_namespace[i+1:]:
             print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
@@ -360,8 +365,8 @@ def main():
     add_singles = nest_leaves(single_taxons, split_analysis)
 
     find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
-    for nested_splits in find_nested_lens:
-        print(nested_splits)
+    #for nested_splits in find_nested_lens:
+    #    print(nested_splits)
 
     get_refs = output_refs(find_nested_lens)
 

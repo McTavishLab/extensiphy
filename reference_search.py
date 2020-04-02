@@ -181,12 +181,54 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
     #IF THE SPLIT GROUP ONLY HAS ONE LONG BRANCH LEADING TO LOTS OF SHORT BRANCHES
     if multiple_taxa_long_branch_split_count == 1 and single_taxa_long_branch_count == 0:
         print("1 long branch, multiple short branches") 
+        nested_branches = {}
+        used_taxa = []
+        for nest_split in multiple_taxa_long_branch_split_list:
+            included_single_taxa_branches = []
+            if len(no_long_branches_list) != 0:
+                for tax in no_long_branches_list:
+                    combine = combine_splits(nest_split, tax)
+                    check_combine = list(map(same_taxa, combine))
+                    int_prev = list(map(int, tax))
+                    if check_combine == int_prev:
+                        if tax not in used_taxa:
+                            included_single_taxa_branches.append(tax)
+                            used_taxa.append(tax)
+                            print("nested")
+                    else:
+                        print("not nested")
+            print(used_taxa)
+            nested_branches[nest_split] = included_single_taxa_branches
 
+        print(nested_branches)
+        return nested_branches
 
 
     #IF SPLIT GROUP HAS MULTIPLE LONG NESTED SPLIT BRNACHES BUT ONLY SHORT BRANCHES WITHIN NESTED SPLITS
     elif multiple_taxa_long_branch_split_count > 1 and single_taxa_long_branch_count == 0:
         print("Multiple long nested branches but only short single taxon branches")
+        nested_branches = {}
+        used_taxa = []
+        for nest_split in multiple_taxa_long_branch_split_list:
+            included_single_taxa_branches = []
+            if len(no_long_branches_list) != 0:
+                for tax in no_long_branches_list:
+                    combine = combine_splits(nest_split, tax)
+                    check_combine = list(map(same_taxa, combine))
+                    int_prev = list(map(int, tax))
+                    if check_combine == int_prev:
+                        if tax not in used_taxa:
+                            included_single_taxa_branches.append(tax)
+                            used_taxa.append(tax)
+                            print("nested")
+                    else:
+                        print("not nested")
+            print(used_taxa)
+            nested_branches[nest_split] = included_single_taxa_branches
+
+        print(nested_branches)
+        return nested_branches
+
 
     #MULTIPLE LONG BRANCH SPLITS AND MULTIPLE LONG BRANCH SINGLE TAXON SPLITS
     elif multiple_taxa_long_branch_split_count > 1 and single_taxa_long_branch_count >= 1:
@@ -223,21 +265,13 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
             nested_branches[nest_split] = included_single_taxa_branches
 
         print(nested_branches)
-
-        #print(nested_branches)
-        #for i, t1 in enumerate(multiple_taxa_long_branch_split_list[:-1]):
-        #    #print(t1)
-        #    for t2 in multiple_taxa_long_branch_split_list[i+1:]:
-        #        print("split '%s' and split '%s'" % (t1, t2))
-        #        combine = combine_splits(t1, t2)
-        #        print(combine)
-        #        check_combine = list(map(same_taxa, combine))
-        #        print(check_combine)
-
+        return nested_branches
 
     #NO LONG BRANCHES FOUND, NEEDS TO BE NESTED INTO BIGGER SPLIT
     elif multiple_taxa_long_branch_split_count == 0 and single_taxa_long_branch_count == 0:
         print("No long branches, needs nesting in bigger split")
+
+
 
 #TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
 #OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
@@ -247,6 +281,9 @@ def output_refs(list_of_nested_splits_len_ratios):
     group_count = 0
     for group in list_of_nested_splits_len_ratios:
         print("group")
+        #list1 = [int(x) for x in group]
+        #list1.sort()
+        #print(list1)
         group_count+=1
         #groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
         split_check = split_type_sorter(group, group_count)

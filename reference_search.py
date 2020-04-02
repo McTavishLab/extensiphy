@@ -192,6 +192,7 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
     elif multiple_taxa_long_branch_split_count > 1 and single_taxa_long_branch_count >= 1:
         print("Multiple long nested splits and at least one long single taxon branch")
         nested_branches = {}
+        used_taxa = []
         for nest_split in multiple_taxa_long_branch_split_list:
             included_single_taxa_branches = []
             if len(single_taxa_long_branch_list) != 0:
@@ -200,8 +201,10 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
                     check_combine = list(map(same_taxa, combine))
                     int_prev = list(map(int, tax))
                     if check_combine == int_prev:
-                        included_single_taxa_branches.append(tax)
-                        print("nested")
+                        if tax not in used_taxa:
+                            included_single_taxa_branches.append(tax)
+                            used_taxa.append(tax)
+                            print("nested")
                     else:
                         print("not nested")
             if len(no_long_branches_list) != 0:
@@ -210,10 +213,13 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
                     check_combine = list(map(same_taxa, combine))
                     int_prev = list(map(int, tax))
                     if check_combine == int_prev:
-                        included_single_taxa_branches.append(tax)
-                        print("nested")
+                        if tax not in used_taxa:
+                            included_single_taxa_branches.append(tax)
+                            used_taxa.append(tax)
+                            print("nested")
                     else:
                         print("not nested")
+            print(used_taxa)
             nested_branches[nest_split] = included_single_taxa_branches
 
         print(nested_branches)

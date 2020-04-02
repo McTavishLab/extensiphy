@@ -175,9 +175,9 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
             elif float(len_ratio) < float(1.0):
                 no_long_branches_count+=1
                 no_long_branches_list.append(split)
-    print(multiple_taxa_long_branch_split_count)
-    print(single_taxa_long_branch_count)
-    print(no_long_branches_count)
+    #print(multiple_taxa_long_branch_split_count)
+    #print(single_taxa_long_branch_count)
+    #print(no_long_branches_count)
 
     #IF THE SPLIT GROUP ONLY HAS ONE LONG BRANCH LEADING TO LOTS OF SHORT BRANCHES
     if multiple_taxa_long_branch_split_count == 1 and single_taxa_long_branch_count == 0:
@@ -206,8 +206,8 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         #print(nested_branches)
         main_list.append('one_long_mult_short')
         main_list.append(nested_branches)
-        print(main_list)
-        return nested_branches
+        #print(main_list)
+        return main_list
 
 
     #IF SPLIT GROUP HAS MULTIPLE LONG NESTED SPLIT BRNACHES BUT ONLY SHORT BRANCHES WITHIN NESTED SPLITS
@@ -237,7 +237,7 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         #print(nested_branches)
         main_list.append('mult_long_short')
         main_list.append(nested_branches)
-        print(main_list)
+        #print(main_list)
         return main_list
 
 
@@ -281,8 +281,8 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         #print(nested_branches)
         main_list.append('mult_long_all')
         main_list.append(nested_branches)
-        print(main_list)
-        return nested_branches
+        #print(main_list)
+        return main_list
 
     #NO LONG BRANCHES FOUND, NEEDS TO BE NESTED INTO BIGGER SPLIT
     elif multiple_taxa_long_branch_split_count == 0 and single_taxa_long_branch_count == 0:
@@ -293,7 +293,7 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         largest_split = ''
         max_taxa_count = 0
         for num, nest_split in enumerate(no_long_branches_list):
-            print(nest_split)
+            #print(nest_split)
             current_taxa_count = 0
             if len(no_long_branches_list) != 0:
                 for position in nest_split:
@@ -318,14 +318,14 @@ def split_type_sorter(dict_of_splits_n_len_ratios, group_count):
         nested_branches[largest_split] = used_taxa
         main_list.append('no_long')
         main_list.append(nested_branches)
-        print(main_list)
+        #print(main_list)
         return main_list
 
 
 #TAKE NESTED SETS OF SPLITS WITH BRANCH LENGTH RATIOS
 #OUTPUT BEST SPLITS BASED ON LONG BRANCHES AND SPLIT SETS THAT NEED REFERENCES CHOSEN BY DISTANCES
 #THIS IS UGLY A HELL
-def output_refs(list_of_nested_splits_len_ratios):
+def output_refs(list_of_nested_splits_len_ratios, name_space, distance_matrix):
     output_dict = {}
     group_count = 0
     for group in list_of_nested_splits_len_ratios:
@@ -336,21 +336,25 @@ def output_refs(list_of_nested_splits_len_ratios):
         group_count+=1
         #groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
         split_check = split_type_sorter(group, group_count)
-        multiple_taxa_long_branch_split_count = 0
-        for split, len_ratio in group.items():
-            tax_in_split_count = 0
-            #split_check = split_type_sorter(dict_of_splits_n_len_ratios, group_count): 
-            print("split '%s' and and branch length ratio '%s'" % (split, len_ratio))
-            #print(int(split))
-            #for position in split:
-            #    if position == '1':
-            #        tax_in_split_count+=1
-            #if tax_in_split_count > 1:
-            #    continue
+        #print(split_check)
+        status = split_check[0]
+        splits = split_check[1]
+        #print(status)
+        #print(splits)
+        taxa_set = []
+        distances_per_taxon = {}
+        if status == 'one_long_mult_short':
+            for key, value in splits.items():
+                for position, taxon in enumerate(key):
+                    taxa_set.append(name_space[-position])
 
-
-
-        
+            for i, t1 in enumerate(taxa_set[:-1]):
+                comparison_dists = []
+                for t2 in taxa_set[i+1:]:
+                    comparison_dists.append(distance_matrix(t1, t2))
+                distances_per_taxon[t1] = comparison_dists
+                    #print(distance_matrix(t1, t2))
+        print(distances_per_taxon)
 
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
@@ -402,9 +406,10 @@ def main():
         for t2 in mle.taxon_namespace[i+1:]:
             print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
-    
+    tax_list = [] 
     print(taxa)
-
+    for taxon in taxa:
+        tax_list.append(taxon)
 
     second_splits_branch_length = 0.0
     second_splits_branch_length_percent_of_tree = 0.0
@@ -459,10 +464,13 @@ def main():
     find_nested_lens = nested_lens(split_n_lens, add_singles, mle_len)
     #for nested_splits in find_nested_lens:
     #    print(nested_splits)
+    
+    
+    
+    get_refs = output_refs(find_nested_lens, tax_list, pdc)
 
-    get_refs = output_refs(find_nested_lens)
-
-
+    #for taxon in mle.namespace:
+    #    print(taxon)
 
 
 

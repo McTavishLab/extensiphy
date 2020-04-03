@@ -43,10 +43,24 @@ def split_indexer(organized_split_dict):
 
 
 def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
+    final_splits_list = []
+    print(cutoff)
     for num in index:
         if num != 0:
             print(num)
-            print(organized_splits[num])
+            for split in organized_splits[num]:
+                print(splits_and_ratios_dict[split])
+                lookat_split = splits_and_ratios_dict[split]
+                if lookat_split >= cutoff:
+                    print("found")
+                    final_splits_list.append(split)
+                    
+    
+    
+    
+    
+    return final_splits_list
+            
 
             
 
@@ -58,7 +72,7 @@ def main():
     mle_len = mle.length()
     mle.encode_bipartitions()
     pdc = mle.phylogenetic_distance_matrix()
-    long_branch_cutoff = 0.4
+    long_branch_cutoff = 0.05
     
     #for i, t1 in enumerate(mle.taxon_namespace[:-1]):
     #    for t2 in mle.taxon_namespace[i+1:]:
@@ -101,6 +115,11 @@ def main():
     #print(index)
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, long_branch_cutoff)
+    print(nest_splits)
+    print(tax_list)
+
+
+
 
 
 if __name__ == '__main__':

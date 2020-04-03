@@ -36,33 +36,17 @@ def split_indexer(organized_split_dict):
     index = []
     for key, value in organized_split_dict.items():
         index.append(key)
-    sorted_index = index[::-1]
-    return sorted_index
+    #sorted_index = index[::-1]
+    index.sort()
+    #return sorted_index
+    return index
 
 
-
-def nested_split_constructor(index, organized_splits):
-    split_count_tracker = 0
-    print(index)
+def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
     for num in index:
-        split_count_tracker+=1
-        num_of_splits = len(organized_splits[num])
-        prev_split = ''
-        current_split = ''
-        if split_count_tracker == 1:
-            prev_split = organized_splits[num][0]
-            print(prev_split)
-            print("WAFFLE")
-        elif split_count_tracker > 1:
-            prev_split = organized_splits[num]
-            #print(current_split)
-            prev_split_list = index[split_count_tracker:split_count_tracker + 1]
-            if len(prev_split_list) != 0:
-                current_split = organized_splits[prev_split_list[0]]
-                print("GRUUP")
-                print(prev_split)
-                print(current_split)
-            
+        if num != 0:
+            print(num)
+            print(organized_splits[num])
 
             
 
@@ -116,7 +100,7 @@ def main():
     index = split_indexer(sort_splits)
     #print(index)
 
-    nest_splits = nested_split_constructor(index, sort_splits)
+    nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, long_branch_cutoff)
 
 
 if __name__ == '__main__':

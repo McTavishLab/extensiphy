@@ -68,20 +68,28 @@ def get_dists(taxa_list, phylo_distance_matrix):
     best_dist = 0
     best_ref = ''
     for subject_tax in taxa_list:
-        for selected_tax in taxa_list:
-            if selected_tax != subject_tax:
-                dists = phylo_distance_matrix(subject_tax, selected_tax)
-                dist_list.append(dists)
-                avg = numpy.mean(dist_list)
-                avgs_list.append(avg)
-            elif len(taxa_list) == 1:
-                best_ref = subject_tax
-                finish = 1
-                return best_ref
+        best_avgs_for_subject = []
+        if len(taxa_list) == 1:
+            best_ref = subject_tax
+            finish = 1
+            print("single best ref")
+            return best_ref
+        elif len(taxa_list) != 1:
+            for selected_tax in taxa_list:
+                if selected_tax != subject_tax:
+                    dists = phylo_distance_matrix(subject_tax, selected_tax)
+                    best_avgs_for_subject.append(dists)
+            avg = numpy.mean(best_avgs_for_subject)
+            avgs_list.append(avg)
+    
     if finish != 1:
+        print("multiple options for best ref, narrowing down")
         best_dist = min(avgs_list)
+        #print(best_dist)
         for num, dist in enumerate(avgs_list):
             if dist == best_dist:
+                #print(taxa_list)
+                #print(avgs_list)
                 best_ref = taxa_list[num]
                 return best_ref
 

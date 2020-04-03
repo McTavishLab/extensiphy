@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
+import statistics
+import numpy
 import dendropy
 
 def parse_args():
@@ -44,15 +46,15 @@ def split_indexer(organized_split_dict):
 
 def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
     final_splits_list = []
-    print(cutoff)
+    #print(cutoff)
     for num in index:
         if num != 0:
-            print(num)
+            #print(num)
             for split in organized_splits[num]:
-                print(splits_and_ratios_dict[split])
+                #print(splits_and_ratios_dict[split])
                 lookat_split = splits_and_ratios_dict[split]
                 if lookat_split >= cutoff:
-                    print("found")
+                    #print("found")
                     final_splits_list.append(split)
                     
     
@@ -85,6 +87,7 @@ def main():
 
     second_splits_branch_length = 0.0
     second_splits_branch_length_percent_of_tree = 0.0
+    split_len_ratios = []
     grouped_splits = []
     split_n_lens = {}
     total_taxa = 0
@@ -100,21 +103,27 @@ def main():
         str_bipart = str(bipart)
         #print(str_bipart)
         #print(type(str_bipart))
+        split_len_ratios.append(split_edge_ratio)
         split_n_lens[str_bipart] = split_edge_ratio
         grouped_splits.append(str_bipart)
         for taxa in str_bipart:
             #print(taxa)
             taxa_in_split_count+=1
         total_taxa = taxa_in_split_count
-    #print(split_n_lens)   
-
+    #print(split_len_ratios)   
+    branch_mean = numpy.mean(split_len_ratios)
+    #print(branch_mean)
+    branch_std = numpy.std(split_len_ratios)
+    #print(branch_std)
+    nine_five_cutoff = branch_mean + (branch_std)
+    print(nine_five_cutoff)
     sort_splits = split_organiser(split_n_lens)
     #print(sort_splits)
 
     index = split_indexer(sort_splits)
     #print(index)
 
-    nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, long_branch_cutoff)
+    nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
     print(nest_splits)
     print(tax_list)
 

@@ -39,18 +39,31 @@ def split_indexer(organized_split_dict):
     sorted_index = index[::-1]
     return sorted_index
 
+
+
 def nested_split_constructor(index, organized_splits):
-    split_count_tracker = 1
+    split_count_tracker = 0
+    print(index)
     for num in index:
+        split_count_tracker+=1
         num_of_splits = len(organized_splits[num])
         prev_split = ''
         current_split = ''
         if split_count_tracker == 1:
             prev_split = organized_splits[num][0]
+            print(prev_split)
+            print("WAFFLE")
         elif split_count_tracker > 1:
-            print(prev_split) 
+            prev_split = organized_splits[num]
+            #print(current_split)
+            prev_split_list = index[split_count_tracker:split_count_tracker + 1]
+            if len(prev_split_list) != 0:
+                current_split = organized_splits[prev_split_list[0]]
+                print("GRUUP")
+                print(prev_split)
+                print(current_split)
+            
 
-        split_count_tracker+=1
             
 
 

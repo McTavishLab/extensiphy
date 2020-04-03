@@ -72,7 +72,7 @@ def get_dists(taxa_list, phylo_distance_matrix):
         if len(taxa_list) == 1:
             best_ref = subject_tax
             finish = 1
-            print("single best ref")
+            #print("single best ref")
             return best_ref
         elif len(taxa_list) != 1:
             for selected_tax in taxa_list:
@@ -83,7 +83,7 @@ def get_dists(taxa_list, phylo_distance_matrix):
             avgs_list.append(avg)
     
     if finish != 1:
-        print("multiple options for best ref, narrowing down")
+        #print("multiple options for best ref, narrowing down")
         best_dist = min(avgs_list)
         #print(best_dist)
         for num, dist in enumerate(avgs_list):
@@ -94,10 +94,11 @@ def get_dists(taxa_list, phylo_distance_matrix):
                 return best_ref
 
 def ref_selector(splits, phylo_distance_matrix, taxa_list):
+    best_refs_list = []
     sorted_taxa = taxa_list[::-1]
     num_taxa = len(sorted_taxa)
     for split in splits:
-        print("NEWSPLIT")
+        #print("NEWSPLIT")
         included_taxa = []
         num_ones = split.count('1')
         num_zeroes = split.count('0')
@@ -112,8 +113,9 @@ def ref_selector(splits, phylo_distance_matrix, taxa_list):
                     #print(sorted_taxa[loc])
                     included_taxa.append(sorted_taxa[loc])
 
-        best_dists = get_dists(included_taxa, phylo_distance_matrix)
-        print(best_dists)
+        best_ref = get_dists(included_taxa, phylo_distance_matrix)
+        best_refs_list.append(best_ref)
+    return best_refs_list
 
 
 def main():
@@ -129,7 +131,7 @@ def main():
     #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
     tax_list = [] 
-    print(taxa)
+    #print(taxa)
     for taxon in taxa:
         tax_list.append(taxon)
 
@@ -164,7 +166,7 @@ def main():
     branch_std = numpy.std(split_len_ratios)
     #print(branch_std)
     nine_five_cutoff = branch_mean + (branch_std)
-    print(nine_five_cutoff)
+    #print(nine_five_cutoff)
     sort_splits = split_organiser(split_n_lens)
     #print(sort_splits)
 
@@ -176,7 +178,8 @@ def main():
     #print(tax_list)
 
     pick_refs = ref_selector(nest_splits, pdc, tax_list)
-    print(pick_refs)
+    for ref in pick_refs:
+        print(ref)
 
     
 

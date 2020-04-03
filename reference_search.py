@@ -336,7 +336,7 @@ def output_refs(list_of_nested_splits_len_ratios, name_space, distance_matrix):
         group_count+=1
         #groups_split_info_dict = {"sngle_tax_lng_brnch":[], "shrt_brnch_tax":[]}
         split_check = split_type_sorter(group, group_count)
-        #print(split_check)
+        print(split_check)
         status = split_check[0]
         splits = split_check[1]
         #print(status)
@@ -346,16 +346,21 @@ def output_refs(list_of_nested_splits_len_ratios, name_space, distance_matrix):
         if status == 'one_long_mult_short':
             for key, value in splits.items():
                 for position, taxon in enumerate(key):
-                    taxa_set.append(name_space[-position])
-
-            for i, t1 in enumerate(taxa_set[:-1]):
+                    if taxon == '1':
+                        taxa_set.append(name_space[-position])
+                    
+            #for i, t1 in enumerate(taxa_set[:-1]):
+            for num, tax_1 in enumerate(taxa_set):
                 comparison_dists = []
-                for t2 in taxa_set[i+1:]:
-                    comparison_dists.append(distance_matrix(t1, t2))
-                distances_per_taxon[t1] = comparison_dists
+                #for t2 in taxa_set[i+1:]:
+                for tax_2 in taxa_set:
+                    if tax_1 != tax_2:
+                        comparison_dists.append(distance_matrix(tax_1, tax_2))
+                distances_per_taxon[tax_1] = comparison_dists
                     #print(distance_matrix(t1, t2))
         print(distances_per_taxon)
-
+        for key, value in distances_per_taxon.items():
+            print(len(value))
 
 #SEPARATE OUT ALL SPLITS CONTAINING 55% OR MORE OF TAXA,
 #THESE SPLITS CONTAIN SO MANY TAXA THAT BRANCH LENGTHS MUST BE SHORT 

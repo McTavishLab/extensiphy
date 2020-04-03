@@ -7,7 +7,8 @@ import dendropy
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tree_file')
+    parser.add_argument('--tree')
+    parser.add_argument('--dist')
     return parser.parse_args()
 
 def split_organiser(splits_with_len_dict):
@@ -121,7 +122,7 @@ def ref_selector(splits, phylo_distance_matrix, taxa_list):
 def main():
     args = parse_args()
     taxa = dendropy.TaxonNamespace()
-    mle = dendropy.Tree.get(path=args.tree_file, schema='newick', taxon_namespace=taxa, preserve_underscores=True)
+    mle = dendropy.Tree.get(path=args.tree, schema='newick', taxon_namespace=taxa, preserve_underscores=True)
     mle_len = mle.length()
     mle.encode_bipartitions()
     pdc = mle.phylogenetic_distance_matrix()
@@ -141,6 +142,9 @@ def main():
     grouped_splits = []
     split_n_lens = {}
     total_taxa = 0
+    branch_mean = 0.0
+    branch_std = 0.0
+    nine_five_cutoff = 0.0
     split_encode = mle.bipartition_encoding
     for split in split_encode:
         taxa_in_split_count = 0
@@ -160,15 +164,21 @@ def main():
             #print(taxa)
             taxa_in_split_count+=1
         total_taxa = taxa_in_split_count
-    #print(split_len_ratios)   
-    branch_mean = numpy.mean(split_len_ratios)
-    #print(branch_mean)
-    branch_std = numpy.std(split_len_ratios)
-    #print(branch_std)
-    nine_five_cutoff = branch_mean + (branch_std)
-    #print(nine_five_cutoff)
+    if args.dist == 'short': 
+        branch_mean = numpy.mean(split_len_ratios)
+    
+        branch_std = numpy.std(split_len_ratios)
+    
+        nine_five_cutoff = branch_mean + (branch_std)
+    elif args.dist == 'long':
+        branch_mean = numpy.mean(split_len_ratios)
+
+        branch_std = numpy.std(split_len_ratios)
+
+        nine_five_cutoff = branch_mean + (branch_std + branch_std)
+
+
     sort_splits = split_organiser(split_n_lens)
-    #print(sort_splits)
 
     index = split_indexer(sort_splits)
     #print(index)

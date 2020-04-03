@@ -57,24 +57,64 @@ def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cu
                     #print("found")
                     final_splits_list.append(split)
                     
-    
-    
-    
-    
     return final_splits_list
-            
 
-            
+
+def get_dists(taxa_list, phylo_distance_matrix):
+    finish = 0
+    dist_list = []
+    avgs_list = []
+    single_taxa = []
+    best_dist = 0
+    best_ref = ''
+    for subject_tax in taxa_list:
+        for selected_tax in taxa_list:
+            if selected_tax != subject_tax:
+                dists = phylo_distance_matrix(subject_tax, selected_tax)
+                dist_list.append(dists)
+                avg = numpy.mean(dist_list)
+                avgs_list.append(avg)
+            elif len(taxa_list) == 1:
+                best_ref = subject_tax
+                finish = 1
+                return best_ref
+    if finish != 1:
+        best_dist = min(avgs_list)
+        for num, dist in enumerate(avgs_list):
+            if dist == best_dist:
+                best_ref = taxa_list[num]
+                return best_ref
+
+def ref_selector(splits, phylo_distance_matrix, taxa_list):
+    sorted_taxa = taxa_list[::-1]
+    num_taxa = len(sorted_taxa)
+    for split in splits:
+        print("NEWSPLIT")
+        included_taxa = []
+        num_ones = split.count('1')
+        num_zeroes = split.count('0')
+        if num_ones <= num_zeroes:
+            for loc, position in enumerate(split):
+                if position == '1':
+                    #print(sorted_taxa[loc])
+                    included_taxa.append(sorted_taxa[loc])
+        elif num_ones > num_zeroes:
+            for loc, position in enumerate(split):
+                if position == '0':
+                    #print(sorted_taxa[loc])
+                    included_taxa.append(sorted_taxa[loc])
+
+        best_dists = get_dists(included_taxa, phylo_distance_matrix)
+        print(best_dists)
 
 
 def main():
     args = parse_args()
     taxa = dendropy.TaxonNamespace()
-    mle = dendropy.Tree.get(path=args.tree_file, schema='newick', taxon_namespace=taxa)
+    mle = dendropy.Tree.get(path=args.tree_file, schema='newick', taxon_namespace=taxa, preserve_underscores=True)
     mle_len = mle.length()
     mle.encode_bipartitions()
     pdc = mle.phylogenetic_distance_matrix()
-    long_branch_cutoff = 0.05
     
     #for i, t1 in enumerate(mle.taxon_namespace[:-1]):
     #    for t2 in mle.taxon_namespace[i+1:]:
@@ -124,11 +164,13 @@ def main():
     #print(index)
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
-    print(nest_splits)
-    print(tax_list)
+    #print(nest_splits)
+    #print(tax_list)
 
+    pick_refs = ref_selector(nest_splits, pdc, tax_list)
+    print(pick_refs)
 
-
+    
 
 
 if __name__ == '__main__':

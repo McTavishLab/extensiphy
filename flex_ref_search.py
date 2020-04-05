@@ -44,36 +44,61 @@ def split_indexer(organized_split_dict):
     #return sorted_index
     return index
 
+def position_check(list_of_2_taxa):
+    if list_of_2_taxa[0] == '1':
+        if list_of_2_taxa[0] == list_of_2_taxa[1]:
+            return 1
+        else:
+            return 0
+    else:
+        return 0
 
 def combine_splits(split_1, split_2):
     list_of_combined_taxa_positions = list(map(list, zip(split_1, split_2)))
+    which_nests = list(map(position_check, list_of_combined_taxa_positions))
+    which_nests = ''.join(str(e) for e in which_nests)
 
-    return list_of_combined_taxa_positions
+    return which_nests
 
-#MAIN FUNCTION TO ITERATE THROUGH SPLITS AND DECIDE WHAT SPLITS ARE INCLUDED FOR FINDING REFERENCES
-def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
+def single_tax_long_branch_finder(index, organized_splits, splits_and_ratios_dict):
     final_splits_list = []
     #print(cutoff)
-    num_count = 0
     for num in index:
-        num_count+=1
-        if num != 0:
-            print(num)
+        if num == 1:
+            #print(num)
             for split in organized_splits[num]:
                 #print(splits_and_ratios_dict[split])
                 lookat_split = splits_and_ratios_dict[split]
                 if lookat_split >= cutoff:
                     #print("found")
                     final_splits_list.append(split)
-                
-                elif lookat_split < cutoff:
-                    if num != max(index):
-                        next_split_set = organized_splits[index[num_count]]
-                        print(split)
-                        print(next_split_set)
-                    elif num == max(index):
-                       print("waffle") 
-    
+
+    return final_splits_list
+
+#MAIN FUNCTION TO ITERATE THROUGH SPLITS AND DECIDE WHAT SPLITS ARE INCLUDED FOR FINDING REFERENCES
+def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
+    final_splits_list = []
+    paths = {}
+    for split in organized_splits[1]:
+        split_path = {}
+        print("START HERE")
+        #print(split)
+        current_split = split
+        next_split = ''
+        for num in index[2:]:
+            #print(num)
+            for bigger_split in organized_splits[num]:
+                next_split = bigger_split
+                nest_check = combine_splits(current_split, next_split)
+                if nest_check == current_split:
+                    #print(current_split)
+                    #print(next_split)
+                    split_path[num] = next_split
+        paths[split] = split_path
+    for split, path in paths.items():
+        print(split)
+        print(path)
+        print("SEP")
     
     return final_splits_list
 
@@ -203,11 +228,11 @@ def main():
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
     #print(nest_splits)
-    #print(tax_list)
+    print(tax_list)
 
     pick_refs = ref_selector(nest_splits, pdc, tax_list)
-    for ref in pick_refs:
-        print(ref)
+    #for ref in pick_refs:
+    #    print(ref)
 
     
 

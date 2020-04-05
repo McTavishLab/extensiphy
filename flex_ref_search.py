@@ -269,7 +269,7 @@ def main():
     print("SINGLE TAX REFS HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
     single_tax_refs = ref_selector(single_tax_branches, pdc, tax_list)
-    single_tax_refs = set(nest_pick_refs)
+    single_tax_refs = set(single_tax_refs)
     for ref in single_tax_refs:
         print(ref)
 

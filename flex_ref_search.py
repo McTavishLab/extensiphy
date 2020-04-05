@@ -60,7 +60,7 @@ def combine_splits(split_1, split_2):
 
     return which_nests
 
-def single_tax_long_branch_finder(index, organized_splits, splits_and_ratios_dict):
+def single_tax_long_branch_finder(index, organized_splits, splits_and_ratios_dict, cutoff):
     final_splits_list = []
     #print(cutoff)
     for num in index:
@@ -81,7 +81,7 @@ def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cu
     paths = {}
     for split in organized_splits[1]:
         split_path = {}
-        print("START HERE")
+        #print("START HERE")
         #print(split)
         current_split = split
         next_split = ''
@@ -95,12 +95,41 @@ def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cu
                     #print(next_split)
                     split_path[num] = next_split
         paths[split] = split_path
-    for split, path in paths.items():
-        print(split)
-        print(path)
-        print("SEP")
     
-    return final_splits_list
+    splits_to_examine = []
+    for split, path in paths.items():
+        splits_passed_filter = []
+        #print("WAFFLE")
+        aggregate_branch = 0.0
+        splits_switch = 0
+        for split_level, nested_split in path.items():
+            num_taxa = 0
+            #splits_switch = 0
+            for position in nested_split:
+                if position == '1':
+                    num_taxa+=1
+            current_branch_len = splits_and_ratios_dict[nested_split]
+            aggregate_branch = aggregate_branch + current_branch_len
+            #print(aggregate_branch)
+            if aggregate_branch >= cutoff:
+                if splits_switch == 0:
+                    #print("LEN CUTOFF")
+                    splits_switch = 1
+                    #print(nested_split)
+                    if nested_split not in splits_to_examine:
+                        splits_to_examine.append(nested_split)
+            elif (num_taxa / max(index)) >= 0.15:
+                if splits_switch == 0:
+                    #print("num taxa cutoff")
+                    splits_switch = 1
+                    #print(nested_split)
+                    if nested_split not in splits_to_examine:
+                        splits_to_examine.append(nested_split)
+    #print(splits_to_examine)
+
+
+
+    return splits_to_examine
 
 
 def get_dists(taxa_list, phylo_distance_matrix):
@@ -228,13 +257,21 @@ def main():
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
     #print(nest_splits)
-    print(tax_list)
+    #print(tax_list)
 
-    pick_refs = ref_selector(nest_splits, pdc, tax_list)
-    #for ref in pick_refs:
-    #    print(ref)
+    single_tax_branches = single_tax_long_branch_finder(index, sort_splits, split_n_lens, nine_five_cutoff)    
 
-    
+    nest_pick_refs = ref_selector(nest_splits, pdc, tax_list)
+    nest_pick_refs = set(nest_pick_refs)
+    for ref in nest_pick_refs:
+        print(ref)
+
+    print("SINGLE TAX REFS HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+
+    single_tax_refs = ref_selector(single_tax_branches, pdc, tax_list)
+    single_tax_refs = set(nest_pick_refs)
+    for ref in single_tax_refs:
+        print(ref)
 
 
 if __name__ == '__main__':

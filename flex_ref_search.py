@@ -7,8 +7,8 @@ import dendropy
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tree')
-    parser.add_argument('--dist')
+    parser.add_argument('--tree', help='phylogenetic tree file in newick format')
+    parser.add_argument('--dist', default='long', help='branch length distance leading to references (DEFAULT: long)(Options: short, long')
     return parser.parse_args()
 
 def split_organiser(splits_with_len_dict):
@@ -34,7 +34,7 @@ def split_organiser(splits_with_len_dict):
     
     return split_sort_dict
 
-#CONSTRUCT INDEX OF KEYS IN ORGANIZED SPLIT_SORT_DICT AND SORT BY DECENDING SIZE
+#CONSTRUCT INDEX OF KEYS IN ORGANIZED SPLIT_SORT_DICT AND SORT BY SMALLEST TO LARGEST
 def split_indexer(organized_split_dict):
     index = []
     for key, value in organized_split_dict.items():
@@ -45,19 +45,36 @@ def split_indexer(organized_split_dict):
     return index
 
 
+def combine_splits(split_1, split_2):
+    list_of_combined_taxa_positions = list(map(list, zip(split_1, split_2)))
+
+    return list_of_combined_taxa_positions
+
+#MAIN FUNCTION TO ITERATE THROUGH SPLITS AND DECIDE WHAT SPLITS ARE INCLUDED FOR FINDING REFERENCES
 def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cutoff):
     final_splits_list = []
     #print(cutoff)
+    num_count = 0
     for num in index:
+        num_count+=1
         if num != 0:
-            #print(num)
+            print(num)
             for split in organized_splits[num]:
                 #print(splits_and_ratios_dict[split])
                 lookat_split = splits_and_ratios_dict[split]
                 if lookat_split >= cutoff:
                     #print("found")
                     final_splits_list.append(split)
-                    
+                
+                elif lookat_split < cutoff:
+                    if num != max(index):
+                        next_split_set = organized_splits[index[num_count]]
+                        print(split)
+                        print(next_split_set)
+                    elif num == max(index):
+                       print("waffle") 
+    
+    
     return final_splits_list
 
 
@@ -177,8 +194,9 @@ def main():
 
         nine_five_cutoff = branch_mean + (branch_std + branch_std)
 
-
+    #TAKES SPLITS AND ORGANIZES THEM BY HOW MANY TAXA THEY CONTAIN
     sort_splits = split_organiser(split_n_lens)
+    #print(sort_splits)
 
     index = split_indexer(sort_splits)
     #print(index)

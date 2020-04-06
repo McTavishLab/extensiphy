@@ -190,6 +190,45 @@ def ref_selector(splits, phylo_distance_matrix, taxa_list):
     return best_refs_list
 
 
+def bisect_split_sets(taxa_list):
+    bisected_numbers = []
+    top_half = []
+    bottom_half = []
+    halfway = int(max(taxa_list) * 0.5)
+    for num in taxa_list:
+        if num < halfway:
+            bottom_half.append(num)
+        elif num >= halfway:
+            top_half.append(num)
+    bisected_numbers.append(bottom_half)
+    bisected_numbers.append(top_half)
+
+    return bisected_numbers
+
+def num_in_list(num, list_of_int):
+    if num < max(list_of_int) and num > min(list_of_int):
+        return 1
+    else:
+        return 0
+
+
+def spread_refs(spread_num, ref_list, organized_split_list, phylo_distance_matrix, taxa_list):
+    close = 0
+    split_up_taxa = bisect_split_sets(taxa_list)
+    while close != 1:
+        #split_up_taxa = bisect_split_sets(taxa_list)
+        check_down = num_in_list(spread_num, split_up_taxa[0])
+        check_up = num_in_list(spread_num, split_up_taxa[1])
+        if check_down == 1:
+            split_up_taxa = split_up_taxa[0]
+        elif check_up == 1:
+            split_up_taxa = split_up_taxa[1]
+
+        if max(split_up_taxa) >= (spread_num + 5) or min(split_up_taxa) <= (spread_num - 5):
+            print("Found")
+            close = 1
+    
+
 def main():
     args = parse_args()
     taxa = dendropy.TaxonNamespace()
@@ -263,16 +302,31 @@ def main():
 
     nest_pick_refs = ref_selector(nest_splits, pdc, tax_list)
     nest_pick_refs = set(nest_pick_refs)
-    for ref in nest_pick_refs:
-        print(ref)
+    #for ref in nest_pick_refs:
+    #    print(ref)
 
-    print("SINGLE TAX REFS HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+    #print("SINGLE TAX REFS HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
     single_tax_refs = ref_selector(single_tax_branches, pdc, tax_list)
     single_tax_refs = set(single_tax_refs)
-    for ref in single_tax_refs:
-        print(ref)
+    #for ref in single_tax_refs:
+    #    print(ref)
 
+    unique_refs = nest_pick_refs.union(single_tax_refs)
+    list_refs = list(unique_refs)
+    #print(list_refs)
+
+    #for i, t1 in enumerate(list_refs[:-1]):
+    #    for t2 in list_refs[i+1:]:
+    #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
+
+    #for num in index:
+    #    print(num)
+    
+    gold_spread = int((max(index) * 0.15))
+    print(gold_spread)
+    
+    spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, index)
 
 if __name__ == '__main__':
     main()

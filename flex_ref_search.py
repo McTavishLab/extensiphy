@@ -190,43 +190,25 @@ def ref_selector(splits, phylo_distance_matrix, taxa_list):
     return best_refs_list
 
 
-def bisect_split_sets(taxa_list):
-    bisected_numbers = []
-    top_half = []
-    bottom_half = []
-    halfway = int(max(taxa_list) * 0.5)
-    for num in taxa_list:
-        if num < halfway:
-            bottom_half.append(num)
-        elif num >= halfway:
-            top_half.append(num)
-    bisected_numbers.append(bottom_half)
-    bisected_numbers.append(top_half)
-
-    return bisected_numbers
-
-def num_in_list(num, list_of_int):
-    if num < max(list_of_int) and num > min(list_of_int):
-        return 1
-    else:
-        return 0
 
 
-def spread_refs(spread_num, ref_list, organized_split_list, phylo_distance_matrix, taxa_list):
-    close = 0
-    split_up_taxa = bisect_split_sets(taxa_list)
-    while close != 1:
-        #split_up_taxa = bisect_split_sets(taxa_list)
-        check_down = num_in_list(spread_num, split_up_taxa[0])
-        check_up = num_in_list(spread_num, split_up_taxa[1])
-        if check_down == 1:
-            split_up_taxa = split_up_taxa[0]
-        elif check_up == 1:
-            split_up_taxa = split_up_taxa[1]
+def spread_refs(spread_num, ref_list, organized_split_dict, phylo_distance_matrix, taxa_list, splits_producing_refs):
+    sorted_taxa = taxa_list[::-1]
+    all_split_levels = []
+    for key, value in organized_split_dict.items():
+        all_split_levels.append(key)
+    #print(all_split_levels)
+    closest_split = min(all_split_levels, key=lambda x:abs(x-spread_num))
+    
+    for split in splits_producing_refs:
+        count_tax = split.count('1')
+        if count_tax <= spread_num:
+            for pos, taxon in enumerate(split):
+                if taxon == '1':
+                    print(taxa_list[pos])
 
-        if max(split_up_taxa) >= (spread_num + 5) or min(split_up_taxa) <= (spread_num - 5):
-            print("Found")
-            close = 1
+        
+    
     
 
 def main():
@@ -295,7 +277,7 @@ def main():
     #print(index)
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
-    #print(nest_splits)
+    print(nest_splits)
     #print(tax_list)
 
     single_tax_branches = single_tax_long_branch_finder(index, sort_splits, split_n_lens, nine_five_cutoff)    
@@ -320,13 +302,9 @@ def main():
     #    for t2 in list_refs[i+1:]:
     #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
-    #for num in index:
-    #    print(num)
-    
     gold_spread = int((max(index) * 0.15))
-    print(gold_spread)
     
-    spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, index)
+    spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, tax_list, nest_splits)
 
 if __name__ == '__main__':
     main()

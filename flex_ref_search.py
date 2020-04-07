@@ -192,24 +192,72 @@ def ref_selector(splits, phylo_distance_matrix, taxa_list):
 
 
 
-def spread_refs(spread_num, ref_list, organized_split_dict, phylo_distance_matrix, taxa_list, splits_producing_refs):
-    sorted_taxa = taxa_list[::-1]
-    all_split_levels = []
-    for key, value in organized_split_dict.items():
-        all_split_levels.append(key)
-    #print(all_split_levels)
-    closest_split = min(all_split_levels, key=lambda x:abs(x-spread_num))
-    
-    for split in splits_producing_refs:
-        count_tax = split.count('1')
-        if count_tax <= spread_num:
-            for pos, taxon in enumerate(split):
-                if taxon == '1':
-                    print(taxa_list[pos])
-
+#def spread_refs(spread_num, ref_list, organized_split_dict, phylo_distance_matrix, taxa_list, splits_producing_refs):
+#    sorted_taxa = taxa_list[::-1]
+#    all_split_levels = []
+#    for key, value in organized_split_dict.items():
+#        all_split_levels.append(key)
+#    #print(all_split_levels)
+#    closest_split = min(all_split_levels, key=lambda x:abs(x-spread_num))
+#    
+#    splits_to_keep = {}
+#    analyzed_taxa = {}
+#    positions_used = []
+#    for split in splits_producing_refs:
+#        taxa_from_current_split = []
+#        count_tax = split.count('1')
+#        if count_tax <= closest_split:
+#            for pos, taxon in enumerate(split):
+#                if taxon == '1':
+#                    taxa_from_current_split.append(taxa_list[pos])
+#                    if pos not in positions_used:
+#                        positions_used.append(pos)
+#        analyzed_taxa[split] = taxa_from_current_split
+#    #for split, tax_set in analyzed_taxa.items():
+#    #    print(split)
+#    #    print(tax_set)
+#    print(positions_used)
+#    tax_groups = []
+#    group = []
+#    for num, tax_position in enumerate(positions_used):
+#        if num != 0:
+#            if tax_position == positions_used[num - 1] + 1:
+#                print(tax_position)
+#            else:
+#                print("new group")
         
-    
-    
+
+
+def spread_refs(refs, phylo_dist_matrix):
+    dist_dict = {}
+    total_dists = []
+    for i, t1 in enumerate(refs[:-1]):
+        dists_from_t1 = []
+        for t2 in refs[i+1:]:
+            dist_from_dict = {}
+            #print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, phylo_dist_matrix(t1, t2)))
+            dist_from_dict[t2] = phylo_dist_matrix(t1, t2)
+            total_dists.append(phylo_dist_matrix(t1, t2))
+            dists_from_t1.append(dist_from_dict)
+        dist_dict[t1] = dists_from_t1
+
+    ref_dist_mean = numpy.mean(total_dists)
+    ref_dist_std = numpy.std(total_dists)
+
+    #print(ref_dist_mean)
+    #print(ref_dist_std)
+    tax_to_keep = []
+    for main_tax, tax_set in dist_dict.items():
+        for tax_dist_pair in tax_set:
+            for key, value in tax_dist_pair.items():
+                if value <= (ref_dist_mean - ref_dist_std):
+                    #print("to close")
+                    pass
+                elif value > (ref_dist_mean - ref_dist_std) and key not in tax_to_keep:
+                    tax_to_keep.append(key)
+    #print(tax_to_keep)
+
+    return tax_to_keep
 
 def main():
     args = parse_args()
@@ -277,16 +325,17 @@ def main():
     #print(index)
 
     nest_splits = nested_split_constructor(index, sort_splits, split_n_lens, nine_five_cutoff)
-    print(nest_splits)
+    #print(nest_splits)
     #print(tax_list)
 
     single_tax_branches = single_tax_long_branch_finder(index, sort_splits, split_n_lens, nine_five_cutoff)    
 
     nest_pick_refs = ref_selector(nest_splits, pdc, tax_list)
     nest_pick_refs = set(nest_pick_refs)
+    nest_pick_refs_list = list(nest_pick_refs)
     #for ref in nest_pick_refs:
     #    print(ref)
-
+    #print(nest_pick_refs)
     #print("SINGLE TAX REFS HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
     single_tax_refs = ref_selector(single_tax_branches, pdc, tax_list)
@@ -302,9 +351,13 @@ def main():
     #    for t2 in list_refs[i+1:]:
     #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
-    gold_spread = int((max(index) * 0.15))
+    #gold_spread = int((max(index) * 0.15))
     
-    spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, tax_list, nest_splits)
+    #spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, tax_list, nest_splits)
 
+    trim_refs = spread_refs(nest_pick_refs_list, pdc)
+    print(trim_refs)
+    for ref in trim_refs:
+        print(ref)
 if __name__ == '__main__':
     main()

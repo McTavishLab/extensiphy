@@ -83,8 +83,9 @@ loci_positions="loci_positions.csv"
 bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
+cleanup="MESSY"
 
-while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:h" opt; do
+while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:v:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -115,6 +116,8 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:h" opt; do
     b) bootstrapping="$OPTARG"
     ;;
     r) ref_select="$OPTARG"
+    ;;
+    v) cleanup="$OPTARG"
     ;;
     h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
     exit
@@ -260,7 +263,7 @@ printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
 printf "suffix for right reads (if paired end only) = $r2_tail\n"
 printf "output directory = $outdir\n"
 printf "#################################################\n"
-exit
+
 
 #if [ -d $outdir ]; then
 #	printf "Output folder exists. Choose a different name.\n"
@@ -444,6 +447,22 @@ for i in $(ls -d *output_dir); do
  fi
  cd ..
 done
+
+# check if user specified to clean up intermediary files and do so if specified
+# else just leave them
+if [ $cleanup == "CLEAN" ]; then
+	printf "\nCleaning up intermediate output files.\n"
+	for i in $(ls -d *output_dir); do
+		cd $i
+		for j in $(ls -1); do
+			rm ./$j
+		done	
+		cd ..
+		rmdir $i
+	done
+elif [ $cleanup == "MESSY" ]; then
+	printf "\nKeeping intermediate output files\n"
+fi
 
 printf "\nskipping renaming step\n"
 cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln

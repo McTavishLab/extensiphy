@@ -200,13 +200,14 @@ else
 fi
 
 #CHECK TREE FILE FOR CORRECT NEWICK FORMAT
-if grep -q "^(.*:.*):" $tree ; then
-	:
-else
-	printf "\nTree file $tree appears to not be in newick format.\n"
-	exit
+if [ $tree != "NONE" ]; then
+	if grep -q "^(.*:.*):" $tree ; then
+		:
+	else
+		printf "\nTree file $tree appears to not be in newick format.\n"
+		exit
+	fi
 fi
-
 # CHECK READ FILES SUFFIX
 printf "\nBeginning check of read and suffix accuracy\n"
 if [ "$end_setting" == "PE" ]; then
@@ -375,6 +376,9 @@ ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 
 printf "\nNumber of cores allocated enough to process all read sets\n"
 printf "\nBeginning RapUp runs\n"
+
+#TODO: ADD MORE FUNCTIONS TO THIS PARALLEL RUNNING SECTION IF POSSIBLE
+# SUCH AS REMOVING FILES IF CLEAN OPTION IS SPECIFIED
 
 if [ "$end_setting" == "PE" ]; then 
 	for j in $(ls x*); do

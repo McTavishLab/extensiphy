@@ -180,6 +180,8 @@ def main():
     #TAKES SPLITS AND ORGANIZES THEM BY HOW MANY TAXA THEY CONTAIN
     sort_splits = split_organiser(split_n_lens)
     #print(sort_splits)
+    for key, split_set in sort_splits.items():
+        print(split_set)
 
     index = split_indexer(sort_splits)
     #print(index)

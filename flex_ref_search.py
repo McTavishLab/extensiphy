@@ -100,6 +100,10 @@ def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cu
     for split, path in paths.items():
         splits_passed_filter = []
         #print("WAFFLE")
+        #print(split)
+        #for key, value in path.items():
+        #    print(key)
+        #    print(value)
         aggregate_branch = 0.0
         splits_switch = 0
         for split_level, nested_split in path.items():
@@ -320,6 +324,9 @@ def main():
     #TAKES SPLITS AND ORGANIZES THEM BY HOW MANY TAXA THEY CONTAIN
     sort_splits = split_organiser(split_n_lens)
     #print(sort_splits)
+    #for num, split_set in sort_splits.items():
+    #    print(num)
+    #    print(split_set)
 
     index = split_indexer(sort_splits)
     #print(index)
@@ -345,7 +352,9 @@ def main():
 
     unique_refs = nest_pick_refs.union(single_tax_refs)
     list_refs = list(unique_refs)
-    #print(list_refs)
+    print(list_refs)
+    for ref in list_refs:
+        print(ref)
 
     #for i, t1 in enumerate(list_refs[:-1]):
     #    for t2 in list_refs[i+1:]:
@@ -356,8 +365,8 @@ def main():
     #spread_out_refs = spread_refs(gold_spread, list_refs, sort_splits, pdc, tax_list, nest_splits)
 
     trim_refs = spread_refs(nest_pick_refs_list, pdc)
-    print(trim_refs)
-    for ref in trim_refs:
-        print(ref)
+    #print(trim_refs)
+    #for ref in trim_refs:
+    #    print(ref)
 if __name__ == '__main__':
     main()

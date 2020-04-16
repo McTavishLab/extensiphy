@@ -100,7 +100,7 @@ for i in $(ls *$r1_tail); do
    echo fastq "$i" "${i%$r1_tail}$r2_tail"
 done
 
-printf "made it through changing into the read directory and fastqc"
+#printf "made it through changing into the read directory and fastqc"
 
 mkdir trimmed_reads
 
@@ -119,7 +119,7 @@ done
 
 wait
 
-printf "made it through bbduk step"
+#printf "made it through bbduk step"
 
 # begin moving trimmed reads into a seperate directory so those files can be worked on
 #mkdir trimmed_reads
@@ -277,7 +277,7 @@ mkdir masked_genomes
 #         fi
 #
 # else
-echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
+#echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
 # STRIP ADDED UNNECESSARY FILE FORMAT INFO FROM FILE NAMES
 #for i in $(ls -1); do mv $i $(echo $i | sed "s/_$r1_tail.fasta//") ; done

@@ -51,14 +51,14 @@ if int(sys.argv[2]) == taxa_counter:
     ending_num = str(1)
     prime_regex = string_to_convert1 + "(.*?)" + "="
     regex2 = re.compile(prime_regex, re.S)
-    print(prime_regex)
+    #print(prime_regex)
 
 # handles all taxa except the last taxon in the alignment
 elif int(sys.argv[2]) != taxa_counter:
     ending_num = str(int(sys.argv[2]) + 1)
     prime_regex = string_to_convert1 + "(.*?)" + ">" + ending_num + ":"
     regex2 = re.compile(prime_regex, re.S)
-    print(prime_regex)
+    #print(prime_regex)
 
 else:
     print("Problem with taxa counting")

@@ -29,11 +29,11 @@ def main():
     else:
         print("Fixing pathing")
         dir_of_aligns = dir_of_aligns + "/"
-        print(dir_of_aligns)
-    print(dir_of_aligns)
+        #print(dir_of_aligns)
+    #print(dir_of_aligns)
     #msa_list = os.listdir(args.msa_folder)
     msa_list = os.listdir(dir_of_aligns)
-    print(msa_list)
+    #print(msa_list)
    
     name_list = []
     file_name_and_seq_len_dict = {}
@@ -59,7 +59,7 @@ def main():
                     seq = name_seq_split[1]
                     seq = seq.replace("\n","")
                     seq_len = len(seq)
-                    print(seq_len)
+                    #print(seq_len)
                     if seq_len >= len_filt:
                         taxon_name_and_seqs[name].append(seq)
                         file_name_and_seq_len_dict[file_name] = seq_len
@@ -77,7 +77,7 @@ def main():
             if seq_len >= len_filt:
                 name_and_len = [loci_count, file_name, seq_len]
                 tuple_name_and_seq_len_list.append(name_and_len)
-    print(tuple_name_and_seq_len_list)
+    #print(tuple_name_and_seq_len_list)
     #print(file_name_and_seq_len_dict)
     #print(taxon_name_and_seqs)
     

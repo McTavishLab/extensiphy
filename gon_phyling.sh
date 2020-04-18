@@ -209,15 +209,20 @@ mkdir genomes_for_parsnp
 
 #done
 
+printf "\nOrganizing assembled genomes for Parsnp locus selection\n"
+
 for i in $(ls -d */);
 do
+	printf "\n$i\n"
         slash_strip=$(basename $i /)
         if [[ $i == "genomes_for_parsnp/" ]]; then
                 printf "\n$i SKIPPED\n"
         else
                 printf "\nmoving contigs from $i\n"
                 cd $i
-                cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+                #cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+		#ln -s contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+		mv contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
                 cd ..
         fi
         #cd $i

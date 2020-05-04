@@ -1,0 +1,16 @@
+name: rapup_env
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python=3
+  - numpy
+  - pandas
+  - argparse
+  - hisat2
+  - samtools
+  - seqtk
+  - bcftools
+  - fastx_toolkit
+  - dendropy
+  - raxml

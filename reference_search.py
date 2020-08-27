@@ -28,10 +28,10 @@ def split_organiser(splits_with_len_dict):
         if taxa_in_split not in split_sort_dict:
             split_sort_dict[taxa_in_split] = []
             split_sort_dict[taxa_in_split].append(split)
-        
+
         else:
             split_sort_dict[taxa_in_split].append(split)
-    
+
     return split_sort_dict
 
 #CONSTRUCT INDEX OF KEYS IN ORGANIZED SPLIT_SORT_DICT AND SORT BY SMALLEST TO LARGEST
@@ -57,7 +57,7 @@ def nested_split_constructor(index, organized_splits, splits_and_ratios_dict, cu
                 if lookat_split >= cutoff:
                     #print("found")
                     final_splits_list.append(split)
-                    
+
     return final_splits_list
 
 
@@ -82,7 +82,7 @@ def get_dists(taxa_list, phylo_distance_matrix):
                     best_avgs_for_subject.append(dists)
             avg = numpy.mean(best_avgs_for_subject)
             avgs_list.append(avg)
-    
+
     if finish != 1:
         #print("multiple options for best ref, narrowing down")
         best_dist = min(avgs_list)
@@ -126,12 +126,14 @@ def main():
     mle_len = mle.length()
     mle.encode_bipartitions()
     pdc = mle.phylogenetic_distance_matrix()
-    
+
+    print(dir(mle))
+
     #for i, t1 in enumerate(mle.taxon_namespace[:-1]):
     #    for t2 in mle.taxon_namespace[i+1:]:
     #        print("Distance between '%s' and '%s': %s" % (t1.label, t2.label, pdc(t1, t2)))
 
-    tax_list = [] 
+    tax_list = []
     #print(taxa)
     for taxon in taxa:
         tax_list.append(taxon)
@@ -164,11 +166,11 @@ def main():
             #print(taxa)
             taxa_in_split_count+=1
         total_taxa = taxa_in_split_count
-    if args.dist == 'short': 
+    if args.dist == 'short':
         branch_mean = numpy.mean(split_len_ratios)
-    
+
         branch_std = numpy.std(split_len_ratios)
-    
+
         nine_five_cutoff = branch_mean + (branch_std)
     elif args.dist == 'long':
         branch_mean = numpy.mean(split_len_ratios)
@@ -194,7 +196,7 @@ def main():
     for ref in pick_refs:
         print(ref)
 
-    
+
 
 
 if __name__ == '__main__':

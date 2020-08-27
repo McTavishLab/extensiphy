@@ -208,13 +208,13 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
         for j in $(ls x*); do
                 for i in $(cat $j); do
-			$PHYCORDER/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 1000 >> $workd/rapup_dev_log.txt 2>&1
+			$PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 1000 >> $workd/rapup_dev_log.txt 2>&1
                 done
                 wait
         done
 
 
-	$PHYCORDER/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
 	align=$( realpath ../combo.fas)
 
 	printf "\nNew alignment file produced\n"
@@ -223,7 +223,7 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 	cd ..
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
-	$PHYCORDER/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
 	#printf "$outdir\n"
 	#printf "$PHYCORDER\n"	
 
@@ -262,16 +262,16 @@ fi
 
 if [ $ref_select != "RANDOM" ]; then
 
-        $PHYCORDER/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
 
-        $PHYCORDER/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
 
 
 elif [ $ref_select == "RANDOM" ]; then
 	# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
-	$PHYCORDER/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
 
-	$PHYCORDER/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
 
 fi
 
@@ -307,7 +307,7 @@ for i in $(cat $j); do
     #echo "${base}_output_dir"
     #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
     #echo "Time for $j Phycorder run:"
-    time $PHYCORDER/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
+    time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
     #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
     #wait
     printf "\nadding new map_to_align run\n"
@@ -405,7 +405,7 @@ output_dir=$(pwd)
 # for now, it serves as a SNP check
 if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
-	$PHYCORDER/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/rapup_dev_log.txt 2>&1
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"

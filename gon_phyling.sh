@@ -299,6 +299,7 @@ mkdir alignment_fixing
 
 sed -i -e 's/.fasta//g' ./P*/parsnp.xmfa
 
+#symlinking this causes problems. Fix later
 cp ./P*/parsnp.xmfa ./alignment_fixing/
 
 cd ./alignment_fixing
@@ -321,7 +322,7 @@ if [ $output_type == "LOCUS" ]; then
 
 	for j in $(ls x*); do
 		for i in $(cat $j); do
-			$GON_PHYLING/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+			$GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 			#$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 		done
 		wait
@@ -329,7 +330,7 @@ if [ $output_type == "LOCUS" ]; then
 
 
 	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
-	$GON_PHYLING/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
+	$GON_PHYLING/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
 	cd ..
 
 	# STRIP TAILS FROM NAMES FOR CLEANER TAXON NAMES
@@ -340,7 +341,7 @@ elif [ $output_type == "LOCI" ]; then
 
 # new parallel parsnp processing
 # grab the number of taxa in the parsnp.xmfa output file
-$GON_PHYLING/parsnp_taxa_count.sh > taxa_count.txt
+$GON_PHYLING/modules/parsnp_taxa_count.sh > taxa_count.txt
 
 # split each number of taxa into a set that can be iterrated over and processed in parallel
 #cat taxa_count.txt | split -a 10 -l $threads
@@ -351,7 +352,7 @@ sed -i -e 's/.fasta//g' ./parsnp.xmfa
 for j in $(ls x*); do
   for i in $(cat $j); do
 
-    $GON_PHYLING/parallel_parsnp_splitter.py parsnp.xmfa $i &
+    $GON_PHYLING/modules/parallel_parsnp_splitter.py parsnp.xmfa $i &
 
   done
   wait

@@ -48,6 +48,7 @@ RapUp requires that you limit the loci you include for updating to sequences wit
 - (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),
 - (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),
 - (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)
+- (-i) set whether to clean up intermediate output files to save disk space)(KEEP, CLEAN)(DEFAULT: KEEP)
 
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),

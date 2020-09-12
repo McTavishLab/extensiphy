@@ -42,7 +42,7 @@ fi
 
 printf "\n\n"
 
-
+intermediate="KEEP"
 ref_genome="NONE"
 gon_phy_runs="2"
 threads="2"
@@ -53,7 +53,7 @@ r1_tail="R1.fastq"
 r2_tail="R2.fastq"
 
 WD=$(pwd)
-while getopts ":b:d:g:r:c:1:2:l:o:h" opt; do
+while getopts ":b:d:g:r:c:1:2:l:o:i:h" opt; do
    case $opt in
      b) bootstrapping="$OPTARG"
      ;;
@@ -73,7 +73,9 @@ while getopts ":b:d:g:r:c:1:2:l:o:h" opt; do
      ;;
      o) output_type="$OPTARG"
      ;;
-     h) printf  "gon_phyling is a program to assemble sets of paired-end short high-throughput reads into genomes, automatically select homologous loci and construct a phylogenetic tree.\n\n\n EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX]\n\n, INPUT OPTIONS:\n (-d) directory of paired end reads. All output folders and files will be contained here\n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)\n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)\n\n OUTPUT\n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)\n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)\n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)\n\n RUNNING PROGRAM\n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)\n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)\n\n OUTPUT FILES\n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out\n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
+     i) intermediate="$OPTARG"
+     ;;
+     h) printf  "gon_phyling is a program to assemble sets of paired-end short high-throughput reads into genomes, automatically select homologous loci and construct a phylogenetic tree.\n\n\n EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX]\n\n, INPUT OPTIONS:\n (-d) directory of paired end reads. All output folders and files will be contained here\n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)\n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)\n\n OUTPUT\n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)\n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)\n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)\n\n RUNNING PROGRAM\n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)\n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2),\n (-i) Clean up intermediate output files option to save HD space (Options: CLEAN or KEEP)(DEFAULT: KEEP)\n\n OUTPUT FILES\n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out\n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
      exit
      ;;
      \?) echo "Invalid option -$OPTARG" >&2
@@ -98,7 +100,7 @@ for i in $(ls *$r1_tail); do
    echo fastq "$i" "${i%$r1_tail}$r2_tail"
 done
 
-printf "made it through changing into the read directory and fastqc"
+#printf "made it through changing into the read directory and fastqc"
 
 mkdir trimmed_reads
 
@@ -117,7 +119,7 @@ done
 
 wait
 
-printf "made it through bbduk step"
+#printf "made it through bbduk step"
 
 # begin moving trimmed reads into a seperate directory so those files can be worked on
 #mkdir trimmed_reads
@@ -207,15 +209,20 @@ mkdir genomes_for_parsnp
 
 #done
 
+printf "\nOrganizing assembled genomes for Parsnp locus selection\n"
+
 for i in $(ls -d */);
 do
+	printf "\n$i\n"
         slash_strip=$(basename $i /)
         if [[ $i == "genomes_for_parsnp/" ]]; then
                 printf "\n$i SKIPPED\n"
         else
                 printf "\nmoving contigs from $i\n"
                 cd $i
-                cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+                #cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+		#ln -s contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+		mv contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
                 cd ..
         fi
         #cd $i
@@ -275,7 +282,7 @@ mkdir masked_genomes
 #         fi
 #
 # else
-echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
+#echo "SKIPPING REPETITIVE SEQUENCE MASKING AND PROCEEDING WITH PARSNP"
 
 # STRIP ADDED UNNECESSARY FILE FORMAT INFO FROM FILE NAMES
 #for i in $(ls -1); do mv $i $(echo $i | sed "s/_$r1_tail.fasta//") ; done
@@ -410,4 +417,26 @@ else
 
 fi
 
-printf "Assembly and inference of genomes complete."
+printf "\nAssembly and inference of genomes complete.\n"
+
+if [ $intermediate != "KEEP" ]; then
+
+	printf "\nCleaning up intermediate files\n"
+	cd $read_dir/trimmed_reads
+	rm *$r1_tail*
+	rm *$r2_tail*
+	cd ./spades_output
+	for i in $(ls -d ./*/); do
+        if [ $i != "./genomes_for_parsnp/" ]; then
+                #printf "\n$i\n"
+		rm -r "$i"
+        fi
+	done
+	cd ./genomes_for_parsnp
+	rm -r ./P_*
+	rm ./*.fasta
+	cd ./alignment_fixing
+	rm ./*chunk*
+	printf "\nFinished cleaning up intermediate files\n"
+
+fi	

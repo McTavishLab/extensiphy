@@ -22,7 +22,7 @@ def main():
     stored_names = []
     stored_ids = []
     locus_id = "(>1:\d+-\d+\s+(\+|\-)\s" + args.locus_id + "\s(.|\n)+?)="
-    print(locus_id)
+    #print(locus_id)
     locus_id_grabber = re.compile(locus_id, re.S)
     file_name = "##SequenceFile(.*?)\n"
     file_name_grabber = re.compile(file_name)
@@ -55,7 +55,7 @@ def main():
         #    print(nuc)
         if seq_len >= seq_len_count:
             seq_len_count = seq_len
-    print(seq_len_count)
+    #print(seq_len_count)
     if int(seq_len_count) >= int(args.locus_size):
         locus_file = open(args.out_file, "w")
         locus_file.write(locus_chunk)

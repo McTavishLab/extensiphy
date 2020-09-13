@@ -33,10 +33,9 @@ while getopts ":a:t:p:e:s:o:n:r:c:1:2:m:d:g:h" opt; do
     ;;
     t) tree="$OPTARG"
     ;;
-    p) PE=1;
-       read_one="$OPTARG"
+    p) read_one="$OPTARG"
     ;;
-    e)
+    e) PE=2;
        read_two="$OPTARG"
     ;;
     s) read_stub="$OPTARG"
@@ -139,7 +138,7 @@ cd $workd
 
 #this is a hack that is in both scripts!! need to be passed between
 
-echo "PAIRED ENDS"
+#echo "PAIRED ENDS"
 base=$(basename $read_one $r1_tail)
 echo "basename is $base"
 refnam=$(head -n 1 $align)
@@ -152,8 +151,18 @@ echo "Time for bowtie2-build:"
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 echo "time for bowtie2 mapping:"
-#bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
-hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
+printf "\nPE = $PE\n" 
+if [ "$PE" -eq 2 ]; then
+	printf "\nRunning in Paired-End Mode\n"
+	#bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
+	hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
+	printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal\n"
+
+elif [ "$PE" -eq 0 ]; then
+	printf "\nRunning in Single-End Mode\n"
+	hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal
+	printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal\n"
+fi
 
 samtools faidx $align
 echo '>samtools faidx passed'

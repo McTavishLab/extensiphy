@@ -74,6 +74,7 @@ outdir="rapup_run"
 threads=0
 r1_tail="R1.fq"
 r2_tail="R2.fq"
+end_setting="PE"
 phycorder_runs=2
 align_type="CONCAT_MSA"
 output_type="CONCAT_MSA"
@@ -82,8 +83,9 @@ loci_positions="loci_positions.csv"
 bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
+intermediate="KEEP"
 
-while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:r:h" opt; do
+while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:i:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -94,6 +96,8 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:r:h" opt; do
     c) threads="$OPTARG"
     ;;
     p) phycorder_runs="$OPTARG"
+    ;;
+    e) end_setting="$OPTARG"
     ;;
     1) r1_tail="$OPTARG"
     ;;
@@ -113,7 +117,9 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:r:h" opt; do
     ;;
     r) ref_select="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
+    i) intermediate="$OPTARG"
+    ;;
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -121,11 +127,10 @@ while getopts ":a:t:o:c:p:1:2:m:d:g:s:f:b:r:h" opt; do
   esac
 done
 
-if [ -z "$align" ] || [ -z "$tree" ]; then
-   "alignment (-a), tree (-t), and paired-end reads (-d)"
+if [ -z "$align" ]; then
+   "alignment file (-a) required"
    exit
 fi
-
 
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
@@ -140,14 +145,34 @@ fi
 
 if [ $threads -eq 0 ]; then
      threads=2
-     printf "Threads not set, defaulting to 2" >&2
+     #printf "Threads not set, defaulting to 2" >&2
 else
-     echo "num threads is"
-     echo $threads
+     #echo "num threads is"
+     #echo $threads
+     :
 fi
 
+if [ -d $outdir ]; then
+        printf "Output folder exists. Choose a different name.\n"
+        exit
+fi
 
-############################################################
+if [ ! -f $align ]; then
+	printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
+	exit
+fi
+
+if [ $tree != "NONE" ]; then
+	if [ ! -f "$tree" ]; then
+		printf "\nTree file doesn't exist or pathing is incorrect.\n"
+		exit
+	fi
+fi
+
+if [ ! -d $read_dir ]; then
+        printf "Directory of read sequences can't be found. Check name and pathing.\n"
+        exit
+fi
 
 tmp_align=$(realpath $align)
 tmp_tree=$(realpath $tree)
@@ -165,24 +190,86 @@ fi
 
 tree=$tmp_tree
 
+#CHECK ALIGNMENT IN FASTA FORMAT
+#THIS SHOULD BE EXPANDED
+if head -1 $align | grep -q "^>"; then
+	:
+else
+	printf "\nAlignment file $align doesn't appear to be a fasta format file. Please input a fasta file.\n"
+	exit
+fi
+
+#CHECK TREE FILE FOR CORRECT NEWICK FORMAT
+if [ $tree != "NONE" ]; then
+	if grep -q "^(.*:.*):" $tree ; then
+		:
+	else
+		printf "\nTree file $tree appears to not be in newick format.\n"
+		exit
+	fi
+fi
+# CHECK READ FILES SUFFIX
+printf "\nBeginning check of read and suffix accuracy\n"
+if [ "$end_setting" == "PE" ]; then
+	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
+	then
+		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
+			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
+				:
+			else
+				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+				exit
+			fi
+		done
+		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
+                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
+                                :
+                        else
+                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceed
+ing\n"
+                                exit
+                        fi
+                done
+				
+		:
+		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
+	else
+		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
+		exit
+	fi
+
+elif [ "$end_setting" == "SE" ]; then
+	if ls $read_dir | grep -q "$r1_tail"
+		then
+		:
+                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
+        else
+                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
+                exit
+        fi
+	
+fi
+
+
+###########################################################
 printf "\n###################################################\n"
-printf "$align_type\n"
-printf "$align\n"
-printf "$tree\n"
-printf "$read_dir\n"
-printf "$ref_select\n"
-printf "$phycorder_runs\n"
-printf "$threads\n"
-printf "$r1_tail\n"
-printf "$r2_tail\n"
-printf "$outdir\n"
+printf "alignment type = $align_type\n"
+printf "alignment file = $align\n"
+printf "tree file = $tree\n"
+printf "directory of reads = $read_dir\n"
+printf "reference selection = $ref_select\n"
+printf "number of RapUp runs = $phycorder_runs\n"
+printf "number of threads per RapUp run = $threads\n"
+printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
+printf "suffix for right reads (if paired end only) = $r2_tail\n"
+printf "output directory = $outdir\n"
 printf "#################################################\n"
 
 
-if [ -d $outdir ]; then
-	printf "Output folder exists. Choose a different name.\n"
-	exit       
-fi
+#if [ -d $outdir ]; then
+#	printf "Output folder exists. Choose a different name.\n"
+#	exit       
+#fi
 
 
 mkdir -p $outdir
@@ -290,30 +377,60 @@ ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 printf "\nNumber of cores allocated enough to process all read sets\n"
 printf "\nBeginning RapUp runs\n"
 
+#TODO: ADD MORE FUNCTIONS TO THIS PARALLEL RUNNING SECTION IF POSSIBLE
+# SUCH AS REMOVING FILES IF CLEAN OPTION IS SPECIFIED
 
-for j in $(ls x*); do
-for i in $(cat $j); do
-    base=$(basename $i $r1_tail)
-    #echo $base
-    #echo $i
-    #echo $PHYCORDER
-    #echo "$workd ####################################################################################################\n"
-    #echo $align
-    #echo $tree x
-    #echo $i
-    #echo ${base}${r2_tail}
-    #echo $threads
-    #echo $align_type
-    #echo "${base}_output_dir"
-    #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
-    #echo "Time for $j Phycorder run:"
-    time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
-    #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
-    #wait
-    printf "\nadding new map_to_align run\n"
-done
-wait
-done
+if [ "$end_setting" == "PE" ]; then 
+	for j in $(ls x*); do
+		for i in $(cat $j); do
+    			base=$(basename $i $r1_tail)
+    			#echo $base
+    			#echo $i
+    			#echo $PHYCORDER
+    			#echo "$workd ####################################################################################################\n"
+    			#echo $align
+    			#echo $tree x
+    			#echo $i
+    			#echo ${base}${r2_tail}
+    			#echo $threads
+    			#echo $align_type
+    			#echo "${base}_output_dir"
+    			#echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
+    			#echo "Time for $j Phycorder run:"
+    			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
+    			#> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
+    			#wait
+    			printf "\nadding new map_to_align run\n"
+		done
+		wait
+	done
+
+elif [ "$end_setting" == "SE" ]; then
+	for j in $(ls x*); do
+                for i in $(cat $j); do
+                        base=$(basename $i $r1_tail)
+                        #echo $base
+                        #echo $i
+                        #echo $PHYCORDER
+                        #echo "$workd ####################################################################################################\n"
+                        #echo $align
+                        #echo $tree x
+                        #echo $i
+                        #echo ${base}${r2_tail}
+                        #echo $threads
+                        #echo $align_type
+                        #echo "${base}_output_dir"
+                        #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
+                        #echo "Time for $j Phycorder run:"
+                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 &
+                        #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
+                        #wait
+                        printf "\nadding new map_to_align run\n"
+                done
+                wait
+        done
+fi
+
 
 printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
@@ -335,6 +452,22 @@ for i in $(ls -d *output_dir); do
  fi
  cd ..
 done
+
+# check if user specified to clean up intermediary files and do so if specified
+# else just leave them
+if [ $intermediate == "CLEAN" ]; then
+	printf "\nCleaning up intermediate output files.\n"
+	for i in $(ls -d *output_dir); do
+		cd $i
+		for j in $(ls -1); do
+			rm ./$j
+		done	
+		cd ..
+		rmdir $i
+	done
+elif [ $intermediate == "KEEP" ]; then
+	printf "\nKeeping intermediate output files\n"
+fi
 
 printf "\nskipping renaming step\n"
 cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln

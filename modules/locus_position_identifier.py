@@ -1,13 +1,14 @@
 #! /usr/bin/python
 # this program will take in a single concatenate sequence produced by Phycorder
-# and a positional file that keeps track of the start location of each locus in the concatenated Phycorder file
+# and a positional file that keeps track of the start location of each
+# locus in the concatenated Phycorder file
 # it will then seperate each locus into its seperate fasta file
 
 
 import os
 import argparse
-import re
-import json
+#import re
+#import json
 import csv
 
 def parse_args():
@@ -21,10 +22,9 @@ def parse_args():
 def main():
     args = parse_args()
 
-
-    pos_list = []    
+    pos_list = []
     loci_count = 0
-    nuc_count = 0
+    #nuc_count = 0
     #json_data = open(args.position_dict_file,'r')
     #read_dict = json_data.read()
     #pos_dict = json.loads(read_dict)
@@ -39,13 +39,13 @@ def main():
 
 
 #    print(pos_dict)
-    
+
     #seq_file = open(args.concatenated_fasta, 'r')
     #read_seq = seq_file.read()
     #split_file = read_seq.split('>')
 
     #print(split_file)
-    
+
     os.mkdir(args.out_file_dir)
 
     seq_file = open(args.concatenated_fasta, 'r')
@@ -56,7 +56,7 @@ def main():
     start_pos = 0
     loci_starts = []
     loci_starts.append(start_pos)
-    
+
 #    for seq_number, length_and_loci_name in pos_dict.items():
 #        loci_count+=1
 
@@ -66,7 +66,7 @@ def main():
         loci_count+=1
         locus_num_check = int(locus_dict['locus_position_number'])
 #        print(locus_num_check)
-        assert(locus_num_check == locus_number + 1)
+        assert locus_num_check == locus_number + 1
         locus_end_pos = int(locus_dict['locus_length'])
         loci_starts.append(locus_end_pos + start_pos)
         start_pos = start_pos + locus_end_pos
@@ -121,8 +121,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main() 
-
-
-
-
+    main()

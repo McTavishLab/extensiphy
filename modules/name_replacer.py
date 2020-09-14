@@ -33,11 +33,29 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
                         os.rename(dirpath + '/' + file_1, replacement_file_1)
                         os.rename(dirpath + '/' + file_2, replacement_file_2)
 
+    # df_ = pd.DataFrame(data_container, columns=columns)
+    
+    # print(df_)
+
+    # write_csv(df_, "NONE")
+
     # return data_container
 
 def write_csv(df, output_file_name):
     if output_file_name == "NONE":
         df.to_csv('original_read_file_names.csv', index=False)
+
+def fix_names(name_file, dir_path):
+    name_df = pd.read_csv(name_file)
+    for index, row in name_df.iterrows():
+        # print(row['old_file_1'], row['old_file_2'])
+        print(dir_path + '/' + str(row['new_name']) + '_' + row['tail_1'])
+        print(dir_path + '/' + row['old_file_1'])
+        os.rename(dir_path + '/' + str(row['new_name']) + '_' + row['tail_1'], dir_path + '/' + row['old_file_1'])
+        print(dir_path + '/' + str(row['new_name']) + '_' + row['tail_2'])
+        print(dir_path + '/' + row['old_file_2'])
+        os.rename(dir_path + '/' + str(row['new_name']) + '_' + row['tail_2'], dir_path + '/' + row['old_file_2'])
+
 
 
 def parse_args():
@@ -64,10 +82,14 @@ def main():
     if args.read_dir != "NONE" and args.name_file == "NONE":
         process_reads(args.read_dir, data, "NONE", args.tail_1, args.tail_2)
 
-    df_ = pd.DataFrame(data, columns=columns)
-    print(df_)
+        df_ = pd.DataFrame(data, columns=columns)
+    
+        # print(df_)
 
-    write_csv(df_, "NONE")
+        write_csv(df_, "NONE")
+
+    elif args.name_file != "NONE" and args.read_dir != "NONE":
+        fix_names(args.name_file, args.read_dir)
 
 if __name__ == '__main__':
     main()

@@ -25,10 +25,12 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
                         print(dirpath + '/' + file_1)
                         print(dirpath + '/' + file_2)
                         print("next pair")
-                        data_container.append([replacement_name_count, file_1, file_2, tail_1, tail_2])
+                        # data_container.append([replacement_name_count, file_1, file_2, tail_1, tail_2])
                         
                         replacement_file_1 = str(replacement_name_count) + '_' + tail_1
                         replacement_file_2 = str(replacement_name_count) + '_' + tail_2
+                        
+                        data_container.append([replacement_name_count, file_1, file_2, replacement_file_1, replacement_file_2, tail_1, tail_2])
 
                         os.rename(dirpath + '/' + file_1, replacement_file_1)
                         os.rename(dirpath + '/' + file_2, replacement_file_2)
@@ -48,13 +50,14 @@ def write_csv(df, output_file_name):
 def fix_names(name_file, dir_path):
     name_df = pd.read_csv(name_file)
     for index, row in name_df.iterrows():
-        # print(row['old_file_1'], row['old_file_2'])
-        print(dir_path + '/' + str(row['new_name']) + '_' + row['tail_1'])
+
         print(dir_path + '/' + row['old_file_1'])
-        os.rename(dir_path + '/' + str(row['new_name']) + '_' + row['tail_1'], dir_path + '/' + row['old_file_1'])
-        print(dir_path + '/' + str(row['new_name']) + '_' + row['tail_2'])
+        print(dir_path + '/' + row['new_file_1'])
+
         print(dir_path + '/' + row['old_file_2'])
-        os.rename(dir_path + '/' + str(row['new_name']) + '_' + row['tail_2'], dir_path + '/' + row['old_file_2'])
+        print(dir_path + '/' + row['new_file_2'])
+        os.rename(dir_path + '/' + row['new_file_1'], dir_path + '/' + row['old_file_1'])
+        os.rename(dir_path + '/' + row['new_file_2'], dir_path + '/' + row['old_file_2'])
 
 
 
@@ -74,7 +77,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    columns = ['new_name', 'old_file_1', 'old_file_2', 'tail_1', 'tail_2']
+    columns = ['new_name', 'old_file_1', 'old_file_2', 'new_file_1', 'new_file_2', 'tail_1', 'tail_2']
     # df_ = pd.DataFrame(index=index, columns=columns)
 
     data = []

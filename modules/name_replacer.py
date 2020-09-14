@@ -30,7 +30,7 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
                         replacement_file_1 = str(replacement_name_count) + '_' + tail_1
                         replacement_file_2 = str(replacement_name_count) + '_' + tail_2
                         
-                        data_container.append([replacement_name_count, file_1, file_2, replacement_file_1, replacement_file_2, tail_1, tail_2])
+                        data_container.append([replacement_name_count, file_1, file_2, replacement_file_1, replacement_file_2, tail_1, tail_2, "null", "read"])
 
                         os.rename(dirpath + '/' + file_1, replacement_file_1)
                         os.rename(dirpath + '/' + file_2, replacement_file_2)
@@ -42,6 +42,35 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
     # write_csv(df_, "NONE")
 
     # return data_container
+
+def process_align(align_file, data_container):
+    
+    num_seqs = 0
+    name = ''
+    read_align = open(align_file,'r')
+    data = read_align.readlines()
+    output = open("fixed_align.fas", 'w')
+
+    for line in data:
+    
+        if line.startswith(">"):
+    
+            num_seqs+=1
+            name_line = line.replace(">","")
+            new_name = str(num_seqs) + "_"
+            name = new_name
+            data_container.append([new_name, "null", "null", "null", "null", "null", "null", name_line, "align"])
+
+            output.write(">" + name)
+        else:
+            output.write("\n")
+            output.write(line)
+
+    read_align.close()
+    return data_container
+
+
+    
 
 def write_csv(df, output_file_name):
     if output_file_name == "NONE":
@@ -77,12 +106,13 @@ def parse_args():
 def main():
     args = parse_args()
 
-    columns = ['new_name', 'old_file_1', 'old_file_2', 'new_file_1', 'new_file_2', 'tail_1', 'tail_2']
+    columns = ['new_name', 'old_file_1', 'old_file_2', 'new_file_1', 'new_file_2', 'tail_1', 'tail_2', 'old_align_name','file_type']
     # df_ = pd.DataFrame(index=index, columns=columns)
 
     data = []
     
-    if args.read_dir != "NONE" and args.name_file == "NONE":
+    if args.read_dir != "NONE" and args.name_file == "NONE" and args.align == "NONE":
+        print("process reads")
         process_reads(args.read_dir, data, "NONE", args.tail_1, args.tail_2)
 
         df_ = pd.DataFrame(data, columns=columns)
@@ -91,8 +121,15 @@ def main():
 
         write_csv(df_, "NONE")
 
+    elif args.read_dir != "NONE" and args.align != "NONE":
+        print("process align")
+        process_align(args.align, data)
+
+
     elif args.name_file != "NONE" and args.read_dir != "NONE":
+
         fix_names(args.name_file, args.read_dir)
+
 
 if __name__ == '__main__':
     main()

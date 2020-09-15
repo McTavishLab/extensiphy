@@ -8,6 +8,8 @@ import csv
 
 def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
     replacement_name_count = 0
+    if len(data_container) != 0:
+        replacement_name_count = len(data_container)
 
     for (dirpath, dirnames, filenames) in walk(input_file):
         print(filenames)
@@ -123,8 +125,15 @@ def main():
 
     elif args.read_dir != "NONE" and args.align != "NONE":
         print("process align")
-        process_align(args.align, data)
+        align_name_data = process_align(args.align, data)
 
+        process_reads(args.read_dir, align_name_data, "NONE", args.tail_1, args.tail_2)
+
+        df_ = pd.DataFrame(data, columns=columns)
+    
+        # print(df_)
+
+        write_csv(df_, "NONE")
 
     elif args.name_file != "NONE" and args.read_dir != "NONE":
 

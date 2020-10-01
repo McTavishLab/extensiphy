@@ -80,12 +80,13 @@ align_type="CONCAT_MSA"
 output_type="CONCAT_MSA"
 single_locus_suffix=".fasta"
 loci_positions="loci_positions.csv"
+loci_len="700"
 bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
 intermediate="KEEP"
 
-while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:i:h" opt; do
+while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -113,13 +114,39 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:b:r:i:h" opt; do
     ;;
     f) loci_positions="$OPTARG"
     ;;
+    n) loci_len="$OPTARG"
+    ;;
     b) bootstrapping="$OPTARG"
     ;;
     r) ref_select="$OPTARG"
     ;;
     i) intermediate="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.\n\n\n EXAMPLE COMMAND:\n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]\n\n (-a) alignment in fasta format,\n (-d) directory of paired end fastq read files for all query taxa,\n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),\n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),\n (-o) directory name to hold results (DEFAULT: creates rapup_run),\n (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),\n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),\n (-p) number of taxa to process in parallel,\n (-c) number of threads per taxon being processed,\n (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)\n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),\n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),\n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),\n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)\n\n\n if using single locus MSA files as input,\n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),\n"
+    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
+    View the README for more specific information. \
+    Inputs are generally a multiple sequence file in. \
+    fasta format and a directory of. \
+    Fastq paired-end read sequences. \
+    \n\n\n EXAMPLE COMMAND: \
+    \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
+    \n\n (-a) alignment in fasta format, \
+    \n (-d) directory of paired end fastq read files for all query taxa, \
+    \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
+    \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
+    \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
+    \n (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP), \
+    \n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM), \
+    \n (-p) number of taxa to process in parallel, \
+    \n (-c) number of threads per taxon being processed, \
+    \n (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE) \
+    \n (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq), \
+    \n (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA), \
+    \n (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta), \
+    \n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF) \
+    \n\n\n if using single locus MSA files as input, \
+    \n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv), \
+    \n (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700) \
+    \n"
     exit
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
@@ -157,9 +184,16 @@ if [ -d $outdir ]; then
         exit
 fi
 
-if [ ! -f $align ]; then
-	printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
-	exit
+if [ $align_type == "CONCAT_MSA" ]; then
+        if [ ! -f $align ]; then
+	        printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
+	        exit
+        fi
+elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
+        if [ ! -d $align ]; then
+                printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
+	        exit
+        fi
 fi
 
 if [ $tree != "NONE" ]; then
@@ -192,11 +226,13 @@ tree=$tmp_tree
 
 #CHECK ALIGNMENT IN FASTA FORMAT
 #THIS SHOULD BE EXPANDED
-if head -1 $align | grep -q "^>"; then
-	:
-else
-	printf "\nAlignment file $align doesn't appear to be a fasta format file. Please input a fasta file.\n"
-	exit
+if [ $align_type == "CONCAT_MSA" ]; then
+        if head -1 $align | grep -q "^>"; then
+	        :
+        else
+	        printf "\nAlignment file $align doesn't appear to be a fasta format file. Please input a fasta file.\n"
+	        exit
+        fi
 fi
 
 #CHECK TREE FILE FOR CORRECT NEWICK FORMAT
@@ -310,12 +346,24 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 	cd ..
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
-	$PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
-	#printf "$outdir\n"
-	#printf "$PHYCORDER\n"	
+        if [ $loci_len == "700" ]; then
+                printf "\nFiltering and combining input single locus alignments by default length of $loci_len\n"
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
+	        #printf "$outdir\n"
+	        #printf "$PHYCORDER\n"	
 
-	align=$( realpath $workd/combo.fas )
-	loci_positions=$( realpath $loci_positions)
+	        align=$( realpath $workd/combo.fas )
+	        loci_positions=$( realpath $loci_positions)
+        
+        elif [ $loci_len != "700" ]; then
+                printf "\nFiltering and combining input single locus alignments by user specified length of $loci_len\n"
+                $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
+	        #printf "$outdir\n"
+	        #printf "$PHYCORDER\n"	
+
+	        align=$( realpath $workd/combo.fas )
+	        loci_positions=$( realpath $loci_positions)
+        fi
 
 elif [ $align_type == "CONCAT_MSA" ]; then
 
@@ -327,25 +375,27 @@ fi
 
 ###########################
 
-if [[ ! -z $(grep "-" $align) ]]; then
-  printf "\nGAP FOUND BEFORE REMOVAL\n"
-else
-  printf "\nNO GAPS FOUND BEFORE REMOVAL\n";
-fi
+$PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.fas
 
-#printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
+# if [[ ! -z $(grep "-" $align) ]]; then
+#   printf "\nGAP FOUND BEFORE REMOVAL\n"
+# else
+#   printf "\nNO GAPS FOUND BEFORE REMOVAL\n";
+# fi
 
-#printf "current wd\n"
-#pwd
-#pull all the gaps from the aligned taxa bc mappers cannot cope.
-sed 's/-//g' <$align > $workd/ref_nogap.fas
+# #printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
+
+# #printf "current wd\n"
+# #pwd
+# #pull all the gaps from the aligned taxa bc mappers cannot cope.
+# sed 's/-//g' <$align > $workd/ref_nogap.fas
 
 
-if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-  printf "\nGAP FOUND AFTER REMOVAL!\n"
-else
-  printf "\nNO GAPS FOUND AFTER REMOVAL\n";
-fi
+# if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
+#   printf "\nGAP FOUND AFTER REMOVAL!\n"
+# else
+#   printf "\nNO GAPS FOUND AFTER REMOVAL\n";
+# fi
 
 if [ $ref_select != "RANDOM" ]; then
 

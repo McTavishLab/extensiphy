@@ -41,10 +41,12 @@ def main():
 
             read_seq = raw_seqs.read()
             split_seqs = read_seq.split(">")
-            
+            # print(split_seqs)
             # Construct regex of name of reference selected by the user
             ref_name = args.ref_select
-            ref_name = ref_name + "\n"
+            # ref_name = ref_name + "\n"
+            ref_name = "^" + ref_name + "\n"
+            # print(ref_name)
             ref_name_compile = re.compile(ref_name)
             
             # Loop through sequences and identify which one has the desired reference

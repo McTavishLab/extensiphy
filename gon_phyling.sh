@@ -51,9 +51,10 @@ output_type="LOCI"
 loci_positions="gon_phy_locus_positions.csv"
 r1_tail="R1.fastq"
 r2_tail="R2.fastq"
+loci_len="700"
 
 WD=$(pwd)
-while getopts ":b:d:g:r:c:1:2:l:o:i:h" opt; do
+while getopts ":b:d:g:r:c:1:2:l:o:n:i:h" opt; do
    case $opt in
      b) bootstrapping="$OPTARG"
      ;;
@@ -75,7 +76,28 @@ while getopts ":b:d:g:r:c:1:2:l:o:i:h" opt; do
      ;;
      i) intermediate="$OPTARG"
      ;;
-     h) printf  "gon_phyling is a program to assemble sets of paired-end short high-throughput reads into genomes, automatically select homologous loci and construct a phylogenetic tree.\n\n\n EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX]\n\n, INPUT OPTIONS:\n (-d) directory of paired end reads. All output folders and files will be contained here\n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)\n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)\n\n OUTPUT\n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)\n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)\n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)\n\n RUNNING PROGRAM\n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)\n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2),\n (-i) Clean up intermediate output files option to save HD space (Options: CLEAN or KEEP)(DEFAULT: KEEP)\n\n OUTPUT FILES\n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out\n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
+     n) loci_len="$OPTARG"
+     ;;
+     h) printf  "gon_phyling is a program to assemble sets of paired-end short \
+     high-throughput reads into genomes, automatically select homologous loci and \
+     construct a phylogenetic tree.\n\n\n \
+     EXAMPLE COMMAND: \n\n /path/to/gon_phyling.sh -d /path/to/read_directory -1 [READSET 1 SUFFIX] -2 [READSET 2 SUFFIX] \
+     \n\n, INPUT OPTIONS: \
+     \n (-d) directory of paired end reads. All output folders and files will be contained here \
+     \n (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE) \
+     \n (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq) \
+     \n\n OUTPUT \
+     \n (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF) \
+     \n (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS) \
+     \n (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv) \
+     \n\n RUNNING PROGRAM \
+     \n (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2) \
+     \n (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2), \
+     \n (-i) Clean up intermediate output files option to save HD space (Options: CLEAN or KEEP)(DEFAULT: KEEP) \
+     \n (-n) Cutoff of loci length when combining or separating loci as input or output (Options: int number)(DEFAULT: 700) \
+     \n\n OUTPUT FILES \
+     \n After a run, you will recieve the files: \n\ncombo.fas \nRAxML_best_tree.core_genome.out \
+     \n\n these are your concatenated MSA and phylogenetic tree, respectively\n"
      exit
      ;;
      \?) echo "Invalid option -$OPTARG" >&2
@@ -326,15 +348,27 @@ if [ $output_type == "LOCUS" ]; then
 	cat ./locus_IDs.txt | split -d -l $threads
 
 	
-
-	for j in $(ls x*); do
-		for i in $(cat $j); do
-			$GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
-			#$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
-		done
-		wait
-	done
-
+  if [ $loci_len != "700" ]; then
+    printf "\nSplitting loci using user specificed cutoff of ${loci_len} nucleotides\n"
+    for j in $(ls x*); do
+		  for i in $(cat $j); do
+			  $GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len
+			  #$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+		  done
+		  wait
+	  done
+  
+  elif [ $loci_len == "700" ]; then
+  
+    printf "\nSplitting loci using default minimum cutoff of 700 nucleotides.\n"
+	  for j in $(ls x*); do
+		  for i in $(cat $j); do
+			  $GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 700
+			  #$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
+		  done
+		  wait
+	  done
+  fi
 
 	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
 	$GON_PHYLING/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
@@ -371,8 +405,9 @@ cat parsnp_chunk-*-.fa > combo.fas
 # remove the first newline character and turn combo.txt into a fasta file
 sed -i '1d' combo.fas
 
-# trim down the taxa names
-#sed -i 's/_[^_]*//2g' combo.fas
+printf "\nREMOVING REFERENCE IDENTIFIER\n"
+# remove .ref from any seq names
+sed -i -e 's/.ref//g' combo.fas
 
 
 fi

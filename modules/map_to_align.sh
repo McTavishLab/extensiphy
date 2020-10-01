@@ -164,8 +164,8 @@ elif [ "$PE" -eq 0 ]; then
 	printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal\n"
 fi
 
-samtools faidx $align
-echo '>samtools faidx passed'
+# samtools faidx $align
+# echo '>samtools faidx passed'
 
 samtools view -bS $outdir/best_map.sam > $outdir/best_map.bam
 echo '>samtools view passed'
@@ -178,6 +178,7 @@ echo '>Time for mpileup step:'
 #bcftools mpileup -f $outdir/best_ref.fas $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 bcftools mpileup -f $align $outdir/best_sorted.bam -o $outdir/best_sorted.vcf
 
+echo '>Dropping duplicate positions'
 $PHYCORDER/vcf_duplicate_dropper.py --vcf_file $outdir/best_sorted.vcf --out_file $outdir/dupes_removed_best_cns.vcf
 
 bcftools call -c $outdir/dupes_removed_best_cns.vcf -o $outdir/best_cns.vcf

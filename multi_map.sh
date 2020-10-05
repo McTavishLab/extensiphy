@@ -375,6 +375,8 @@ fi
 
 ###########################
 
+# Strip newline characters from sequences so each sequence is contiguous
+# Also strips gap characters ('-') from each sequence
 $PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.fas
 
 # if [[ ! -z $(grep "-" $align) ]]; then
@@ -399,15 +401,20 @@ $PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.
 
 if [ $ref_select != "RANDOM" ]; then
 
+        printf "\nProducing reference based on input $ref_select\n"
         $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
 
+        printf "\nProducing no gap reference based on input $ref_select\n"
         $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
 
 
 elif [ $ref_select == "RANDOM" ]; then
 	# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
+
+        printf "\nProducing a random reference with gaps\n"
 	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
 
+        printf "\nProducing random reference without gaps\n"
 	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
 
 fi
@@ -523,7 +530,7 @@ printf "\nskipping renaming step\n"
 cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 # fi
 
-printf "\nExtended alignment file creaded (extended.aln), using previous tree as starting tree for phylogenetic inference\n"
+printf "\nExtended alignment file creaded (extended.aln).\n"
 
 cd combine_and_infer
 

@@ -500,10 +500,9 @@ wd=$(pwd)
 # for tree inference
 for i in $(ls -d *output_dir); do
  cd $i
- count=$(ls *_align.fas | wc -l)
- if [ $count -gt 0 ]; then
+if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
    cp *_align.fas $wd/combine_and_infer/
- else
+ elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
    echo "$i"
    continue
  fi

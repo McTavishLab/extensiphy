@@ -243,17 +243,18 @@ do
                 printf "\nmoving contigs from $i\n"
                 cd $i
                 #cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
-		#ln -s contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
-		mv contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+		            #ln -s contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+                
+                if [ $(ls -l | grep "contigs.fasta" | wc -l) -gt 0 ]; then
+		              mv contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
+                
+                elif [ $(ls -l | grep "contigs.fasta" | wc -l) -eq 0 ]; then
+                  printf "\n NO ASSEMBLED SEQUENCE FROM $i\n"
+                
+                fi
+                
                 cd ..
         fi
-        #cd $i
-
-        #if [[ $dir_check != 0 ]]; then
-        #pwd ;
-
-        #cp contigs.fasta  ../genomes_for_parsnp/$i.fasta
-        #cd .. ;
 
 done
 

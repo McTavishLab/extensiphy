@@ -327,18 +327,32 @@ if [ $align_type == "PARSNP_XMFA" ]; then
         #echo pwd
         cat ./locus_IDs.txt | split -d -l $threads
 
+        if [ $loci_len == "700" ]; then
 
-
-        for j in $(ls x*); do
-                for i in $(cat $j); do
-			$PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 1000 >> $workd/rapup_dev_log.txt 2>&1
+                for j in $(ls x*); do
+                        for i in $(cat $j); do
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/rapup_dev_log.txt 2>&1
+                        done
+                        wait
                 done
-                wait
-        done
 
 
-	$PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 1000 >> $workd/rapup_dev_log.txt 2>&1
-	align=$( realpath ../combo.fas)
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
+	
+        elif [ $loci_len != "700" ]; then
+                for j in $(ls x*); do
+                        for i in $(cat $j); do
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/rapup_dev_log.txt 2>&1
+                        done
+                        wait
+                done
+
+
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
+	
+        fi
+
+        align=$( realpath ../combo.fas)
 
 	printf "\nNew alignment file produced\n"
 	printf "$align"

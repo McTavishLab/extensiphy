@@ -245,46 +245,45 @@ if [ $tree != "NONE" ]; then
 	fi
 fi
 # CHECK READ FILES SUFFIX
-printf "\nBeginning check of read and suffix accuracy\n"
-if [ "$end_setting" == "PE" ]; then
-	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
-	then
-		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
-			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
-				:
-			else
-				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
-				exit
-			fi
-		done
-		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
-                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
-                                :
-                        else
-                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceed
-ing\n"
-                                exit
-                        fi
-                done
-				
-		:
-		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
-	else
-		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
-		exit
-	fi
-
-elif [ "$end_setting" == "SE" ]; then
-	if ls $read_dir | grep -q "$r1_tail"
-		then
-		:
-                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
-        else
-                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
-                exit
-        fi
-	
-fi
+#printf "\nBeginning check of read and suffix accuracy\n"
+#if [ "$end_setting" == "PE" ]; then
+#	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
+#	then
+#		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
+#			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
+#				:
+#			else
+#				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+#				exit
+#			fi
+#		done
+#		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
+#                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
+#                                :
+#                        else
+#                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+#                                exit
+#                        fi
+#                done
+#				
+#		:
+#		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
+#	else
+#		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
+#		exit
+#	fi
+#
+#elif [ "$end_setting" == "SE" ]; then
+#	if ls $read_dir | grep -q "$r1_tail"
+#		then
+#		:
+#                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
+#        else
+#                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
+#                exit
+#        fi
+#	
+#fi
 
 
 ###########################################################
@@ -563,7 +562,7 @@ if [ $bootstrapping == "ON" ]; then
   if [ $tree == "NONE" ]; then
     time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
 
-    time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345 >> $workd/rapup_dev_log.txt 2>&1
+    time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
 
     time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
 
@@ -573,7 +572,7 @@ if [ $bootstrapping == "ON" ]; then
 
    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
 
-   time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -b 12345 >> $workd/rapup_dev_log.txt 2>&1
+   time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
 
    time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
 

@@ -158,13 +158,15 @@ if [ "$PE" -eq 2 ]; then
 	#hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
 	
 	bwa-mem2 mem -t $threads $align $read_one $read_two > $outdir/best_map.sam
-	printf "\nRun with command: bwa-mem2 mem -t ${threads} ${align} ${read_one} ${read_two} > ${outdir}/best_map.sam"
+	printf "\nRun with command: bwa-mem2 mem -t ${threads} ${align} ${read_one} ${read_two} > ${outdir}/best_map.sam\n"
 	#printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal\n"
 
 elif [ "$PE" -eq 0 ]; then
 	printf "\nRunning in Single-End Mode\n"
-	hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal
-	printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal\n"
+	#hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal
+	bwa-mem2 mem -t $threads $align $read_one > $outdir/best_map.sam
+	printf "\nRun with command: bwa-mem2 mem -t $threads $align $read_one > $outdir/best_map.sam\n"
+	#printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal\n"
 fi
 
 samtools faidx $align

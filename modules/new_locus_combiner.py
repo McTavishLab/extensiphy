@@ -16,6 +16,17 @@ def parse_args():
     parser.add_argument('--len_filter')
     return parser.parse_args()
 
+# Test function for contiguity of loci in their supposed positions within the MSA
+# ex. positions = 1,2,3,4,5,7. throw error on there being no locus at position 6
+# first item in list skipped as headers
+def loci_position_check(loci_tuple_list):
+    locus_count = 0
+    for item in loci_tuple_list[1:]:
+        locus_count+=1
+        locus_position = item[0]
+        # print(item)
+        # print(type(locus_position))
+        assert locus_count == locus_position
 
 def main():
     args = parse_args()
@@ -48,7 +59,7 @@ def main():
         if file_name.endswith(args.suffix):
             locus_name = file_name
             locus_len = 0
-            loci_count+=1
+            # loci_count+=1
             open_file = open(dir_of_aligns + file_name, "r")
             read_file = open_file.read()
             split_file = read_file.split(">")
@@ -74,13 +85,16 @@ def main():
                     #tuple_name_and_seq_len_list.append(name_and_len)
                     #if file_name not in name_list:
                     #    name_list.append(file_name)
-            if seq_len >= len_filt:
-                name_and_len = [loci_count, file_name, seq_len]
+            if locus_len >= len_filt:
+                loci_count+=1
+                name_and_len = [loci_count, file_name, locus_len]
                 tuple_name_and_seq_len_list.append(name_and_len)
     #print(tuple_name_and_seq_len_list)
     #print(file_name_and_seq_len_dict)
     #print(taxon_name_and_seqs)
     
+    loci_position_check(tuple_name_and_seq_len_list)
+
     myFile = open(args.position_csv_file, 'w')
     with myFile:
         writer = csv.writer(myFile)

@@ -65,7 +65,7 @@ def main():
 #        print(locus_dict)
         loci_count+=1
         locus_num_check = int(locus_dict['locus_position_number'])
-#        print(locus_num_check)
+        print(locus_num_check)
         assert locus_num_check == locus_number + 1
         locus_end_pos = int(locus_dict['locus_length'])
         loci_starts.append(locus_end_pos + start_pos)

@@ -244,47 +244,54 @@ if [ $tree != "NONE" ]; then
 		exit
 	fi
 fi
-# CHECK READ FILES SUFFIX
-printf "\nBeginning check of read and suffix accuracy\n"
-if [ "$end_setting" == "PE" ]; then
-	if ls $read_dir | grep -q "$r1_tail" || ls $read_dir | grep -q "$r2_tail"
-	then
-		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
-			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
-				:
-			else
-				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
-				exit
-			fi
-		done
-		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
-                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
-                                :
-                        else
-                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceed
-ing\n"
-                                exit
-                        fi
-                done
-				
-		:
-		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
-	else
-		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
-		exit
-	fi
 
-elif [ "$end_setting" == "SE" ]; then
-	if ls $read_dir | grep -q "$r1_tail"
-		then
-		:
-                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
-        else
-                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
-                exit
-        fi
-	
-fi
+echo "$r1_tail"
+echo "$r2_tail"
+echo "$read_dir"
+#ls ${read_dir}/*${r1_tail}
+#ls $read_dir | grep "$r1_tail"
+#echo "WAFFLE"
+
+# CHECK READ FILES SUFFIX
+#printf "\nBeginning check of read and suffix accuracy\n"
+#if [ "${end_setting}" == "PE" ]; then
+#	if ls ${read_dir} | grep -q "${r1_tail}" || ls ${read_dir} | grep -q "${r2_tail}"
+#	then
+#		for read_1 in $( ls -1 $read_dir/*$r1_tail ); do
+#			if head -1 "$read_1" | grep -q "^@" && head -3 "$read_1" | tail -1 | grep -q "^+"; then
+#				:
+#			else
+#				printf "\nRead file $read_1 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+#				exit
+#			fi
+#		done
+#		for read_2 in $( ls -1 $read_dir/*$r2_tail ); do
+#                        if head -1 "$read_2" | grep -q "^@" && head -3 "$read_2" | tail -1 | grep -q "^+"; then
+#                                :
+#                        else
+#                                printf "\nRead file $read_2 isn't formatted as a fastq file. Check your read file format before proceeding\n"
+#                                exit
+#                        fi
+#                done
+#				
+#		:
+#		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
+#	else
+#		printf "\nRead suffixes for paired end reads not found in specified read directory. Check your read suffixes and try again.\n"
+#		exit
+#	fi
+#
+#elif [ "$end_setting" == "SE" ]; then
+#	if ls $read_dir | grep -q "$r1_tail"
+#		then
+#		:
+#                #printf "\nRead suffixes for single end reads found in specified read directory. Continuing with analysis.\n"
+#        else
+#                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
+#                exit
+#        fi
+#	
+#fi
 
 
 ###########################################################
@@ -434,8 +441,8 @@ elif [ $ref_select == "RANDOM" ]; then
 fi
 
 	# BUILD REFERENCE ALIGNMENT LIBRARY
-hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/rapup_dev_log.txt 2>&1
-
+#hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/rapup_dev_log.txt 2>&1
+bwa-mem2 index $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 

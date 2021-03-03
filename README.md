@@ -1,24 +1,26 @@
-# RapUp
+# Extensiphy
 ### Overview
 
-RapUp is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment, and places the new lineages in a phylogeny using EPA in RAxML.
+Extensiphy is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment. Homologous loci may be kept concatenated or split back into individual alignments prior to phylogenetic estimation.
 
-RapUp takes an alignment, a tree, and sets of sequencing reads from query taxa.
+Extensiphy takes an alignment and sets of sequencing reads from query taxa.
+
+![Extensiphy_worlflow](./doc/images/EP_workflow_2.png)
 
 ### Setup and Use
 
-RapUp now takes inputs in the commandline without requiring a config file.
-RapUp allows for control over both how many RapUp runs happen
-in parallel and how many threads are allocated to each RapUp run
+Extensiphy now takes inputs in the commandline without requiring a config file.
+Extensiphy allows for control over both how many Extensiphy runs happen
+in parallel and how many threads are allocated to each Extensiphy run
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
-find out how many cores you have available and calculate (cores * rapup_runs) you wish to run as the same time
+find out how many cores you have available and calculate (cores * extensiphy_runs) you wish to run as the same time
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
 
 ### First Run
 Once you've cloned this repo and installed all dependencies to your PATH, begin here. Dependencies are outlined at the bottom of this readme.
 
-If you only plan on using RapUp to add data to an existing alignment and tree, use the following command:
+If you only plan on using Extensiphy to add data to an existing alignment and tree, use the following command:
 
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata
@@ -32,9 +34,9 @@ If you plan to generate a starting alignment and tree that you wish to add seque
 
 #### IMPORTANT!!
 
-RapUp requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
+Extensiphy requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
 
-### RapUp Controls and Flags For Use:
+### Extensiphy Controls and Flags For Use:
 
 - (-a) alignment in fasta format,
 - (-d) directory of paired end fastq read files for all query taxa,
@@ -84,23 +86,23 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
 ```bash
 ./gon_phyling.sh -d [PATH/TO/NEW/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2]
 ```
-3. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full RapUp run by running:
+3. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full Extensiphy run by running:
 ```bash
  multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
 
 ### Tutorial
 
-For a more indepth walkthrough of how to install dependencies for use with RapUp and how to run RapUp using different data types and options, try the tutorial in the tutorial folder. You can copy code snippets into your terminal window.
+For a more indepth walkthrough of how to install dependencies for use with Extensiphy and how to run Extensiphy using different data types and options, try the tutorial in the tutorial folder. You can copy code snippets into your terminal window.
 
 ### Dependencies
 
-**Using RapUp is limited to Linux at the moment.** Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
+**Using Extensiphy is limited to Linux at the moment.** Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
 
 Dependencies (Separate programs you'll need to install):
 
 1. [Python 3](https://www.python.org/)
-2. [Hisat2](https://daehwankimlab.github.io/hisat2/download/)
+2. [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)
 3. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 4. [Seqtk](https://github.com/lh3/seqtk)
 5. [Samtools](http://www.htslib.org/)
@@ -108,7 +110,7 @@ Dependencies (Separate programs you'll need to install):
 7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
 
-Additionally, RapUp comes with an additional pipeline for generating a phylogenetic tree from scratch: **Gon\_phyling**. These programs are not required for running RapUp itself but Gon\_ling can be useful if you have a lot of data and aren't interested in hand selecting the loci/genes you include in your alignment. Gon\_phyling's dependencies are as follows:
+Additionally, Extensiphy comes with an additional pipeline for generating a phylogenetic tree from scratch: **Gon\_phyling**. These programs are not required for running Extensiphy itself but Gon\_ling can be useful if you have a lot of data and aren't interested in hand selecting the loci/genes you include in your alignment. Gon\_phyling's dependencies are as follows:
 
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)
@@ -117,7 +119,7 @@ Additionally, RapUp comes with an additional pipeline for generating a phylogene
 
 
 ### Apt-get dependency install
-Almost all programs for running RapUp are available with apt-get. Hisat2 is not available with apt-get. Run the commands found below to install:
+Almost all programs for running Extensiphy are available with apt-get. Hisat2 is not available with apt-get. Run the commands found below to install:
 
 ```bash
 apt-get install raxml
@@ -144,7 +146,7 @@ conda config --prepend channels bioconda
 Run this command to add the necessary dependencies to your conda environment:
 
 ```bash
-conda create -n rapup samtools hisat2 seqtk bcftools fastx-toolkit dendropy raxml
+conda create -n extensiphy samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
 Activate your installation

@@ -122,7 +122,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
     ;;
     i) intermediate="$OPTARG"
     ;;
-    h) printf  " RapUp is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
+    h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
     View the README for more specific information. \
     Inputs are generally a multiple sequence file in. \
     fasta format and a directory of. \
@@ -388,7 +388,7 @@ elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 
 elif [ $align_type == "CONCAT_MSA" ]; then
 
-	printf "Concatenated Multiple Sequence Alignment selected as input. Assuming that documentation has been read\n"
+	printf "Concatenated Multiple Sequence Alignment selected as input.\n"
 	printf "Assuming loci are all longer than 1000bp. Continuing with rapid updating\n"
 
 fi

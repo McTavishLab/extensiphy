@@ -35,7 +35,7 @@ If you plan to generate a starting alignment and tree that you wish to add seque
 
 #### IMPORTANT!!
 
-Extensiphy requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy.
+Extensiphy requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy. This is checked when using individual locus alignments as input but when using a concatenated alignment, the user must make this assessment themselves.
 
 ### Extensiphy Controls and Flags For Use:
 

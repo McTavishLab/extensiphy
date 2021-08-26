@@ -85,8 +85,9 @@ bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
 intermediate="KEEP"
+use="ALIGN"
 
-while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
+while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -122,6 +123,8 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
     ;;
     i) intermediate="$OPTARG"
     ;;
+    u) use="$OPTARG"
+    ;;
     h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
     View the README for more specific information. \
     Inputs are generally a multiple sequence file in. \
@@ -131,6 +134,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
     \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
     \n\n (-a) alignment in fasta format, \
     \n (-d) directory of paired end fastq read files for all query taxa, \
+    \n (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
     \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
     \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
     \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
@@ -561,51 +565,60 @@ cd combine_and_infer
 
 INFER=$(pwd)
 
- # handling of bootstrapping
+if [ $use == "ALIGN" ]; then
+    printf "\nAlignment updating complete.\n"
 
-printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
-if [ $bootstrapping == "ON" ]; then
-
-# handles whether user wants to use a starting tree or not
-  if [ $tree == "NONE" ]; then
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-
-    time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
-
-    time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
-
-    printf "\nMultiple taxa update of phylogenetic tree complete\n"
-
-  elif [ $tree != "NONE" ]; then
-
-   time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-
-   time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
-
-   time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
-
-   printf "\nMultiple taxa update of phylogenetic tree complete\n"
-
- fi
-
-elif [ $bootstrapping == "OFF" ]; then
-
-  # handles whether user wants to use a starting tree or not
-  if [ $tree == "NONE" ]; then
-
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-
-  elif [ $tree != "NONE" ]; then
-
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-
-    printf "\nMultiple taxa update of phylogenetic tree complete\n"
-
-  fi
-
-else
-  printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
-
+elif [ $use == "PHYLO" ]; then
+    printf "\nAlignment updating complete.\n"
+    printf "\nPhylogenetic estimation selected.\n"
+    printf "\n"
+     # handling of bootstrapping
+    
+    #printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
+    if [ $bootstrapping == "ON" ]; then
+    
+    # handles whether user wants to use a starting tree or not
+      if [ $tree == "NONE" ]; then
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+    
+        time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
+    
+        time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
+    
+        printf "\nMultiple taxa update of phylogenetic tree complete\n"
+    
+      elif [ $tree != "NONE" ]; then
+    
+       time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+    
+       time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
+    
+       time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
+    
+       printf "\nMultiple taxa update of phylogenetic tree complete\n"
+    
+     fi
+    
+    elif [ $bootstrapping == "OFF" ]; then
+    
+      # handles whether user wants to use a starting tree or not
+      if [ $tree == "NONE" ]; then
+    
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+    
+      elif [ $tree != "NONE" ]; then
+    
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+    
+        printf "\nMultiple taxa update of phylogenetic tree complete\n"
+    
+      fi
+    
+    else
+      printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
+    
+    fi
+#end of phylo inference "if" statement
 fi
 
 output_dir=$(pwd)
@@ -619,14 +632,17 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-	printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        if [ use == "PHYLO" ]; then
+	    printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        fi
 	printf "\nSingle locus alignment files are in: "$output_dir/"updated_single_loci\n"
 
 elif [ $output_type == "CONCAT_MSA" ]; then
 	printf "\nSingle concatenated loci MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-        printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
-
+        if [ use == "PHYLO" ]; then
+            printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        fi
 
 
 fi

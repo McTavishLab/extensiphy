@@ -70,7 +70,7 @@ fi
 
 printf "\n\n"
 
-outdir="rapup_run"
+outdir="EP_output"
 threads=0
 r1_tail="R1.fq"
 r2_tail="R2.fq"
@@ -462,6 +462,9 @@ printf "\nBeginning RapUp runs\n"
 #TODO: ADD MORE FUNCTIONS TO THIS PARALLEL RUNNING SECTION IF POSSIBLE
 # SUCH AS REMOVING FILES IF CLEAN OPTION IS SPECIFIED
 
+wd=$(pwd)
+mkdir -p combine_and_infer
+
 if [ "$end_setting" == "PE" ]; then 
 	for j in $(ls x*); do
 		for i in $(cat $j); do
@@ -485,6 +488,30 @@ if [ "$end_setting" == "PE" ]; then
     			printf "\nadding new map_to_align run\n"
 		done
 		wait
+
+                for i in $(ls -d *output_dir); do
+                        cd $i
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
+                                cp *_align.fas $wd/combine_and_infer/
+                        elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                echo "$i NO FASTA PRODUCED"
+                                continue
+                        fi
+                        cd ..
+                done
+
+                if [ ${intermediate} == "CLEAN" ]; then
+                        printf "\nCleaning up intermediate output files.\n"
+	                for i in $(ls -d *output_dir); do
+		                cd $i
+		                for j in $(ls -1); do
+			                rm ./$j
+		                done	
+		                cd ..
+		                rmdir $i
+	                done
+                fi
+
 	done
 
 elif [ "$end_setting" == "SE" ]; then
@@ -510,43 +537,67 @@ elif [ "$end_setting" == "SE" ]; then
                         printf "\nadding new map_to_align run\n"
                 done
                 wait
+
+                for i in $(ls -d *output_dir); do
+                        cd $i
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
+                                cp *_align.fas $wd/combine_and_infer/
+                        elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                echo "$i NO FASTA PRODUCED"
+                                continue
+                        fi
+                        cd ..
+                        done
+
+                if [ ${intermediate} == "CLEAN" ]; then
+                        printf "\nCleaning up intermediate output files.\n"
+	                for i in $(ls -d *output_dir); do
+		                cd $i
+		                for j in $(ls -1); do
+			                rm ./$j
+		                done	
+		                cd ..
+		                rmdir $i
+	                done
+                fi
         done
 fi
 
 
 printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
-mkdir -p combine_and_infer
+# mkdir -p combine_and_infer
 
 
-wd=$(pwd)
+# wd=$(pwd)
 
 # loop through phycorder run directories and move finished fasta files to /combine_and_infer/
 # for tree inference
-for i in $(ls -d *output_dir); do
- cd $i
-if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
-   cp *_align.fas $wd/combine_and_infer/
- elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
-   echo "$i"
-   continue
- fi
- cd ..
-done
+# for i in $(ls -d *output_dir); do
+#  cd $i
+# if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
+#    cp *_align.fas $wd/combine_and_infer/
+#  elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+#    echo "$i"
+#    continue
+#  fi
+#  cd ..
+# done
 
 # check if user specified to clean up intermediary files and do so if specified
 # else just leave them
-if [ $intermediate == "CLEAN" ]; then
-	printf "\nCleaning up intermediate output files.\n"
-	for i in $(ls -d *output_dir); do
-		cd $i
-		for j in $(ls -1); do
-			rm ./$j
-		done	
-		cd ..
-		rmdir $i
-	done
-elif [ $intermediate == "KEEP" ]; then
+# if [ $intermediate == "CLEAN" ]; then
+# 	printf "\nCleaning up intermediate output files.\n"
+# 	for i in $(ls -d *output_dir); do
+# 		cd $i
+# 		for j in $(ls -1); do
+# 			rm ./$j
+# 		done	
+# 		cd ..
+# 		rmdir $i
+# 	done
+
+if [ $intermediate == "KEEP" ]; then
 	printf "\nKeeping intermediate output files\n"
 fi
 
@@ -632,7 +683,7 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-        if [ use == "PHYLO" ]; then
+        if [ $use == "PHYLO" ]; then
 	    printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
         fi
 	printf "\nSingle locus alignment files are in: "$output_dir/"updated_single_loci\n"
@@ -640,7 +691,7 @@ if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 elif [ $output_type == "CONCAT_MSA" ]; then
 	printf "\nSingle concatenated loci MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-        if [ use == "PHYLO" ]; then
+        if [ $use == "PHYLO" ]; then
             printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
         fi
 

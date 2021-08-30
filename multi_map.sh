@@ -193,6 +193,7 @@ if [ $align_type == "CONCAT_MSA" ]; then
 	        printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
 	        exit
         fi
+        
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
         if [ ! -d $align ]; then
                 printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
@@ -566,36 +567,6 @@ fi
 
 printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
-# mkdir -p combine_and_infer
-
-
-# wd=$(pwd)
-
-# loop through phycorder run directories and move finished fasta files to /combine_and_infer/
-# for tree inference
-# for i in $(ls -d *output_dir); do
-#  cd $i
-# if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
-#    cp *_align.fas $wd/combine_and_infer/
-#  elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
-#    echo "$i"
-#    continue
-#  fi
-#  cd ..
-# done
-
-# check if user specified to clean up intermediary files and do so if specified
-# else just leave them
-# if [ $intermediate == "CLEAN" ]; then
-# 	printf "\nCleaning up intermediate output files.\n"
-# 	for i in $(ls -d *output_dir); do
-# 		cd $i
-# 		for j in $(ls -1); do
-# 			rm ./$j
-# 		done	
-# 		cd ..
-# 		rmdir $i
-# 	done
 
 if [ $intermediate == "KEEP" ]; then
 	printf "\nKeeping intermediate output files\n"

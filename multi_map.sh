@@ -39,19 +39,12 @@ if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "seqtk found\n"
 fi
-if [ $(which hisat2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which bwa-mem2 | wc -l) -lt 1 ] 
     then
-        printf "hisat2 not found. Install and/or add to path\n" >&2
+        printf "bwa-mem2 not found. Install and/or add to path\n" >&2
 	exit 0
     else
         printf "hisat2 found\n"
-fi
-if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
-	exit 0
-    else
-        printf "raxmlHPC found\n"
 fi
 if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
@@ -125,10 +118,10 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     ;;
     u) use="$OPTARG"
     ;;
-    h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
-    View the README for more specific information. \
-    Inputs are generally a multiple sequence file in. \
-    fasta format and a directory of. \
+    h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \n \
+    View the README for more specific information. \n \
+    Inputs are generally a multiple sequence file in. \n \
+    fasta format and a directory of. \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
     \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
@@ -163,6 +156,16 @@ if [ -z "$align" ]; then
    exit
 fi
 
+if [ ${use} == "PHYLO" ]; then
+# If user is trying to also build a phylogeny, make sure the RAxML is installed.
+        if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ]; then
+                printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
+	        exit 0
+        else
+                printf "raxmlHPC found\n"
+        fi
+
+fi
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
 
@@ -319,16 +322,21 @@ printf "#################################################\n"
 #	exit       
 #fi
 
+echo "${outdir}"
+mkdir -p ${outdir}
 
-mkdir -p $outdir
+tmp_outdir=$(realpath ${outdir})
+outdir=${tmp_outdir}
+echo "${outdir}"
+cd ${outdir}
 
-cd $outdir
+mkdir ${outdir}/outputs
 
 workd=$(pwd)
 
-touch $workd/rapup_dev_log.txt
+touch ${workd}/rapup_dev_log.txt
 
-if [ $align_type == "PARSNP_XMFA" ]; then
+if [ ${align_type} == "PARSNP_XMFA" ]; then
 
 	mkdir locus_msa_files
 
@@ -405,25 +413,6 @@ fi
 # Also strips gap characters ('-') from each sequence
 $PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.fas
 
-# if [[ ! -z $(grep "-" $align) ]]; then
-#   printf "\nGAP FOUND BEFORE REMOVAL\n"
-# else
-#   printf "\nNO GAPS FOUND BEFORE REMOVAL\n";
-# fi
-
-# #printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
-
-# #printf "current wd\n"
-# #pwd
-# #pull all the gaps from the aligned taxa bc mappers cannot cope.
-# sed 's/-//g' <$align > $workd/ref_nogap.fas
-
-
-# if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-#   printf "\nGAP FOUND AFTER REMOVAL!\n"
-# else
-#   printf "\nNO GAPS FOUND AFTER REMOVAL\n";
-# fi
 
 if [ $ref_select != "RANDOM" ]; then
 
@@ -520,7 +509,7 @@ elif [ "$end_setting" == "SE" ]; then
                 for i in $(cat $j); do
                         base=$(basename $i $r1_tail)
                         #echo $base
-                        #echo $i
+                        #echo $imv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
                         #echo $PHYCORDER
                         #echo "$workd ####################################################################################################\n"
                         #echo $align
@@ -578,7 +567,7 @@ cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
 printf "\nExtended alignment file creaded (extended.aln).\n"
 
-cd combine_and_infer
+cd ${outdir}/outputs
 
 # strip the unnecessary information from the taxa names in the alignment.
 # this assumes you've used the renaming tool to rename all of the reads for this experiment
@@ -587,8 +576,11 @@ cd combine_and_infer
 
 INFER=$(pwd)
 
+mv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
+
 if [ $use == "ALIGN" ]; then
     printf "\nAlignment updating complete.\n"
+    printf "\nAlignment file will be in ${outdir}/outputs \n"
 
 elif [ $use == "PHYLO" ]; then
     printf "\nAlignment updating complete.\n"

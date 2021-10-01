@@ -19,13 +19,6 @@ You can also install the dependencies of Extensiphy using Anaconda. This link wi
 ### Advanced
 *For advanced users of Linux* If you're comfortable installing programs by hand, this section is for you.
 
-** Extensiphy allows for control over both how many Extensiphy runs happen
-in parallel and how many threads are allocated to each Extensiphy run
-Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
-find out how many cores you have available and calculate (cores * extensiphy_runs) you wish to run as the same time
-if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
-then adjust to your optimum setting. **
-
 ## Quick Install and Run
 ### Building your own Extensiphy Docker image
 

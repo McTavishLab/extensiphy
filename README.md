@@ -54,7 +54,7 @@ mv [/path/to/your/raw_read_files] [/path/to/data_folder]
 docker build --tag ep_image .
 ```
 4. We'll build your Extensiphy Docker container and connect the folder containing your data to the container.
-Replace the `[bracket terms]` with the paths and folder names you've used so far.
+Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
 ```bash
 docker run --name ep_container -i -t -v [/path/to/data_folder]:/usr/src/app/linked_data ep_image bash
 ```
@@ -80,29 +80,11 @@ to learn more about the issue before proceeding.
 
 ## Extensiphy Controls and Flags For Use:
 
-Extensiphy allows for control over both how many Extensiphy runs happen
-in parallel and how many threads are allocated to each Extensiphy run
-Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
-find out how many cores you have available and calculate (cores * extensiphy_runs) you wish to run as the same time
-if you have 8 cores available, considerIf you only plan on using Extensiphy to add data to an existing alignment, use the following command:
-
-```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
-```
-
-** you will know this worked if ... **
-
-If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
-
-```bash
-./gon_phyling.sh -d ./gon_phy_testdata starting 2 runs with 3 threads available to each,
-then adjust to your optimum setting.
-
-#### Required flags
+### Required flags
 - (-a) alignment in fasta format,
 - (-d) directory of paired end fastq read files for all query taxa,
 
-#### Optional flags
+### Optional flags
 - (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
@@ -160,60 +142,53 @@ We recommend you run through the tutorial before using Extensiphy on your own da
 
 ## Installation Methods
 
-### Docker Installation
-Docker is currently the easiest, all inclusive way to install Extensiphy and all its dependency programs.
-You can find out more about installing Docker [here](https://docs.docker.com/engine/install/).
-
-Once Docker has been installed, you'll need to move your data into a folder that we'll connect to the Docker container.
-This will make it accessible to the Docker container and to Extensiphy.
-
-```bash
-mv [/path/to/directory/of/reads] [/path/to/data/folder]
-mv [/path/to/alignment_file] [/path/to/data/folder]
-```
-
-Once data files are in the appropriate place, lets build the Docker image we'll use as a base for future Extensiphy containers.
-```bash
-docker build --tag [image name] .
-```
-
-Now lets build and runs an interactive Docker container based on the image we just made.
-We need to add the path to the folder we stored our data in earlier.
-This will allow us to access all of our data files within the Docker container.
-
-```bash
-docker run --name [container name] -it -v [/path/to/data/folder]:/usr/src/app/data_connection [image name] bash
-```
-
-You can now run the First Run command using this command.
-```bash
-PLACEHOLDER
-```
-
 ### Anaconda Installation
 You can install the dependencies of Extensiphy using the Anaconda package manager. Install instructions for Anaconda can be found here (link).
 Once Anaconda has been installed, use this command to create an environment with all of the Extensiphy dependencies added to it.
 
-Add appropriate channels to your conda install:
+1. Add appropriate channels to your conda install:
 
 ```bash
 conda config --prepend channels conda-forge
 conda config --prepend channels bioconda
 ```
 
-Run this command to create a new environment (extensiphy_env) and add the necessary dependencies:
+2. Run this command to create a new environment (extensiphy_env) and add the necessary dependencies:
 
 ```bash
 conda create -n extensiphy_env samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
-Activate your installation
+3. Activate your installation
 
 ```bash
 conda activate extensiphy_env
 ```
 
-Once all installation processes are complete and you've activated your environment, you can run the commands found in First Run (link)
+4. Once all installation processes are complete and you've activated your environment,
+you can clone the Extensiphy repository.
+
+```bash
+git clone https://github.com/McTavishLab/extensiphy.git
+cd extensiphy
+```
+
+5. Finally, you can test your installation by running the following command.
+
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+Once Extensiphy has finished running on the test data, you should see a line saying:
+```bash
+Alignment file is: [path/to]/EP_output/outputs/extended.aln
+```
+
+This indicates that the run completed successfully and you can find the updated
+alignment file in the `output` directory.
+If you did not get this message, you'll have to check output log `ep_dev_log.txt`
+to learn more about the issue before proceeding.
+
 
 ### Advanced Installation Methods
 
@@ -222,7 +197,8 @@ Once all installation processes are complete and you've activated your environme
 
 #### Requirements
 
-You can forgo installing dependencies with Conda and instead install everything by hand if you feel comfortable with computer pathing.
+You can forgo installing dependencies with Conda or Docker and
+instead install everything by hand if you feel comfortable with computer pathing.
 
 Dependencies (Separate programs you'll need to install):
 
@@ -251,7 +227,6 @@ apt-get install raxml
 apt-get install seqtk
 apt-get install samtools
 apt-get install bcftools
-apt-get install fastx-toolkit
 pip install dendropy
 ```
 

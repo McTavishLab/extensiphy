@@ -85,6 +85,7 @@ to learn more about the issue before proceeding.
 - (-d) directory of paired end fastq read files for all query taxa,
 
 ### Optional flags
+- (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN),
 - (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
@@ -92,6 +93,7 @@ to learn more about the issue before proceeding.
 - (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
 - (-p) number of taxa to process in parallel,
 - (-c) number of threads per taxon being processed,
+- (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE),
 - (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),
 - (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),
 - (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)
@@ -99,11 +101,12 @@ to learn more about the issue before proceeding.
 
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),
+- (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
 
 ## Output Files!
-- concatenated file: found in your output folder [OUTDIR]/combine_and_infer/extended.aln
-- Phylogeny in newick file format: found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
-- taxon specific intermediate files: found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
+- concatenated file: found in your output folder [OUTDIR]/outputs/extended.aln
+- Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
+- taxon specific intermediate files (if you kept intermediate files): found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 ### Gon_phyling Controls and Flags For Use
 

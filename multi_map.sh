@@ -10,11 +10,10 @@ set -o pipefail
 # establishes the path to find the phycorder directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-#keep track of the last command executed
-trap 'last_command=$current_command; current_command=$BASH_command' DEBUG
-
-#echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
+# # keep track of the last executed command
+# trap 'previous_command=$this_command; this_command=${BASH_COMMAND}' DEBUG
+# # echo an error message before exiting
+# trap 'echo "exit ${?} due to ${previous_command}"' EXIT
 
 ############################################################
 

@@ -10,10 +10,11 @@ set -o pipefail
 # establishes the path to find the phycorder directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# changing location of .cfg file to a variable
-# for easy use of multiple config num_files
-#source $1
+#keep track of the last command executed
+trap 'last_command=$current_command; current_command=$BASH_command' DEBUG
 
+#echo an error message before exiting
+trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 ############################################################
 
@@ -39,7 +40,7 @@ if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "seqtk found\n"
 fi
-if [ $(which bwa-mem2 | wc -l) -lt 1 ] 
+if [ $(which bwa-mem2 | wc -l) -lt 1 ]
     then
         printf "bwa-mem2 not found. Install and/or add to path\n" >&2
 	exit 0
@@ -196,7 +197,7 @@ if [ $align_type == "CONCAT_MSA" ]; then
 	        printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
 	        exit
         fi
-        
+
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
         if [ ! -d $align ]; then
                 printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
@@ -281,7 +282,7 @@ echo "$read_dir"
 #                                exit
 #                        fi
 #                done
-#				
+#
 #		:
 #		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
 #	else
@@ -298,7 +299,7 @@ echo "$read_dir"
 #                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
 #                exit
 #        fi
-#	
+#
 #fi
 
 
@@ -319,7 +320,7 @@ printf "#################################################\n"
 
 #if [ -d $outdir ]; then
 #	printf "Output folder exists. Choose a different name.\n"
-#	exit       
+#	exit
 #fi
 
 echo "${outdir}"
@@ -334,7 +335,7 @@ mkdir ${outdir}/outputs
 
 workd=$(pwd)
 
-touch ${workd}/rapup_dev_log.txt
+touch ${workd}/ep_dev_log.txt
 
 if [ ${align_type} == "PARSNP_XMFA" ]; then
 
@@ -351,25 +352,25 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
 
                 for j in $(ls x*); do
                         for i in $(cat $j); do
-			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/rapup_dev_log.txt 2>&1
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
                 done
 
 
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
-	
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
+
         elif [ $loci_len != "700" ]; then
                 for j in $(ls x*); do
                         for i in $(cat $j); do
-			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/rapup_dev_log.txt 2>&1
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
                 done
 
 
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
-	
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
+
         fi
 
         align=$( realpath ../combo.fas)
@@ -382,18 +383,18 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
         if [ $loci_len == "700" ]; then
                 printf "\nFiltering and combining input single locus alignments by default length of $loci_len\n"
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
 	        #printf "$outdir\n"
-	        #printf "$PHYCORDER\n"	
+	        #printf "$PHYCORDER\n"
 
 	        align=$( realpath $workd/combo.fas )
 	        loci_positions=$( realpath $loci_positions)
-        
+
         elif [ $loci_len != "700" ]; then
                 printf "\nFiltering and combining input single locus alignments by user specified length of $loci_len\n"
-                $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
+                $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
 	        #printf "$outdir\n"
-	        #printf "$PHYCORDER\n"	
+	        #printf "$PHYCORDER\n"
 
 	        align=$( realpath $workd/combo.fas )
 	        loci_positions=$( realpath $loci_positions)
@@ -417,26 +418,26 @@ $PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.
 if [ $ref_select != "RANDOM" ]; then
 
         printf "\nProducing reference based on input $ref_select\n"
-        $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/ep_dev_log.txt 2>&1
 
         printf "\nProducing no gap reference based on input $ref_select\n"
-        $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 
 elif [ $ref_select == "RANDOM" ]; then
 	# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
 
         printf "\nProducing a random reference with gaps\n"
-	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/ep_dev_log.txt 2>&1
 
         printf "\nProducing random reference without gaps\n"
-	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 fi
 
 	# BUILD REFERENCE ALIGNMENT LIBRARY
 #hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/rapup_dev_log.txt 2>&1
-bwa-mem2 index $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+bwa-mem2 index $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 
@@ -455,7 +456,7 @@ printf "\nBeginning RapUp runs\n"
 wd=$(pwd)
 mkdir -p combine_and_infer
 
-if [ "$end_setting" == "PE" ]; then 
+if [ "$end_setting" == "PE" ]; then
 	for j in $(ls x*); do
 		for i in $(cat $j); do
     			base=$(basename $i $r1_tail)
@@ -472,7 +473,7 @@ if [ "$end_setting" == "PE" ]; then
     			#echo "${base}_output_dir"
     			#echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
     			#echo "Time for $j Phycorder run:"
-    			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
+    			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
     			#> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
     			#wait
     			printf "\nadding new map_to_align run\n"
@@ -481,7 +482,7 @@ if [ "$end_setting" == "PE" ]; then
 
                 for i in $(ls -d *output_dir); do
                         cd $i
-                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
                                 cp *_align.fas $wd/combine_and_infer/
                         elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
                                 echo "$i NO FASTA PRODUCED"
@@ -496,7 +497,7 @@ if [ "$end_setting" == "PE" ]; then
 		                cd $i
 		                for j in $(ls -1); do
 			                rm ./$j
-		                done	
+		                done
 		                cd ..
 		                rmdir $i
 	                done
@@ -521,7 +522,7 @@ elif [ "$end_setting" == "SE" ]; then
                         #echo "${base}_output_dir"
                         #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
                         #echo "Time for $j Phycorder run:"
-                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 &
+                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
                         #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
                         #wait
                         printf "\nadding new map_to_align run\n"
@@ -530,7 +531,7 @@ elif [ "$end_setting" == "SE" ]; then
 
                 for i in $(ls -d *output_dir); do
                         cd $i
-                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
                                 cp *_align.fas $wd/combine_and_infer/
                         elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
                                 echo "$i NO FASTA PRODUCED"
@@ -545,7 +546,7 @@ elif [ "$end_setting" == "SE" ]; then
 		                cd $i
 		                for j in $(ls -1); do
 			                rm ./$j
-		                done	
+		                done
 		                cd ..
 		                rmdir $i
 	                done
@@ -587,50 +588,50 @@ elif [ $use == "PHYLO" ]; then
     printf "\nPhylogenetic estimation selected.\n"
     printf "\n"
      # handling of bootstrapping
-    
+
     #printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
     if [ $bootstrapping == "ON" ]; then
-    
+
     # handles whether user wants to use a starting tree or not
       if [ $tree == "NONE" ]; then
-        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-    
-        time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
-    
-        time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
-    
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
+
+        time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/ep_dev_log.txt 2>&1
+
+        time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
+
         printf "\nMultiple taxa update of phylogenetic tree complete\n"
-    
+
       elif [ $tree != "NONE" ]; then
-    
-       time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-    
-       time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
-    
-       time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
-    
+
+       time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
+
+       time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/ep_dev_log.txt 2>&1
+
+       time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
+
        printf "\nMultiple taxa update of phylogenetic tree complete\n"
-    
+
      fi
-    
+
     elif [ $bootstrapping == "OFF" ]; then
-    
+
       # handles whether user wants to use a starting tree or not
       if [ $tree == "NONE" ]; then
-    
-        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-    
+
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
+
       elif [ $tree != "NONE" ]; then
-    
-        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
-    
+
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
+
         printf "\nMultiple taxa update of phylogenetic tree complete\n"
-    
+
       fi
-    
+
     else
       printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
-    
+
     fi
 #end of phylo inference "if" statement
 fi
@@ -642,7 +643,7 @@ output_dir=$(pwd)
 # for now, it serves as a SNP check
 if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
-	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/ep_dev_log.txt 2>&1
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"

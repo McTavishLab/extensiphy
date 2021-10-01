@@ -10,7 +10,8 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 ## Setup and Use
 
 ### Docker
-The simplest and most hassle free way to run Extensiphy is using Docker. This link will take you to the Docker installation guide.
+The simplest and most hassle free way to run Extensiphy is using Docker.
+the Quick Install and Run section (LINK) will review the docker installation instructions.
 
 ### Anaconda
 You can also install the dependencies of Extensiphy using Anaconda. This link will take you to the Anaconda installation guide.
@@ -18,37 +19,64 @@ You can also install the dependencies of Extensiphy using Anaconda. This link wi
 ### Advanced
 *For advanced users of Linux* If you're comfortable installing programs by hand, this section is for you.
 
-## Tutorial
-
-We *HIGHLY* recommend you run through the tutorial before using Extensiphy on your own dataset. The tutorial will walk through how to install program dependencies for use with Extensiphy and how to run Extensiphy using different data types and options. You can find the tutorial file in the tutorial folder (link). You can copy code snippets into your terminal window.
-
-Extensiphy allows for control over both how many Extensiphy runs happen
+** Extensiphy allows for control over both how many Extensiphy runs happen
 in parallel and how many threads are allocated to each Extensiphy run
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
 find out how many cores you have available and calculate (cores * extensiphy_runs) you wish to run as the same time
 if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
-then adjust to your optimum setting.
+then adjust to your optimum setting. **
 
-## Impatient Person's First Run
-Once you've cloned this repo and installed all dependencies to your PATH, begin here. Dependencies are outlined at the bottom of this readme.
+## Quick Install and Run
+### Building your own Extensiphy Docker image
 
-If you only plan on using Extensiphy to add data to an existing alignment and tree, use the following command:
-
-```bash
-./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata
-```
-
-** you will know this worked if ... **
-
-If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
+1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). Then, download the [extensiphy repository](https://github.com/McTavishLab/extensiphy) to your computer. One way is to type from the terminal:
 
 ```bash
-./gon_phyling.sh -d ./gon_phy_testdata
+git clone https://github.com/McTavishLab/extensiphy.git
+cd extensiphy
 ```
 
-#### IMPORTANT!!
+2. Now before we proceed,
+you'll need to move your data into a folder. Move both the FASTA format alignment file
+and the FASTQ raw-read files into a shared folder.
+We'll use brackets `[]` to indicate variables you should replace with your own files or paths
+```bash
+mkdir data_folder
+mv [/path/to/your/alignment_file] [/path/to/data_folder]
+mv [/path/to/your/raw_read_files] [/path/to/data_folder]
+```
 
-Extensiphy requires that you limit the loci you include for updating to sequences with lengths of 1000bp or above. This is to protect the read mapping and basecall accuracy. This is checked when using individual locus alignments as input but when using a concatenated alignment, the user must make this assessment themselves.
+*You'll need to know the absolute path to the data_folder we just created.*
+
+3. To build your Docker installation of Extensiphy, we'll need to build the Docker image.
+
+```bash
+docker build --tag ep_image .
+```
+4. We'll build your Extensiphy Docker container and connect the folder containing your data to the container.
+Replace the `[bracket terms]` with the paths and folder names you've used so far.
+```bash
+docker run --name ep_container -i -t -v [/path/to/data_folder]:/usr/src/app/linked_data ep_image bash
+```
+
+You should now see your command prompt change, indicating you're connected to
+the new Docker container we just created, ep_container.
+
+5. Finally, we'll run a test of Extensiphy to make sure installation occurred correctly.
+Copy and run this command.
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+Once Extensiphy has finished running on the test data, you should see a line saying:
+```bash
+Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
+```
+
+This indicates that the run completed successfully and you can find the updated
+alignment file in the `output` directory.
+If you did not get this message, you'll have to check output log `ep_dev_log.txt`
+to learn more about the issue before proceeding.
 
 ## Extensiphy Controls and Flags For Use:
 
@@ -56,7 +84,18 @@ Extensiphy allows for control over both how many Extensiphy runs happen
 in parallel and how many threads are allocated to each Extensiphy run
 Make sure you dont ask your computer to work too hard by adding more runs and threads than your computer can handle
 find out how many cores you have available and calculate (cores * extensiphy_runs) you wish to run as the same time
-if you have 8 cores available, consider starting 2 runs with 3 threads available to each,
+if you have 8 cores available, considerIf you only plan on using Extensiphy to add data to an existing alignment, use the following command:
+
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+** you will know this worked if ... **
+
+If you plan to generate a starting alignment and tree that you wish to add sequences to, test gon_phyling with this command:
+
+```bash
+./gon_phyling.sh -d ./gon_phy_testdata starting 2 runs with 3 threads available to each,
 then adjust to your optimum setting.
 
 #### Required flags
@@ -114,6 +153,10 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
 ```bash
  multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
+
+## Tutorial
+
+We recommend you run through the tutorial before using Extensiphy on your own dataset. The tutorial will walk through how to install program dependencies for use with Extensiphy and how to run Extensiphy using different data types and options. You can find the tutorial file in the tutorial folder (link). You can copy code snippets into your terminal window.
 
 ## Installation Methods
 

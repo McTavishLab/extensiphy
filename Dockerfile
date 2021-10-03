@@ -36,4 +36,4 @@ RUN git clone https://github.com/McTavishLab/extensiphy.git
 WORKDIR /usr/src/app/extensiphy
 RUN git checkout dev
 
-RUN ln -s /usr/src/app/linked_data/* /usr/src/app/extensiphy/data/
+#RUN ln -s /usr/src/app/linked_data/* /usr/src/app/extensiphy/data/

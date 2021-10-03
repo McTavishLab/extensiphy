@@ -20,7 +20,7 @@ You can also install the dependencies of Extensiphy using Anaconda. This link wi
 *For advanced users of Linux* If you're comfortable installing programs by hand, this section is for you.
 
 ## Quick Install and Run
-### Building your own Extensiphy Docker image
+### Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
 
 1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). Then, download the [extensiphy repository](https://github.com/McTavishLab/extensiphy) to your computer. One way is to type from the terminal:
@@ -58,20 +58,21 @@ to learn more about the issue before proceeding.
 For a deeper walkthrough of what has actually happened, you can try the tutorial.
 To get right down to business and update your own alignment, continue with the walkthrough.
 
-### Using Extensiphy on Your Own Data
+### Using Extensiphy on your own data
 
 5. Next, you'll need to move the data you want to use to a directory we can link to a new container.
-First, lets move the data we want to use into the Extensiphy Data directory:
+First, let's create a new directory and move the data we want to use into the new directory:
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths
 ```bash
-mv [/path/to/your/alignment_file] [/path/to/extensiphy/data]
-mv [/path/to/your/raw_read_files] [/path/to/extensiphy/data]
+mkdir new_data_dir
+mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
+mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
 ```
 
 6. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
 ```bash
-docker run --name ep_container -i -t -v [/path/to/data]:/usr/src/app/linked_data ep_image bash
+docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
 ```
 7. Now you can run the same command as earlier but we'll specify that the `data`
 as where your data is located. The output will be an updated sequence alignment.
@@ -79,7 +80,7 @@ You will also need to specify the suffixes of your read files using the
 `-1` and `-2` flags.
 The `-o` flag lets you specify the name of the output folder.
 ```bash
-./multi_map.sh -a ./data/[alignment_file] -d ./data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
 ```
 
 Once the Extensiphy run is finished, you can check the `outputs` directory
@@ -111,11 +112,16 @@ for the updated alignment file.
 - (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
 
 ## Output Files!
-- concatenated file: found in your output folder [OUTDIR]/outputs/extended.aln
+- Concatenated alignment file: found in your output folder [OUTDIR]/outputs/extended.aln
 - Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
-- taxon specific intermediate files (if you kept intermediate files): found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
+- Taxon specific intermediate files (if you kept intermediate files): found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 ### Gon_phyling Controls and Flags For Use
+Additionally, Extensiphy comes with an additional pipeline for generating a
+phylogenetic tree from scratch: **Gon\_phyling**.
+These programs are not required for running Extensiphy itself but Gon\_ling
+can be useful if you have a lot of data and aren't interested in hand selecting
+the loci/genes you include in your alignment.
 
 INPUT OPTIONS:
 - (-d) directory of paired end reads. All output folders and files will be contained here
@@ -153,8 +159,10 @@ We recommend you run through the tutorial before using Extensiphy on your own da
 ## Installation Methods
 
 ### Anaconda Installation
-You can install the dependencies of Extensiphy using the Anaconda package manager. Install instructions for Anaconda can be found here (link).
-Once Anaconda has been installed, use this command to create an environment with all of the Extensiphy dependencies added to it.
+You can install the dependencies of Extensiphy using the Anaconda package manager.
+ Install instructions for Anaconda can be found here (link).
+Once Anaconda has been installed, use this command to create an environment with
+ all of the Extensiphy dependencies added to it.
 
 1. Add appropriate channels to your conda install:
 
@@ -202,7 +210,10 @@ to learn more about the issue before proceeding.
 
 ### Advanced Installation Methods
 
-**Using Extensiphy is limited to Linux at the moment.** Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
+**Using Extensiphy is limited to Linux at the moment.** Using Ubuntu will ensure
+the smoothest performance. If you want to use another distro,
+you'll have to make sure you install analogous one-liners and all that.
+You have been warned.
 
 
 #### Requirements
@@ -221,7 +232,12 @@ Dependencies (Separate programs you'll need to install):
 7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
 
-Additionally, Extensiphy comes with an additional pipeline for generating a phylogenetic tree from scratch: **Gon\_phyling**. These programs are not required for running Extensiphy itself but Gon\_ling can be useful if you have a lot of data and aren't interested in hand selecting the loci/genes you include in your alignment. Gon\_phyling's dependencies are as follows:
+Additionally, Extensiphy comes with an additional pipeline for generating a
+phylogenetic tree from scratch: **Gon\_phyling**.
+These programs are not required for running Extensiphy itself but Gon\_ling
+can be useful if you have a lot of data and aren't interested in hand selecting
+the loci/genes you include in your alignment. Gon\_phyling's dependencies are as
+follows:
 
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)
@@ -230,7 +246,8 @@ Additionally, Extensiphy comes with an additional pipeline for generating a phyl
 
 
 ### Apt-get dependency install
-Almost all programs for running Extensiphy are available with apt-get. Hisat2 is not available with apt-get. Run the commands found below to install:
+Many programs for running Extensiphy are available with apt-get.
+Run the commands found below to install:
 
 ```bash
 apt-get install raxml
@@ -240,4 +257,5 @@ apt-get install bcftools
 pip install dendropy
 ```
 
-Installs with apt-get for Gon\_phyling are not currently available. You will have to install these programs manually or with conda.
+Installs with apt-get for Gon\_phyling are not currently available.
+You will have to install these programs manually or with conda.

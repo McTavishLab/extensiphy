@@ -36,8 +36,4 @@ RUN git clone https://github.com/McTavishLab/extensiphy.git
 WORKDIR /usr/src/app/extensiphy
 RUN git checkout dev
 
-
-
-
-# Try to run Extensiphy to see whats been added to the path
-# Add programs to path that werent added
+RUN ln -s /usr/src/app/linked_data/* /usr/src/app/extensiphy/data/

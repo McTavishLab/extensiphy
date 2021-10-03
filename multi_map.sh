@@ -10,10 +10,11 @@ set -o pipefail
 # establishes the path to find the phycorder directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# # keep track of the last executed command
-# trap 'previous_command=$this_command; this_command=${BASH_COMMAND}' DEBUG
-# # echo an error message before exiting
-# trap 'echo "exit ${?} due to ${previous_command}"' EXIT
+# # # keep track of the last executed command
+# current_command=$BASH_COMMAND
+# trap last_command=$current_command DEBUG
+# # # echo an error message before exiting
+# trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 ############################################################
 
@@ -44,7 +45,7 @@ if [ $(which bwa-mem2 | wc -l) -lt 1 ]
         printf "bwa-mem2 not found. Install and/or add to path\n" >&2
 	exit 0
     else
-        printf "hisat2 found\n"
+        printf "bwa-mem2 found\n"
 fi
 if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then

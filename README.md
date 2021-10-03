@@ -21,6 +21,7 @@ You can also install the dependencies of Extensiphy using Anaconda. This link wi
 
 ## Quick Install and Run
 ### Building your own Extensiphy Docker image
+First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
 
 1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). Then, download the [extensiphy repository](https://github.com/McTavishLab/extensiphy) to your computer. One way is to type from the terminal:
 
@@ -29,34 +30,21 @@ git clone https://github.com/McTavishLab/extensiphy.git
 cd extensiphy
 ```
 
-2. Now before we proceed,
-you'll need to move your data into a folder. Move both the FASTA format alignment file
-and the FASTQ raw-read files into a shared folder.
-We'll use brackets `[]` to indicate variables you should replace with your own files or paths
-```bash
-mkdir data_folder
-mv [/path/to/your/alignment_file] [/path/to/data_folder]
-mv [/path/to/your/raw_read_files] [/path/to/data_folder]
-```
-
-*You'll need to know the absolute path to the data_folder we just created.*
-
-3. To build your Docker installation of Extensiphy, we'll need to build the Docker image.
+2. To build your Docker installation of Extensiphy, we'll need to build the Docker image.
 
 ```bash
 docker build --tag ep_image .
 ```
-4. We'll build your Extensiphy Docker container and connect the folder containing your data to the container.
-Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
+
+3. We'll build your Extensiphy Docker container using this command.
+The `-i` flag will make the container interactive and allow you to run Extensiphy
+within the container.
 ```bash
-docker run --name ep_container -i -t -v [/path/to/data_folder]:/usr/src/app/linked_data ep_image bash
+docker run --name ep_container -i -t ep_image bash
 ```
 
-You should now see your command prompt change, indicating you're connected to
-the new Docker container we just created, ep_container.
-
-5. Finally, we'll run a test of Extensiphy to make sure installation occurred correctly.
-Copy and run this command.
+4. Your command line prompt should change to indicate that you are now working
+inside your Extensiphy container. To test your installation, run this command:
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
@@ -65,11 +53,37 @@ Once Extensiphy has finished running on the test data, you should see a line say
 ```bash
 Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```
-
-This indicates that the run completed successfully and you can find the updated
-alignment file in the `output` directory.
 If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
+For a deeper walkthrough of what has actually happened, you can try the tutorial.
+To get right down to business and update your own alignment, continue with the walkthrough.
+
+### Using Extensiphy on Your Own Data
+
+5. Next, you'll need to move the data you want to use to a directory we can link to a new container.
+First, lets move the data we want to use into the Extensiphy Data directory:
+We'll use brackets `[]` to indicate variables you should replace with your own files or paths
+```bash
+mv [/path/to/your/alignment_file] [/path/to/extensiphy/data]
+mv [/path/to/your/raw_read_files] [/path/to/extensiphy/data]
+```
+
+6. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
+Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
+```bash
+docker run --name ep_container -i -t -v [/path/to/data]:/usr/src/app/linked_data ep_image bash
+```
+7. Now you can run the same command as earlier but we'll specify that the `data`
+as where your data is located. The output will be an updated sequence alignment.
+You will also need to specify the suffixes of your read files using the
+`-1` and `-2` flags.
+The `-o` flag lets you specify the name of the output folder.
+```bash
+./multi_map.sh -a ./data/[alignment_file] -d ./data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+```
+
+Once the Extensiphy run is finished, you can check the `outputs` directory
+for the updated alignment file.
 
 ## Extensiphy Controls and Flags For Use:
 

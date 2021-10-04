@@ -11,7 +11,7 @@ output: html_document
 
 Hello!
 
-This tutorial will walk you through installing and using **Extensiphy**, a program for rapidly updating multiple sequence alignments (and phylogenies) with new sequences. I try not to assume too much knowledge of programming and program use standards so this tutorial should be accessible for beginning and advanced bioinformaticians.
+This tutorial will walk you through installing and using **Extensiphy**, a program for rapidly updating multiple sequence alignments with new sequences. I try not to assume too much knowledge of programming and program use standards so this tutorial should be accessible for beginning and advanced bioinformaticians.
 
 
 ## Description
@@ -32,9 +32,9 @@ You need:
 You need:
 * Multiple seperate locus multiple sequence alignment files (fasta format) **OR**
   * A single concatenated multiple sequence alignment file
-  * A CSV file illustrating locus lengths and positions
+  * A CSV file illustrating locus lengths and positions (formatting explained later)
 * Directory of paired-end read files
-* (Optional but recommended) a tree generated from combining all the loci
+* (Optional) a tree generated from combining all the loci
 
 
 ### A Few Notes on Code Examples
@@ -43,21 +43,30 @@ The code snippets I have included in this tutorial can be copied straight into y
 ```bash
 path/to/file/or/program
 ```
-This notation indicates that you should replace this string segment with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see '$' (dollar signs) in front of code snippets. These should not be included when you copy and past the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
+This notation indicates that you should replace this string segment with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see '$' (dollar signs) in front of code snippets. These should not be included when you copy and paste the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
 
 
 ### Dependencies
 
-Unfortunately, Extensiphy requires some dependencies. You know what they say about not reinventing the wheel. We'll walk through the basics of installation and adding the installed programs to your path so that Extensiphy can use them.
+Unfortunately, Extensiphy requires some dependencies. You know what they say about not reinventing the wheel. There are multiple ways to install Extensiphy and handle dependencies. We'll walk through the basics of dependency and Extensiphy installation using two methods (docker and individual installations).
 
-Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro, you'll have to make sure you install analogous one-liners and all that. You have been warned.
+Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro or another flavor of Debian, you'll have to make sure you install analogous one-liners and all that. You have been warned. If you're not sure what this means, you'll want to stick to the Docker installation instructions but you might learn more about computing from reading the indicidual install program install instructions.
 
 [Dependencies](https://github.com/McTavishLab/extensiphy) (Links to separate programs you'll need to install can be found at the bottom of the Extensiphy readme):
 
 
+## Command Line Basics and Installation Methods
+
+First, you'll need to know about some basics of command line and how to find your way around a computer without using the graphical user interface (GUI) that you're probably used to. If you've never used the command line before, I recommend you use the command line tutorial (LINK) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
+
+2. Docker installation and use
+
+3. Individual program installations
+
+
 ### Pathing
 
-Extensiphy will need to automatically look for these programs in your computers PATH. If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of. The following is a basic tutorial on adding programs to your PATH.
+If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of.
 
 First you'll need to find the ```.bash_profile``` file on your computer. This file lives in your home directory when you first open a terminal. Here's how you find it:
 
@@ -70,7 +79,7 @@ other_files_in_your_home_directory
 $echo $PATH
 home/your_name/bin:home/your_name/other_folders/in_your/path:
 
-$vim .bash_profile
+$nano .bash_profile
 ```
 At this point you'll need to add the programs you've downloaded and unpacked to your .bash_profile in the following format. Add all of this as one line, filling in the appropriate absolute pathing. If you don't see this file when using `ls -a` then you need to create it.
 
@@ -106,6 +115,9 @@ I installed bwa-mem2 in a bin folder so I see:
 
 ```
 
+### Installation with Docker
+
+By far, the simplest Extensiphy installation method is to use Docker. Docker is a way you can install all a program and all of its dependency programs all at once on a miniature, self contained computer that lives on your computer. In more technical terms, Docker allows you to build images and containers of a program (similar to the object oriented programming concepts of classes and objects) on your computer, with an end result similar to installing a fully configured virtual machine. Its pretty great but it takes a little getting used to.
 
 
 ## Running Extensiphy

@@ -41,10 +41,9 @@ You need:
 
 The code snippets I have included in this tutorial can be copied straight into your terminal unless they include something like:
 ```bash
-path/to/file/or/program
+[path/to/file/or/program]
 ```
-This notation indicates that you should replace this string segment with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see '$' (dollar signs) in front of code snippets. These should not be included when you copy and paste the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
-
+This notation indicates that you should replace the segment within the brackets with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see `$` (dollar signs) in front of code snippets. These should not be included when you copy and paste the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
 
 ### Dependencies
 
@@ -57,14 +56,163 @@ Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the
 
 ## Command Line Basics and Installation Methods
 
-First, you'll need to know about some basics of command line and how to find your way around a computer without using the graphical user interface (GUI) that you're probably used to. If you've never used the command line before, I recommend you use the command line tutorial (LINK) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
+First, you'll need to know about some basics of command line. If you've never used the command line before, I recommend you read the command line tutorial (LINK) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
 
 2. Docker installation and use
 
 3. Individual program installations
 
 
-### Pathing
+### Installation with Docker
+
+By far, the simplest Extensiphy installation method is to use Docker. Docker is a way you can install all a program and all of its dependency programs all at once on a miniature, self contained computer that lives on your computer. In more technical terms, Docker allows you to build images and containers of a program (similar to the object oriented programming concepts of classes and objects) on your computer, with an end result similar to installing a fully configured virtual machine. Its pretty great but it takes a little getting used to.
+
+#### Installing Docker and setting up
+1. To install Docker on your computer, go to the [Docker website](https://www.docker.com/products/docker-desktop) and follow the instructions.
+
+2. If you havent cloned the Extensiphy repository to your computer, clone it as normal using these commands:
+```bash
+git clone https://github.com/McTavishLab/extensiphy.git
+```
+
+Once these steps are complete, you're ready to begin installing Extensiphy.
+
+#### Docker commands to install Extensiphy
+First we'll build the Docker image and a container to test your installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
+
+1. To build your Docker installation of Extensiphy, we'll need to build the Docker image.
+
+```bash
+cd extensiphy
+docker build --tag ep_image .
+```
+
+2. We'll build your Extensiphy Docker container using this command. The `-i` flag will make the container interactive and allow you to run Extensiphy
+within the container.
+```bash
+docker run --name ep_container -i -t ep_image bash
+```
+
+3. Your command line prompt should change to indicate that you are now working
+inside your Extensiphy container.
+To examine the example data alignment in the `testdata` directory and see how many taxa are in the alignment.
+
+```bash
+grep ">" ./testdata/combo.fas
+
+>taxon_12
+>taxon_16.ref
+>taxon_22
+>taxon_25
+>taxon_10
+>taxon_17
+>taxon_20
+>taxon_23
+>taxon_21
+>taxon_18
+>taxon_13
+>taxon_15
+>taxon_14
+>taxon_27
+>taxon_11
+>taxon_1
+>taxon_28
+>taxon_26
+>taxon_19
+>taxon_24
+```
+
+Lets count how many taxa are in this alignment.
+```bash
+grep -c ">" ./testdata/comba.fas
+
+20
+```
+
+4. Finally, the moment of truth. To test your installation, run this command:
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+Once Extensiphy has finished running on the test data, you should see a line saying:
+```bash
+Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
+```
+If you did not get this message, you'll have to check output log `ep_dev_log.txt`
+to learn more about the issue before proceeding.
+
+
+5. You can examine the extended alignment file and see that the alignment has been updated with 3 new sequences.
+
+```bash
+grep ">" ./EP_output/outputs/extended.aln
+
+>taxon_30_
+>taxon_31_
+>taxon_32_
+>taxon_12
+>taxon_16.ref
+>taxon_22
+>taxon_25
+>taxon_10
+>taxon_17
+>taxon_20
+>taxon_23
+>taxon_21
+>taxon_18
+>taxon_13
+>taxon_15
+>taxon_14
+>taxon_27
+>taxon_11
+>taxon_1
+>taxon_28
+>taxon_26
+>taxon_19
+>taxon_24
+```
+
+Now count how many sequences are in the new, updated alignment.
+```bash
+grep -c ">" ./EP_output/outputs/extended.aln
+
+23
+```
+
+We can see that the alignment has been expanded with 3 additional sequences.
+We're done with this container so we can detatch with a simple `exit` command.
+
+#### Using Extensiphy on your own data
+
+6. Ok, running tests on test datasets is nice but you have data you want to analyze.
+You'll need to move the data you want to use to a directory we can link to a new container.
+First, let's create a new directory and move the data we want to use into the new directory:
+We'll use brackets `[]` to indicate variables you should replace with your own files or paths
+```bash
+mkdir new_data_dir
+mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
+mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
+```
+
+7. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
+Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
+```bash
+docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
+```
+
+8. Now you can run the same command as earlier but we'll specify that the `data`
+as where your data is located. The output will be an updated sequence alignment.
+You will also need to specify the suffixes of your read files using the
+`-1` and `-2` flags.
+The `-o` flag lets you specify the name of the output folder.
+```bash
+./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+```
+
+Once the Extensiphy run is finished, you can check the `outputs` directory
+for the updated alignment file.
+
+### Installing dependencies by hand
 
 If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of.
 
@@ -114,10 +262,6 @@ I installed bwa-mem2 in a bin folder so I see:
 /home/jasper/bin/bwa-mem2
 
 ```
-
-### Installation with Docker
-
-By far, the simplest Extensiphy installation method is to use Docker. Docker is a way you can install all a program and all of its dependency programs all at once on a miniature, self contained computer that lives on your computer. In more technical terms, Docker allows you to build images and containers of a program (similar to the object oriented programming concepts of classes and objects) on your computer, with an end result similar to installing a fully configured virtual machine. Its pretty great but it takes a little getting used to.
 
 
 ## Running Extensiphy

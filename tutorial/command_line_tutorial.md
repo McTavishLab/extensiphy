@@ -37,7 +37,7 @@ any_other_folders
 any_files
 ```
 
-Flags are used in a couple different ways. A flag can be used to tell the program your using that you wish to use some extra functionality (an option), such as when we told the `ls` command that we also wished to see hidden files by using the `-a` flag. Flags can also indicate a particular variable to a program, such as a necessary file. The times when a flag is used for one or the other use-case will rely on the the program's designer to explain.
+Flags are used in a couple different ways. A flag can be used to tell the program your using that you wish to use some extra functionality (an option), such as when we told the `ls` command that we also wished to see hidden files by using the `-a` flag. Flags can also indicate a particular variable to a program, such as a necessary file. The programs manual should describe how a specific flag is used.
 
 ## Finding your location with pwd
 
@@ -82,6 +82,6 @@ $ls /home/your_user_name/.bash_profile
 /home/your_user_name/.bash_profile
 ```
 
-We were able to point to a file in a different directory by giving the computer the path to that file. This is probably one of the most important aspects of using command line. When using a bioinformatics program (like Extensiphy), you will need to point your computer to various files and directories using this slash-directory-slash structure.
+We were able to point to a file in a different directory by giving the computer the path to that file. This is one of the most important aspects of using command line. When using a bioinformatics program (like Extensiphy), you will need to point your computer to various files and directories using this slash-directory-slash structure.
 
 Hopefully you can see how using this pathing information will relate to other command line programs that need to be passed the location of multiple files or directories and use multiple flags to describe the desired actions you wish that program to make.

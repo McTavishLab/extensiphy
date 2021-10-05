@@ -50,9 +50,9 @@ This notation indicates that you should replace the segment within the brackets 
 
 First, you'll need to know about some basics of command line. If you've never used the command line before, I recommend you read the command line tutorial (LINK) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
 
-2. Docker installation and use
+1. Docker installation and use
 
-3. Conda installation and use
+2. Conda installation and use
 
 ### A note to advanced users
 
@@ -97,43 +97,8 @@ within the container.
 docker run --name ep_container -i -t ep_image bash
 ```
 
-3. Your command line prompt should change to indicate that you are now working
-inside your Extensiphy container.
-To examine the example data alignment in the `testdata` directory and see how many taxa are in the alignment.
-
-```bash
-grep ">" ./testdata/combo.fas
-
->taxon_12
->taxon_16.ref
->taxon_22
->taxon_25
->taxon_10
->taxon_17
->taxon_20
->taxon_23
->taxon_21
->taxon_18
->taxon_13
->taxon_15
->taxon_14
->taxon_27
->taxon_11
->taxon_1
->taxon_28
->taxon_26
->taxon_19
->taxon_24
-```
-
-Lets count how many taxa are in this alignment.
-```bash
-grep -c ">" ./testdata/comba.fas
-
-20
-```
-
-4. Finally, the moment of truth. To test your installation, run this command:
+3. Your command line prompt should change to indicate you are working inside the container.
+Finally, the moment of truth. To test your installation, run this command:
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
@@ -144,52 +109,12 @@ Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```
 If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
-
-
-5. You can examine the extended alignment file and see that the alignment has been updated with 3 new sequences.
-
-```bash
-grep ">" ./EP_output/outputs/extended.aln
-
->taxon_30_
->taxon_31_
->taxon_32_
->taxon_12
->taxon_16.ref
->taxon_22
->taxon_25
->taxon_10
->taxon_17
->taxon_20
->taxon_23
->taxon_21
->taxon_18
->taxon_13
->taxon_15
->taxon_14
->taxon_27
->taxon_11
->taxon_1
->taxon_28
->taxon_26
->taxon_19
->taxon_24
-```
-
-Now count how many sequences are in the new, updated alignment.
-```bash
-grep -c ">" ./EP_output/outputs/extended.aln
-
-23
-```
-
-We can see that the alignment has been expanded with 3 additional sequences.
 If you want to start analyzing your data, you can detach with a simple `exit` command and continue with the rest of the Docker section.
 Otherwise, we'll use container again so you can skip right to the actual tutorial section.
 
-#### Using Extensiphy on your own data
+#### Using Doker Extensiphy on your own data
 
-6. Ok, running tests on test datasets is nice but you have data you want to analyze!
+1. Ok, testing installation is nice but you have data you want to analyze!
 You'll need to move the data you want to use to a directory so we can link it to a new container.
 First, let's create a new directory and move the data we want to use into the new directory:
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths
@@ -199,13 +124,13 @@ mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
 mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
 ```
 
-7. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
+2. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
 ```bash
 docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
 ```
 
-8. Now you can run the same command as earlier but we'll specify that the `data`
+3. Now you can run the same command as earlier but we'll specify that the `data`
 as where your data is located. The output will be an updated sequence alignment.
 You will also need to specify the suffixes of your read files using the
 `-1` and `-2` flags.
@@ -269,6 +194,10 @@ Congratulations! You're install of Extensiphy is complete and you are ready to c
 
 ## Running Extensiphy
 
+Ok, you've installed Extensiphy and all of its dependency programs using one of the methods outlined above.
+Regardless of the method of installation you used, we're going to use the example dataset in the `testdata` directory to explore some of Extensiphy's functionality. All of the commands will work regardless of the installation method.
+Lets get to it!
+
 ### Extensiphy Help Menu
 Extensiphy takes command line arguments to update a sequence alignment with new taxa sequences. Lets look at the options used by Extensiphy. Extensiphy use revolves around calling the
 
@@ -276,7 +205,8 @@ Extensiphy takes command line arguments to update a sequence alignment with new 
 $./multi_map.sh
 ```
 
-command followed by flags (dashes next to a letter corresponding the flag you wish to use or input).
+command followed by flags (dashes next to a letter corresponding the option you wish to use or input).
+Calling the help menu with the following command:
 
 ```bash
 $./multi_map.sh -h
@@ -320,34 +250,153 @@ Extensiphy is a program for quickly adding genomic sequence data to multiple seq
 
 Extensiphy has a number of default settings for these so you will not always have to explicitly use all of these options for every run. The use of these flags depends on the input you wish to use and the output you desire to have at the end of a run.
 
+
+### Examining our input data
 First lets try a basic test case. Within the Extensiphy folder is a folder called
 
 ```bash
 testdata
 ```
 
-### A Basic Extensiphy Run
 This folder contains a variety of files for testing your installation and use of Extensiphy.
 
+Lets take a look at some of the files in the testdata folder.
+
+```bash
+$grep ">" ./testdata/combo.fas
+```
+This command should output:
+
+```bash
+>taxon_12
+>taxon_16.ref
+>taxon_22
+>taxon_25
+>taxon_10
+>taxon_17
+>taxon_20
+>taxon_23
+>taxon_21
+>taxon_18
+>taxon_13
+>taxon_15
+>taxon_14
+>taxon_27
+>taxon_11
+>taxon_1
+>taxon_28
+>taxon_26
+>taxon_19
+>taxon_24
+```
+
+A quick search of our `combo.fas` sequence alignment shows that we have a number of sequences, presumably in fasta format because the sequence names start with a `>`. Lets count our sequences so we can later assess if our Extensiphy runs are actually adding sequences to the alignment.
+
+```bash
+$grep -c ">" ./testdata/combo.fas
+```
+You should see there are this many sequences in the sequence alignment.
+
+```bash
+20
+```
+
+We can also examine some of the sequences directly. This process is easier with a program like [seaview](http://doua.prabi.fr/software/seaview) but if you want to skip installing another program, you can run the following command to look at the first 4 lines of the alignment file.
+
+```bash
+head -4 ./testdata/combo.fas
+```
+The output of this command will be rather intense. DONT PANIC.
+You should see a few header lines starting with a `>` and the name of the taxon followed by another long line of DNA sequence.
+There should be 2 sequences total output by this command. This displays that there is indeed aligned DNA sequences in our alignment file.
+
+Finally, lets examine the size of our alignment file.
+This will give us tool to show that our alignment file is expanding with new sequences as we run Extensiphy.
+
+```bash
+$ ls -lh ./testdata/combo.fas
+```
+
+This command should output something similar to the following information.
+
+```bash
+-rw-rw-r-- 1 your_user_name your_user_name 200K Oct  4 11:43 ./testdata/combo.fas
+```
+
+This tells us that the alignment file is 200 kilobytes in size.
+Ok, we've examined the alignment file, lets take a look at the fastq files we'll be working with.
+Run the following command to show all of the read files we'll use in this tutorial.
+
+```bash
+$ ls ./testdata/*.fq
+```
+
+Our output should look like this:
+
+```bash
+./testdata/taxon_30_R1.fq  ./testdata/taxon_31_R1.fq  ./testdata/taxon_32_R1.fq
+./testdata/taxon_30_R2.fq  ./testdata/taxon_31_R2.fq  ./testdata/taxon_32_R2.fq
+```
+
+Examining these results, we can see that our files are paired-end fastq format files, denoted by the suffixes (_R1.fq and _R2.fq).
+We have read files for 3 taxa.
+Lets take a look inside to confirm that the read files look like real fastq files.
+Run the following command.
+
+```bash
+$ for i in $(ls ./testdata/*.fq ); do head $i; done
+```
+
+The output of this command should look like repetitions of the following:
+
+```bash
+@taxonxon_66_R1_sim_taxonxon_127_R1-2040/1
+AGACTCCAGCCTGCCTGACGTGGTCAGCCACGGCGAAGGCCGCGCCGACTTCGCGCTTCACGGCGGCAGTATTTCCGCCGACTTGGGCGTCGCGCTGCAA
++
+CC?FDAFAGH2HHJIJJ?@GE@GFJJHJ=<IJIIHJJE.?J8IGJ*FI>GJEH@HDJJ>J.HHHB?F(DF=CFFECE7@FD.A8@DC9DD5D=DDCE:CC
+@taxonxon_66_R1_sim_taxonxon_127_R1-2038/1
+ATGACCGTCGCCGGTCGCCGTGCCGACTACGGCAAACGGGCAGCGTTCGCGTTCGCAGAGGGCGCGGAAGGTGTACAAATCTTTTTCCAAAATCGACAAG
++
+@;@8FF?FFGHGFFIHDJI-IGGJJ?IJHHHJIJJ?FJJICJJH*HJBHEC9IHJFHHE((JIFGEGJDEDECD:A0&DDCEDFCDBF>DE>DDD?@C<D
+@taxonxon_66_R1_sim_taxonxon_127_R1-2036/1
+```
+
+Bioinformatics data is often formatted in destressing ways. Again, DONT PANIC.
+This is what we want to see. Its not critical that you recognize all of the lines of a fastq file.
+A cursory glance will show you lines that have the taxon's name and lines that have the DNA sequence information.
+Great! With all of our files containing short reads, we're ready to run Extensiphy and update our alignment with these new taxa.
+
+
+### A Basic Extensiphy Run
 Lets use Extensiphy to update a multiple sequence alignment with some new data. Run this command in the Extensiphy folder:
 
 ```bash
 
-$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_Extensiphy_run
+$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 
 ```
 
-This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that Extensiphy will add the taxa sequences from the read files to combo.fas and will infer a new phylogenetic tree. You can examine the results by looking at these files:
+This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that Extensiphy will add the taxa sequences from the read files to combo.fas. You can examine the results by looking at the updated alignment file:
 
 ```bash
-~/first_Extensiphy_run/combine_and_infer/extended.aln
-~/first_Extensiphy_run/combine_and_infer/RAxML_bestTree.consensusFULL
+~/first_extensiphy_run/outputs/extended.aln
 ```
 
-Primarily, Extensiphy should be used for adding new sequences to an alignment AND a tree produced from that alignment. Lets run a command to take as intput the same alignment and a tree that was produced from that alignment before adding new sequences. Run the following command:
+Extensiphy can also build a phylogeny for you based on the updated sequence alignment using RAxML.
+Adding the `-u PHYLO` option to the command will instruct Extensiphy to estimate a phylogeny once the sequence alignment has been updated.
+Here is our new command.
 
 ```bash
-$./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o second_Extensiphy_run
+
+$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extensiphy_run
+
+```
+
+
+Lets run a command to take as intput the same alignment and a tree that was produced from that alignment before adding new sequences. Run the following command:
+
+```bash
+$./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o second_extensiphy_run
 ```
 
 The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a randomly generated tree.

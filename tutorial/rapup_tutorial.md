@@ -45,14 +45,6 @@ The code snippets I have included in this tutorial can be copied straight into y
 ```
 This notation indicates that you should replace the segment within the brackets with the absolute or relative path to the program/file/directory as indicated. Additionally, You'll see `$` (dollar signs) in front of code snippets. These should not be included when you copy and paste the code into your terminal window. These dollar signs are only included to indicate the line with the actual code snippet and not the results of the command.
 
-### Dependencies
-
-Unfortunately, Extensiphy requires some dependencies. You know what they say about not reinventing the wheel. There are multiple ways to install Extensiphy and handle dependencies. We'll walk through the basics of dependency and Extensiphy installation using two methods (docker and individual installations).
-
-Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro or another flavor of Debian, you'll have to make sure you install analogous one-liners and all that. You have been warned. If you're not sure what this means, you'll want to stick to the Docker installation instructions but you might learn more about computing from reading the indicidual install program install instructions.
-
-[Dependencies](https://github.com/McTavishLab/extensiphy) (Links to separate programs you'll need to install can be found at the bottom of the Extensiphy readme):
-
 
 ## Command Line Basics and Installation Methods
 
@@ -60,8 +52,20 @@ First, you'll need to know about some basics of command line. If you've never us
 
 2. Docker installation and use
 
-3. Individual program installations
+3. Conda installation and use
 
+### A note to advanced users
+
+Its completely possible to install all of the dependencies for Extensiphy by hand.
+If you know how to add programs to your PATH (and know what a PATH is), I probably don't need to explain how to do this.
+However, to make sure this overview of installation instructions is complete, here is a brief description.
+You will need to:
+1. Download the dependency programs listed in the [Requirements](https://github.com/McTavishLab/extensiphy) section of the Extensiphy README.
+2. Unzip and make sure all of the necessary programs are executable.
+3. Add all of the dependency programs to your computers PATH.
+
+Thats it! If you've done these steps, you can skip ahead to the sections where we start running Extensiphy (LINK).
+Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro or another flavor of Debian, you'll have to make sure you install analogous one-liners and all that. You have been warned.
 
 ### Installation with Docker
 
@@ -180,12 +184,13 @@ grep -c ">" ./EP_output/outputs/extended.aln
 ```
 
 We can see that the alignment has been expanded with 3 additional sequences.
-We're done with this container so we can detatch with a simple `exit` command.
+If you want to start analyzing your data, you can detach with a simple `exit` command and continue with the rest of the Docker section.
+Otherwise, we'll use container again so you can skip right to the actual tutorial section.
 
 #### Using Extensiphy on your own data
 
-6. Ok, running tests on test datasets is nice but you have data you want to analyze.
-You'll need to move the data you want to use to a directory we can link to a new container.
+6. Ok, running tests on test datasets is nice but you have data you want to analyze!
+You'll need to move the data you want to use to a directory so we can link it to a new container.
 First, let's create a new directory and move the data we want to use into the new directory:
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths
 ```bash
@@ -205,6 +210,7 @@ as where your data is located. The output will be an updated sequence alignment.
 You will also need to specify the suffixes of your read files using the
 `-1` and `-2` flags.
 The `-o` flag lets you specify the name of the output folder.
+
 ```bash
 ./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
 ```
@@ -212,68 +218,65 @@ The `-o` flag lets you specify the name of the output folder.
 Once the Extensiphy run is finished, you can check the `outputs` directory
 for the updated alignment file.
 
-### Installing dependencies by hand
 
-If you're new to the inner workings of computers, think of your PATH as a set of programs or locations on your computer that your computer automatically knows the location of.
+### Installing dependencies with Anaconda
 
-First you'll need to find the ```.bash_profile``` file on your computer. This file lives in your home directory when you first open a terminal. Here's how you find it:
+The other fast way to install the dependency programs of Extensiphy is to use the Conda package manager.
+The Conda package manager is excellent because it handles installing dependency programs very well.
+The steps for installing the Extensiphy dependencies are pretty straight forward so lets walk through them.
 
-```bash
-open terminal
-$ls -a
-.bash_profile
-other_files_in_your_home_directory
+1. Install Conda using the [miniconda](https://docs.conda.io/en/latest/miniconda.html) installer.
 
-$echo $PATH
-home/your_name/bin:home/your_name/other_folders/in_your/path:
-
-$nano .bash_profile
-```
-At this point you'll need to add the programs you've downloaded and unpacked to your .bash_profile in the following format. Add all of this as one line, filling in the appropriate absolute pathing. If you don't see this file when using `ls -a` then you need to create it.
+2. Once conda has been installed and is working, add appropriate channels to your conda install:
 
 ```bash
-
-export PATH="/home/your_name/path/to/program:$PATH"
-
+conda config --prepend channels conda-forge
+conda config --prepend channels bioconda
 ```
 
-An example of what I see is:
+3. Run this command to create a new environment (extensiphy_env) and add the necessary dependencies:
 
 ```bash
-
-export PATH="/home/jasper/src/SPAdes-3.13.0-Linux:$PATH"
-
+conda create -n extensiphy_env samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
-Once you've added all your programs to your PATH, close the terminal window and reopen it. Then use the `which` command to see if your computer knows where the program is located
+4. Activate your environment.
 
 ```bash
-
-$which bwa-mem2
-
-/home/your_name/bwa-mem2_folder/bwa-mem2
-
+conda activate extensiphy_env
 ```
 
-I installed bwa-mem2 in a bin folder so I see:
+5. Once you've activated your environment, you can clone the Extensiphy repository.
 
 ```bash
-
-/home/jasper/bin/bwa-mem2
-
+git clone https://github.com/McTavishLab/extensiphy.git
+cd extensiphy
 ```
+
+6. Finally, you can test your installation by running the following command.
+
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+```
+
+Once Extensiphy has finished running on the test data, you should see a line saying:
+```bash
+Alignment file is: [path/to]/EP_output/outputs/extended.aln
+```
+Congratulations! You're install of Extensiphy is complete and you are ready to continue with the tutorial.
+
 
 
 ## Running Extensiphy
 
 ### Extensiphy Help Menu
-Extensiphy (on branch overhaul_dev) takes command line arguments to update a phylogenetic tree with new taxa sequences. Lets look at the options used by Extensiphy. Extensiphy use revolves around calling the
+Extensiphy takes command line arguments to update a sequence alignment with new taxa sequences. Lets look at the options used by Extensiphy. Extensiphy use revolves around calling the
 
 ```bash
 $./multi_map.sh
 ```
 
-command followed by flags (dashes next to a letter corresponding the command you wish to use or input).
+command followed by flags (dashes next to a letter corresponding the flag you wish to use or input).
 
 ```bash
 $./multi_map.sh -h
@@ -282,30 +285,38 @@ $./multi_map.sh -h
 has the following output:
 
 ```bash
-Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. View the README for more specific information. Inputs are generally a multiple sequence file in .fasta format and a directory of .fastq paired-end read sequences.
+Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.
+    View the README for more specific information.
+    Inputs are generally a multiple sequence file in fasta format and a directory of
+    Fastq paired-end read sequences.    
 
 
- EXAMPLE COMMAND:
+ EXAMPLE COMMAND:     
 
- /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]
+ /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]     
 
- (-a) alignment in fasta format,
- (-d) directory of paired end fastq read files for all query taxa,
- (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
- (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
- (-o) directory name to hold results (DEFAULT: creates Extensiphy_run),
- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
- (-p) number of taxa to process in parallel,
- (-c) number of threads per taxon being processed,
- (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),
- (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),
- (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),
- (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)
+ (-a) alignment in fasta format,     
+ (-d) directory of paired end fastq read files for all query taxa,     
+ (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
+
+ (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),     
+ (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),     
+ (-o) directory name to hold results (DEFAULT: creates rapup_run),     
+ (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),     
+ (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),     
+ (-p) number of taxa to process in parallel,     
+ (-c) number of threads per taxon being processed,     
+ (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)     
+ (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files (DEFAULTS: R1.fq and R2.fq),     
+ (-g) output format (CONCAT_MSA or SINGLE_LOCUS_FILES) (DEFAULT: CONCAT_MSA),     
+ (-s) specify the suffix (.fa, .fasta, etc) (DEFAULT: .fasta),     
+ (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)     
 
 
- if using single locus MSA files as input,
- (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv)
-```
+ if using single locus MSA files as input,     
+ (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),     
+ (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
+ ```
 
 Extensiphy has a number of default settings for these so you will not always have to explicitly use all of these options for every run. The use of these flags depends on the input you wish to use and the output you desire to have at the end of a run.
 

@@ -17,6 +17,7 @@ RUN apt-get install seqtk
 RUN apt-get install bcftools -y
 RUN apt-get install samtools -y
 RUN apt-get install git -y
+RUN apt-get install seaview -y
 
 #fastx toolkit and bwa-mem need wget to be installed
 RUN apt-get install wget -y

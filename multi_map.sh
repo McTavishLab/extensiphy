@@ -121,8 +121,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     ;;
     h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \n \
     View the README for more specific information. \n \
-    Inputs are generally a multiple sequence file in. \n \
-    fasta format and a directory of. \n \
+    Inputs are generally a multiple sequence file in fasta format and a directory of \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
     \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \

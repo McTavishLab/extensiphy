@@ -11,19 +11,22 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the [Quick Install and Run](https://github.com/McTavishLab/extensiphy/blob/dev/README.md#L22) section will review the docker installation instructions.
+the Quick Install and Run section will review the docker installation instructions.
 
 ### Anaconda
-You can also install the dependencies of Extensiphy using Anaconda. [Click here](https://github.com/McTavishLab/extensiphy/blob/dev/README.md#L161) to go to the Anaconda installation guide.
+You can also install the dependencies of Extensiphy using Anaconda. The Anaconda Installation section of this readme will walk through this process in more detail.
 
 ### Advanced
-*For advanced users of Linux* If you're comfortable installing programs by hand, [this](https://github.com/McTavishLab/extensiphy/blob/dev/README.md#L211) section is for you.
+*For advanced users of Linux* If you're comfortable installing programs by hand, the Advanced Installation Methods section is for you.
+
+### Tutorial
+We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
 ## Quick Install and Run
 ### Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
 
-1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). Then, download the [extensiphy repository](https://github.com/McTavishLab/extensiphy) to your computer. One way is to type from the terminal:
+1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). Then, download the [Extensiphy repository](https://github.com/McTavishLab/extensiphy) to your computer. One way is to type from the terminal:
 
 ```bash
 git clone https://github.com/McTavishLab/extensiphy.git
@@ -49,14 +52,15 @@ inside your Extensiphy container. To test your installation, run this command:
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
-Once Extensiphy has finished running on the test data, you should see a line saying:
-```bash
+Once Extensiphy has finished running on the test data, you should see a line saying: 
+```
 Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```
 If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
-For a deeper walkthrough of what has actually happened, you can try the tutorial.
-To get right down to business and update your own alignment, continue with the walkthrough.
+For a deeper walk through of what has actually happened, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
+To get right down to business and update your own alignment, continue to the next section.
+
 
 ### Using Extensiphy on your own data
 
@@ -84,15 +88,18 @@ The `-o` flag lets you specify the name of the output folder.
 ```
 
 Once the Extensiphy run is finished, you can check the `outputs` directory
-for the updated alignment file.
+for the updated alignment file `extended.aln`.
 
 ## Extensiphy Controls and Flags For Use:
 
 ### Required flags
+```
 - (-a) alignment in fasta format,
 - (-d) directory of paired end fastq read files for all query taxa,
+```
 
 ### Optional flags
+```
 - (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN),
 - (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
@@ -110,11 +117,12 @@ for the updated alignment file.
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),
 - (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
+```
 
 ## Output Files!
-- Concatenated alignment file: found in your output folder [OUTDIR]/outputs/extended.aln
-- Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder [OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL
-- Taxon specific intermediate files (if you kept intermediate files): found in your output folder [OUTDIR]/[TAXON_NAME]. .sam, .bam and .vcf files can be found in here for any additional analyses.
+- Concatenated alignment file: found in your output folder `[OUTDIR]/outputs/extended.aln`
+- Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder `[OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL`
+- Taxon specific intermediate files (if you kept intermediate files): found in your output folder `[OUTDIR]/[TAXON_NAME]`. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 ### Gon_phyling Controls and Flags For Use
 Additionally, Extensiphy comes with an additional pipeline for generating a
@@ -123,19 +131,25 @@ These programs are not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment.
 
-INPUT OPTIONS:
+#### INPUT OPTIONS:
+```
 - (-d) directory of paired end reads. All output folders and files will be contained here
 - (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)
 - (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)
+```
 
- OUTPUT
+#### OUTPUT
+```
 - (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)
 - (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)
 - (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)
+```
 
- RUNNING PROGRAM
+#### RUNNING PROGRAM
+```
 - (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)
 - (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
+```
 
 ## If all you have is raw reads and you need to create a starting tree:
 Creating a starting tree!
@@ -151,10 +165,6 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
 ```bash
  multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
-
-## Tutorial
-
-We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through how to install program dependencies for use with Extensiphy and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
 ## Installation Methods
 

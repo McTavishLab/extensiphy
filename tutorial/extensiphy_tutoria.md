@@ -76,7 +76,7 @@ By far, the simplest Extensiphy installation method is to use Docker. Docker is 
 
 2. If you havent cloned the Extensiphy repository to your computer, clone it as normal using these commands:
 ```bash
-git clone https://github.com/McTavishLab/extensiphy.git
+$ git clone https://github.com/McTavishLab/extensiphy.git
 ```
 
 Once these steps are complete, you're ready to begin installing Extensiphy.
@@ -87,20 +87,20 @@ First we'll build the Docker image and a container to test your installation. Th
 1. To build your Docker installation of Extensiphy, we'll need to build the Docker image.
 
 ```bash
-cd extensiphy
-docker build --tag ep_image .
+$ cd extensiphy
+$ docker build --tag ep_image .
 ```
 
 2. We'll build your Extensiphy Docker container using this command. The `-i` flag will make the container interactive and allow you to run Extensiphy
 within the container.
 ```bash
-docker run --name ep_container -i -t ep_image bash
+$ docker run --name ep_container -i -t ep_image bash
 ```
 
 3. Your command line prompt should change to indicate you are working inside the container.
 Finally, the moment of truth. To test your installation, run this command:
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
@@ -119,15 +119,15 @@ You'll need to move the data you want to use to a directory so we can link it to
 First, let's create a new directory and move the data we want to use into the new directory:
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths
 ```bash
-mkdir new_data_dir
-mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
-mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
+$ mkdir new_data_dir
+$ mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
+$ mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
 ```
 
 2. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
 ```bash
-docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
+$ docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
 ```
 
 3. Now you can run the same command as earlier but we'll specify that the `data`
@@ -137,7 +137,7 @@ You will also need to specify the suffixes of your read files using the
 The `-o` flag lets you specify the name of the output folder.
 
 ```bash
-./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+$ ./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
 ```
 
 Once the Extensiphy run is finished, you can check the `outputs` directory
@@ -155,33 +155,33 @@ The steps for installing the Extensiphy dependencies are pretty straight forward
 2. Once conda has been installed and is working, add appropriate channels to your conda install:
 
 ```bash
-conda config --prepend channels conda-forge
-conda config --prepend channels bioconda
+$ conda config --prepend channels conda-forge
+$ conda config --prepend channels bioconda
 ```
 
 3. Run this command to create a new environment (extensiphy_env) and add the necessary dependencies:
 
 ```bash
-conda create -n extensiphy_env samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
+$ conda create -n extensiphy_env samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
 ```
 
 4. Activate your environment.
 
 ```bash
-conda activate extensiphy_env
+$ conda activate extensiphy_env
 ```
 
 5. Once you've activated your environment, you can clone the Extensiphy repository.
 
 ```bash
-git clone https://github.com/McTavishLab/extensiphy.git
+$ git clone https://github.com/McTavishLab/extensiphy.git
 cd extensiphy
 ```
 
 6. Finally, you can test your installation by running the following command.
 
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
@@ -189,7 +189,6 @@ Once Extensiphy has finished running on the test data, you should see a line say
 Alignment file is: [path/to]/EP_output/outputs/extended.aln
 ```
 Congratulations! You're install of Extensiphy is complete and you are ready to continue with the tutorial.
-
 
 
 ## Running Extensiphy
@@ -202,14 +201,14 @@ Lets get to it!
 Extensiphy takes command line arguments to update a sequence alignment with new taxa sequences. Lets look at the options used by Extensiphy. Extensiphy use revolves around calling the
 
 ```bash
-$./multi_map.sh
+$ ./multi_map.sh
 ```
 
 command followed by flags (dashes next to a letter corresponding the option you wish to use or input).
 Calling the help menu with the following command:
 
 ```bash
-$./multi_map.sh -h
+$ ./multi_map.sh -h
 ```
 
 has the following output:
@@ -243,7 +242,7 @@ Extensiphy is a program for quickly adding genomic sequence data to multiple seq
  (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)     
 
 
- if using single locus MSA files as input,     
+ \if using single locus MSA files as input,     
  (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),     
  (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
  ```
@@ -263,7 +262,7 @@ This folder contains a variety of files for testing your installation and use of
 Lets take a look at some of the files in the testdata folder.
 
 ```bash
-$grep ">" ./testdata/combo.fas
+$ grep ">" ./testdata/combo.fas
 ```
 This command should output:
 
@@ -293,7 +292,7 @@ This command should output:
 A quick search of our `combo.fas` sequence alignment shows that we have a number of sequences, presumably in fasta format because the sequence names start with a `>`. Lets count our sequences so we can later assess if our Extensiphy runs are actually adding sequences to the alignment.
 
 ```bash
-$grep -c ">" ./testdata/combo.fas
+$ grep -c ">" ./testdata/combo.fas
 ```
 You should see there are this many sequences in the sequence alignment.
 
@@ -304,7 +303,7 @@ You should see there are this many sequences in the sequence alignment.
 We can also examine some of the sequences directly. This process is easier with a program like [seaview](http://doua.prabi.fr/software/seaview) but if you want to skip installing another program, you can run the following command to look at the first 4 lines of the alignment file.
 
 ```bash
-head -4 ./testdata/combo.fas
+$ head -4 ./testdata/combo.fas
 ```
 The output of this command will be rather intense. DONT PANIC.
 You should see a few header lines starting with a `>` and the name of the taxon followed by another long line of DNA sequence.
@@ -338,7 +337,7 @@ Our output should look like this:
 ./testdata/taxon_30_R2.fq  ./testdata/taxon_31_R2.fq  ./testdata/taxon_32_R2.fq
 ```
 
-Examining these results, we can see that our files are paired-end fastq format files, denoted by the suffixes (_R1.fq and _R2.fq).
+Examining these results, we can see that our files are paired-end fastq format files, denoted by the suffixes (\_R1.fq and \_R2.fq).
 We have read files for 3 taxa.
 Lets take a look inside to confirm that the read files look like real fastq files.
 Run the following command.
@@ -372,7 +371,7 @@ Lets use Extensiphy to update a multiple sequence alignment with some new data. 
 
 ```bash
 
-$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
+$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 
 ```
 
@@ -382,24 +381,85 @@ This command takes in an alignment file (combo.fas) with the -a flag and a direc
 ~/first_extensiphy_run/outputs/extended.aln
 ```
 
+Lets take a look at our new alignment file that SHOULD have 3 new taxa/sequences added to it.
+
+```bash
+$ grep ">" ./first_extensiphy_run/outputs/extended.aln
+```
+
+The output you should see is:
+
+```bash
+>taxon_30_
+>taxon_31_
+>taxon_32_
+>taxon_12
+>taxon_16.ref
+>taxon_22
+>taxon_25
+>taxon_10
+>taxon_17
+>taxon_20
+>taxon_23
+>taxon_21
+>taxon_18
+>taxon_13
+>taxon_15
+>taxon_14
+>taxon_27
+>taxon_11
+>taxon_1
+>taxon_28
+>taxon_26
+>taxon_19
+>taxon_24
+```
+
+Follow that up with a quick count of the number of sequences in the alignment file.
+
+```bash
+$ grep -c ">" ./first_extensiphy_run/outputs/extended.aln
+```
+
+This command should return
+```bash
+23
+```
+
+Awesome! You've successfully added 3 new sequences to a sequence alignment without having to realign the entire file.
+Lets play with some of the optional functionality Extensiphy provides.
+
+### Building a phylogeny
+
 Extensiphy can also build a phylogeny for you based on the updated sequence alignment using RAxML.
 Adding the `-u PHYLO` option to the command will instruct Extensiphy to estimate a phylogeny once the sequence alignment has been updated.
 Here is our new command.
 
 ```bash
 
-$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extensiphy_run
+$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extensiphy_run
 
 ```
 
-
-Lets run a command to take as intput the same alignment and a tree that was produced from that alignment before adding new sequences. Run the following command:
+The outputs will all appear in the `outputs` folder. When looking at your `outputs` folder, you'll see all the RAxML output files.
 
 ```bash
-$./multi_map.sh -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o second_extensiphy_run
+extended.aln          RAxML_bestTree.consensusFULL  RAxML_log.consensusFULL            RAxML_result.consensusFULL
+extended.aln.reduced  RAxML_info.consensusFULL      RAxML_parsimonyTree.consensusFULL
 ```
 
-The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a randomly generated tree.
+The tree file, `RAxML_bestTree.consensusFULL` is the maximum likelihood most likely phylogeny based on the input data.
+
+### Updating an existing phylogeny
+
+In some cases, you might already have a phylogeny and you want to add your new sequences to the alignment and phylogeny in one command.
+Run the following command:
+
+```bash
+$ ./multi_map.sh -u PHYLO -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o third_extensiphy_run
+```
+All of the output files will be the same as generating a phylogeny from scratch.
+The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a de novo generated tree.
 
 Lets look at the original tree that DOESN'T included our new sequences: ![sequences](images/tree_image_3.png?raw=true)
 
@@ -407,10 +467,37 @@ Now, if either run completed successfully you'll see a full phylogenetic tree th
 
 We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.
 
-Selecting a particular reference from the alignment may be important to a particular analysis. You can select a reference by using the -r flag followed by the name of the taxon/sequence. First, lets look at a list of our included taxa. Run the following command in the Extensiphy directory:
+### Bootstrapping an updated phylogeny
+
+By using the `-b` flag, we can toggle bootstrapping on or off when estimating a phylogeny.
+You'll need to specify `-b ON` to turn on bootstrapping. Bootstrapping is off by default.
+Run this command to run Extensiphy on our test data with bootstrapping on for our phylogenetic estimation.
 
 ```bash
-grep ">" ./testdata/combo.fas
+$ ./multi_map.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o fourth_extensiphy_run
+```
+One the run completes, you should see a few additional files compared to our previous outputs.
+The complete `outputs` folder should look something like this:
+
+```bash
+extended.aln                                                      RAxML_info.consensusFULL
+extended.aln.reduced                                              RAxML_info.consensusFULL_bootstrap
+RAxML_bestTree.consensusFULL                                      RAxML_info.majority_rule_bootstrap_consensus
+RAxML_bipartitionsBranchLabels.majority_rule_bootstrap_consensus  RAxML_log.consensusFULL
+RAxML_bipartitions.majority_rule_bootstrap_consensus              RAxML_result.consensusFULL
+RAxML_bootstrap.consensusFULL_bootstrap
+```
+
+These are standard [RAxML](https://github.com/stamatak/standard-RAxML) outputs.
+Visit the linked github repo and brush up on what each file contians.
+
+
+### Choosing a specific reference sequence
+
+Selecting a particular reference from the alignment may be important to a particular analysis. You can select a reference by using the `-r` flag followed by the name of the taxon/sequence. First, lets look at a list of our included taxa. Run the following command in the Extensiphy directory:
+
+```bash
+$ grep ">" ./testdata/combo.fas
 ```
 
 You should see something like this:
@@ -441,7 +528,7 @@ You should see something like this:
 Lets take one of our taxa and use that sequence as the reference. I chose taxon_11 because its on a long branch far from where we expect our sequences to placed in the tree. Make sure you leave off the carrot (>) from the taxon name. Run this command:
 
 ```bash
-$./multi_map.sh -a ./testdata/combo.fas -d ./testdata -t ./testdata/combo.tre -o third_Extensiphy_run -r taxon_11
+$ ./multi_map.sh -a ./testdata/combo.fas -u PHYLO -d ./testdata -t ./testdata/combo.tre -o fifth_Extensiphy_run -r taxon_11
 ```
 
 Did you get the same tree as the output of our original run?
@@ -449,68 +536,76 @@ Did you get the same tree as the output of our original run?
 
 
 ### Starting with Multiple Single Locus Alignments
+
+Extensiphy will accept multiple, single locus files as input instead of a single, concatenated sequence file.
+This is useful if you would also like to output single locus files that have been updated with new sequences for each taxon.
 Lets try starting with multiple single locus files instead of a single, concatenated sequence file. Use the following commands to look at our single locus files:
 
 ```bash
-$ls /testdata/single_locus_align_dir/
+$ ls ./testdata/single_locus_align_dir/
 /testdata/single_locus_align_dir/single_locus_1_.fasta
 /testdata/single_locus_align_dir/single_locus_2_.fasta
 ```
 
-Both of these files contain the homologous sequence for a number of taxa. The first one is a rather big sequence of over 10,000 bases. The second one is a smaller sequence of 4 bases. Take a look at them like so:
+Both of these files contain homologous sequences for a number of taxa. The first one is a rather big sequence of over 10,000 bases. The second one is a smaller sequence of 4 bases. Take a look at them like so:
 
 ```bash
-$head -2 /testdata/single_locus_align_dir/single_locus_1_.fasta
-$head -2 /testdata/single_locus_align_dir/single_locus_2_.fasta
+$ head -2 /testdata/single_locus_align_dir/single_locus_1_.fasta
+$ head -2 /testdata/single_locus_align_dir/single_locus_2_.fasta
 ```
 
-You'll see that one file's sequence is indeed very large while the second file's sequence is only a few letters. This is deliberate to display a function of Extensiphy when selecting which data to input. Extensiphy should only be used with loci over 1,000 bases long. If taking these files as input, the smaller sequence file will be identified and removed before construction of a concatenated sequence. Lets run a new analyses.
+You'll see that one file's sequence is indeed very large while the second file's sequence is only a few letters.
+This is deliberate to display a function of Extensiphy when selecting which data to input.
+Extensiphy should only be used with loci over 700 bases long.
+The read alignment software used in Extensiphy produces the best results when the reads are aligned to longer sequences.
+We've set this default length to 700 bases but we'll show you how to adjust it in a moment.
+If taking these files as input, the smaller sequence file will be identified and removed before construction of a concatenated sequence.
+Lets run a new analyses.
 
 Now, enter the following command:
 
 ```bash
-$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES -o fourth_Extensiphy_run
+$ ./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES -o sixth_Extensiphy_run
 ```
 
-The -m flag allows you to specify a number of input options. by using -m SINGLE_LOCUS_FILES, we are indicating that the alignment option (-a) will point to a directory containing multiple single locus alignment files that share all the sample taxon names. It is VERY important that all the taxa labels have the same names or this function will not work. This run will take the single loci MSA files, check for loci longer than the cut-off of 1,000 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the
+The `-m` flag allows you to specify a directory with any number of input options. by using -m SINGLE_LOCUS_FILES, we are indicating that the alignment option (-a) will point to a directory containing multiple single locus alignment files that share all the sample taxon names. It is VERY important that all the taxa labels have the same names or this function will not work. This run will take the single loci MSA files, check for loci longer than the cut-off of 700 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the file:
 
 ```bash
 loci_positions.csv
 ```
 
-file. This file is a comma delimited file capturing the loci's position in the concatenated alignment, the loci's file name and the loci's length. This will be useful if you decide to split your concatenated multiple sequence alignment back into single locus (gene) alignment files or just want to know how long each locus in your concatenated alignment is.
+This file is a comma delimited file capturing the loci's position in the concatenated alignment, the loci's file name and the loci's length. This will be useful if you decide to split your concatenated multiple sequence alignment back into single locus (gene) alignment files or just want to know how long each locus in your concatenated alignment is.
 
+
+### Updating a species tree produced from single locus files
 
 If you have already produced a species-tree from multiple single locus alignments, Extensiphy can take that tree as input along with your separate locus files. Run the following command to read in some multiple single locus alignments and the tree corresponding to the relationships inferred from all of the combined loci. We'll also give our new Extensiphy run output folder a new name so we can distinguish it from our old run.
 
 ```bash
-$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o split_Extensiphy_run
+$ ./multi_map.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o split_Extensiphy_run
 
 ```
+
+### Outputting updated single locus alignment files
 
 Maybe you also want to output single locus alignment files that have been updated with your new query sequences. Run this command to do that:
 
 ```bash
-$./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
+$ ./multi_map.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
 
 ```
 
-The -g flag allows you to specify the format you wish your output alignments to take (CONCAT_MSA or SINGLE_LOCUS_FILES). When selecting SINGLE_LOCUS_FILES, a concatenated alignment file is produced ASWELL as a folder that contains the separated single locus alignment files in fasta format. Lets take a look at them.
+The -g flag allows you to specify the format you wish your output alignments to take (CONCAT_MSA or SINGLE_LOCUS_FILES). When selecting SINGLE_LOCUS_FILES, a concatenated alignment file is produced AS WELL as a folder that contains the separated single locus alignment files in fasta format. Lets take a look at them.
 
 From the Extensiphy folder, run:
 
 ```bash
-$ls ./locus_out_Extensiphy_run/combine_and_infer/updated_single_loci/
+$ ls ./locus_out_Extensiphy_run/outputs/updated_single_loci/
+
 single_locus_1_.fasta
 ```
 
-You'll notice that there is only a single file here corresponding to a single locus alignment. This is because one of the loci we tried to input into Extensiphy was only 4 nucleotides long, far short of the 1000 nucleotide cutoff for using Extensiphy!
+You'll notice that there is only a single file here corresponding to a single locus alignment. This is because one of the loci we tried to input into Extensiphy was only 4 nucleotides long, far short of the 700 nucleotide cutoff for using Extensiphy!
 
-As an additional use-case, Extensiphy can take Parsnp output files as inputs. This time, we'll use a raw Parsnp file (parsnp.xmfa) file as our input alignment. Parsnp is an automatic homologous locus selection tool for bacterial sequences. The output is not in a standard .fasta format so there is normally some additional processing necessary. Alternatively, Extensiphy will convert the .xmfa file to a fasta file when you add new sequences to the alignment. Use this command:
-
-```bash
-$./multi_map.sh -a ./testdata/parsnp.xmfa -d ./testdata -t ./testdata/combo.tre -m PARSNP_XMFA -o parsnp_Extensiphy_run
-
-```
 
 This concludes the tutorial. Hopefully you understand a little more about using Extensiphy and how to apply Extensiphy to your use-case and data.

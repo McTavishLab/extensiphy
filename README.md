@@ -11,13 +11,13 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the Quick Install and Run section (LINK) will review the docker installation instructions.
+the [Quick Install and Run](https://github.com/McTavishLab/extensiphy/blob/bb8887dc3021b410901d198aaf4c73b0081e7aa8/README.md#L22) section will review the docker installation instructions.
 
 ### Anaconda
-You can also install the dependencies of Extensiphy using Anaconda. This link will take you to the Anaconda installation guide.
+You can also install the dependencies of Extensiphy using Anaconda. [Click here](https://github.com/McTavishLab/extensiphy/blob/bb8887dc3021b410901d198aaf4c73b0081e7aa8/README.md#L161) to go to the Anaconda installation guide.
 
 ### Advanced
-*For advanced users of Linux* If you're comfortable installing programs by hand, this section is for you.
+*For advanced users of Linux* If you're comfortable installing programs by hand, [this](https://github.com/McTavishLab/extensiphy/blob/bb8887dc3021b410901d198aaf4c73b0081e7aa8/README.md#L211) section is for you.
 
 ## Quick Install and Run
 ### Building and testing your own Extensiphy Docker image
@@ -119,7 +119,7 @@ for the updated alignment file.
 ### Gon_phyling Controls and Flags For Use
 Additionally, Extensiphy comes with an additional pipeline for generating a
 phylogenetic tree from scratch: **Gon\_phyling**.
-These programs are not required for running Extensiphy itself but Gon\_ling
+These programs are not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment.
 
@@ -154,13 +154,13 @@ gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsn
 
 ## Tutorial
 
-We recommend you run through the tutorial before using Extensiphy on your own dataset. The tutorial will walk through how to install program dependencies for use with Extensiphy and how to run Extensiphy using different data types and options. You can find the tutorial file in the tutorial folder (link). You can copy code snippets into your terminal window.
+We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through how to install program dependencies for use with Extensiphy and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
 ## Installation Methods
 
 ### Anaconda Installation
 You can install the dependencies of Extensiphy using the Anaconda package manager.
- Install instructions for Anaconda can be found here (link).
+ Install instructions for Anaconda can be found [here](https://docs.conda.io/en/latest/miniconda.html).
 Once Anaconda has been installed, use this command to create an environment with
  all of the Extensiphy dependencies added to it.
 
@@ -234,7 +234,7 @@ Dependencies (Separate programs you'll need to install):
 
 Additionally, Extensiphy comes with an additional pipeline for generating a
 phylogenetic tree from scratch: **Gon\_phyling**.
-These programs are not required for running Extensiphy itself but Gon\_ling
+These programs are not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment. Gon\_phyling's dependencies are as
 follows:

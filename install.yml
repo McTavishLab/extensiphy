@@ -1,4 +1,4 @@
-name: rapup_env
+name: extensiphy_env
 channels:
   - bioconda
   - conda-forge
@@ -7,7 +7,7 @@ dependencies:
   - numpy
   - pandas
   - argparse
-  - hisat2
+  - bwa-mem2
   - samtools
   - seqtk
   - bcftools

@@ -48,7 +48,7 @@ This notation indicates that you should replace the segment within the brackets 
 
 ## Command Line Basics and Installation Methods
 
-First, you'll need to know about some basics of command line. If you've never used the command line before, I recommend you read the command line tutorial (LINK) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
+First, you'll need to know about some basics of command line. If you've never used the command line before, I recommend you read the [command line tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/command_line_tutorial.md) packaged in this repo to help get to grips with some of the new concepts you'll need in order to use Extensiphy. Then we'll walk through the two different methods you can use to install Extensiphy and its dependency programs. This section contains:
 
 1. Docker installation and use
 
@@ -64,7 +64,7 @@ You will need to:
 2. Unzip and make sure all of the necessary programs are executable.
 3. Add all of the dependency programs to your computers PATH.
 
-Thats it! If you've done these steps, you can skip ahead to the sections where we start running Extensiphy (LINK).
+Thats it! If you've done these steps, you can skip ahead to the sections where we start running Extensiphy.
 Using Extensiphy is limited to Linux at the moment. Using Ubuntu will ensure the smoothest performance. If you want to use another distro or another flavor of Debian, you'll have to make sure you install analogous one-liners and all that. You have been warned.
 
 ### Installation with Docker
@@ -104,7 +104,7 @@ $ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
-```bash
+```
 Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```
 If you did not get this message, you'll have to check output log `ep_dev_log.txt`
@@ -175,7 +175,7 @@ $ conda activate extensiphy_env
 
 ```bash
 $ git clone https://github.com/McTavishLab/extensiphy.git
-cd extensiphy
+$ cd extensiphy
 ```
 
 6. Finally, you can test your installation by running the following command.
@@ -213,7 +213,7 @@ $ ./multi_map.sh -h
 
 has the following output:
 
-```bash
+```
 Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.
     View the README for more specific information.
     Inputs are generally a multiple sequence file in fasta format and a directory of
@@ -242,7 +242,7 @@ Extensiphy is a program for quickly adding genomic sequence data to multiple seq
  (-b) bootstrapping tree ON or OFF (DEFAULT: OFF)     
 
 
- \if using single locus MSA files as input,     
+ if using single locus MSA files as input,     
  (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),     
  (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
  ```
@@ -253,7 +253,7 @@ Extensiphy has a number of default settings for these so you will not always hav
 ### Examining our input data
 First lets try a basic test case. Within the Extensiphy folder is a folder called
 
-```bash
+```
 testdata
 ```
 
@@ -266,7 +266,7 @@ $ grep ">" ./testdata/combo.fas
 ```
 This command should output:
 
-```bash
+```
 >taxon_12
 >taxon_16.ref
 >taxon_22
@@ -296,7 +296,7 @@ $ grep -c ">" ./testdata/combo.fas
 ```
 You should see there are this many sequences in the sequence alignment.
 
-```bash
+```
 20
 ```
 
@@ -305,7 +305,7 @@ We can also examine some of the sequences directly. This process is easier with 
 ```bash
 $ head -4 ./testdata/combo.fas
 ```
-The output of this command will be rather intense. DONT PANIC.
+The output of this command will be rather intense. **DONT PANIC**.
 You should see a few header lines starting with a `>` and the name of the taxon followed by another long line of DNA sequence.
 There should be 2 sequences total output by this command. This displays that there is indeed aligned DNA sequences in our alignment file.
 
@@ -318,7 +318,7 @@ $ ls -lh ./testdata/combo.fas
 
 This command should output something similar to the following information.
 
-```bash
+```
 -rw-rw-r-- 1 your_user_name your_user_name 200K Oct  4 11:43 ./testdata/combo.fas
 ```
 
@@ -332,12 +332,12 @@ $ ls ./testdata/*.fq
 
 Our output should look like this:
 
-```bash
+```
 ./testdata/taxon_30_R1.fq  ./testdata/taxon_31_R1.fq  ./testdata/taxon_32_R1.fq
 ./testdata/taxon_30_R2.fq  ./testdata/taxon_31_R2.fq  ./testdata/taxon_32_R2.fq
 ```
 
-Examining these results, we can see that our files are paired-end fastq format files, denoted by the suffixes (\_R1.fq and \_R2.fq).
+Examining these results, we can see that our files are paired-end fastq format files, denoted by the suffixes (`_R1.fq` and `_R2.fq`).
 We have read files for 3 taxa.
 Lets take a look inside to confirm that the read files look like real fastq files.
 Run the following command.
@@ -348,7 +348,7 @@ $ for i in $(ls ./testdata/*.fq ); do head $i; done
 
 The output of this command should look like repetitions of the following:
 
-```bash
+```
 @taxonxon_66_R1_sim_taxonxon_127_R1-2040/1
 AGACTCCAGCCTGCCTGACGTGGTCAGCCACGGCGAAGGCCGCGCCGACTTCGCGCTTCACGGCGGCAGTATTTCCGCCGACTTGGGCGTCGCGCTGCAA
 +
@@ -377,7 +377,7 @@ $ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 
 This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that Extensiphy will add the taxa sequences from the read files to combo.fas. You can examine the results by looking at the updated alignment file:
 
-```bash
+```
 ~/first_extensiphy_run/outputs/extended.aln
 ```
 
@@ -389,7 +389,7 @@ $ grep ">" ./first_extensiphy_run/outputs/extended.aln
 
 The output you should see is:
 
-```bash
+```
 >taxon_30_
 >taxon_31_
 >taxon_32_
@@ -422,7 +422,7 @@ $ grep -c ">" ./first_extensiphy_run/outputs/extended.aln
 ```
 
 This command should return
-```bash
+```
 23
 ```
 
@@ -443,7 +443,7 @@ $ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extens
 
 The outputs will all appear in the `outputs` folder. When looking at your `outputs` folder, you'll see all the RAxML output files.
 
-```bash
+```
 extended.aln          RAxML_bestTree.consensusFULL  RAxML_log.consensusFULL            RAxML_result.consensusFULL
 extended.aln.reduced  RAxML_info.consensusFULL      RAxML_parsimonyTree.consensusFULL
 ```
@@ -479,7 +479,7 @@ $ ./multi_map.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre 
 One the run completes, you should see a few additional files compared to our previous outputs.
 The complete `outputs` folder should look something like this:
 
-```bash
+```
 extended.aln                                                      RAxML_info.consensusFULL
 extended.aln.reduced                                              RAxML_info.consensusFULL_bootstrap
 RAxML_bestTree.consensusFULL                                      RAxML_info.majority_rule_bootstrap_consensus
@@ -502,7 +502,7 @@ $ grep ">" ./testdata/combo.fas
 
 You should see something like this:
 
-```bash
+```
 >taxon_12
 >taxon_16.ref
 >taxon_22
@@ -543,6 +543,9 @@ Lets try starting with multiple single locus files instead of a single, concaten
 
 ```bash
 $ ls ./testdata/single_locus_align_dir/
+```
+This command should produce this result:
+```
 /testdata/single_locus_align_dir/single_locus_1_.fasta
 /testdata/single_locus_align_dir/single_locus_2_.fasta
 ```
@@ -570,7 +573,7 @@ $ ./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LO
 
 The `-m` flag allows you to specify a directory with any number of input options. by using -m SINGLE_LOCUS_FILES, we are indicating that the alignment option (-a) will point to a directory containing multiple single locus alignment files that share all the sample taxon names. It is VERY important that all the taxa labels have the same names or this function will not work. This run will take the single loci MSA files, check for loci longer than the cut-off of 700 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the file:
 
-```bash
+```
 loci_positions.csv
 ```
 

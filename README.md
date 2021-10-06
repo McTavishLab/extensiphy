@@ -11,13 +11,13 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the Quick Install and Run section will review the docker installation instructions.
+the **Quick Install and Run** section will review the docker installation instructions.
 
 ### Anaconda
-You can also install the dependencies of Extensiphy using Anaconda. The Anaconda Installation section of this readme will walk through this process in more detail.
+You can also install the dependencies of Extensiphy using Anaconda. The **Anaconda Installation** section of this readme will walk through this process in more detail.
 
 ### Advanced
-*For advanced users of Linux* If you're comfortable installing programs by hand, the Advanced Installation Methods section is for you.
+*For advanced users of Linux* If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you.
 
 ### Tutorial
 We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
@@ -52,7 +52,7 @@ inside your Extensiphy container. To test your installation, run this command:
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
-Once Extensiphy has finished running on the test data, you should see a line saying: 
+Once Extensiphy has finished running on the test data, you should see a line saying:
 ```
 Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```

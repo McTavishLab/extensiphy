@@ -11,11 +11,18 @@ output: html_document
 
 This tutorial introduces the basics of the command line. Its not designed to be an in-depth exposition on how to use all facets of the command line. Rather, this tutorial will get you started and give you some important information that you can follow up with your own research.
 
+## A note about this guide
+You can copy commands from this guide into your terminal.
+Lines in a code block that start with the dollar sign `$` are lines that you can run in the terminal.
+The dollar sign is just there to indicate that its a executable command. **Do not copy the dollar sign.**
+Lines after an executable line are the outputs of the executable line.
+
 ## Looking around
-When you open up a terminal window, you'll notice that you don't really see anything. DONT PANIC. This is just a new way of interacting with your computer. Lets look around our new environment. The `ls` command lets you see what files and folders (directories) are in the same folder (directory) as you currently are.
+When you open up a terminal window, you'll notice that you don't really see anything. **DONT PANIC**. This is just a new way of interacting with your computer. Lets look around our new environment. The `ls` command lets you see what files and folders (directories) are in the same folder (directory) as you currently are.
 
 ```bash
-$ls
+$ ls
+
 Documents
 Downloads
 any_other_folders
@@ -26,7 +33,8 @@ any_files
 When you use the `ls` command, you'll see files and directories specific to your computer. you can also use the `-a` flag to show hidden files and directories.
 
 ```bash
-$ls -a
+$ ls -a
+
 .
 ..
 .bash_profile
@@ -44,7 +52,8 @@ Flags are used in a couple different ways. A flag can be used to tell the progra
 The `pwd` command will become very imporant because it tells you the path to your current location. By path, I mean the navigation path through the directory structure of your computer to get to your current location. If you open a terminal and type the `pwd` command, you should see something like:
 
 ```bash
-$pwd
+$ pwd
+
 /home/your_user_name
 ```
 
@@ -55,18 +64,21 @@ The `/` (slashes) indicate the transition between one directory (folder) and ano
 To illustrate the importance of the `pwd` command, we'll introduce another basic command: `cd`. The `cd` command moves you into another directory. So if I open a terminal, want to look at the files and directories around me and then move into one of those directories, I could use the following sequence of commands.
 
 ```bash
-$ls
+$ ls
+
 Documents
 Downloads
 any_other_folders
 any_files
 
-$pwd
+$ pwd
+
 /home/your_user_name
 
-$cd Documents
+$ cd Documents
 
-$pwd
+$ pwd
+
 /home/your_user_name/Documents
 ```
 

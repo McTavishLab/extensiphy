@@ -2,27 +2,29 @@
 
 Extensiphy is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment. Homologous loci may be kept concatenated or split back into individual alignments prior to phylogenetic estimation.
 
-![Extensiphy_worlflow](./doc/images/EP_workflow_2.png)
+![Extensiphy_workflow](./doc/images/EP_workflow_2.png)
 
 Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). Reads are aligned to a reference sequence and a consensus sequence is called (b). The new sequence is added to the alignment and the updated alignment is used to estimate a phylogeny (c).
 
-[1. Setup and Use](#1-setup-and-use)
+[Installation](#installation)
 
-[2. Quick Install and Run](#2-quick-install-and-run)
+[Example Run](#example-run)
 
-[3. Extensiphy Controls and Flags](#3-extensiphy-controls-and-flags)
+[Running on your own data](#own-data)
 
-[4. Output Files](#4-output-files)
+[Extensiphy Controls and Flags](#extensiphy-controls-and-flags)
 
-[5. Gon_phyling](#5-gon-phyling)
+[Output Files](output-files)
 
-[6. Starting from Raw Reads](#6-starting-from-raw-reads)
+[De novo genome assembly and alignment](#gon-phyling)
 
-[7. Anaconda Installation](#7-anaconda-installation)
+[Starting from Raw Reads](starting-from-raw-reads)
 
-[8. Advanced Installation Methods](#8-advanced-installation-methods)
+[Anaconda Installation](anaconda-installation)
 
-## 1. Setup and Use
+[Advanced Installation Methods](advanced-installation-methods)
+
+## Installation
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
@@ -53,7 +55,7 @@ docker pull mctavishlab/extensiphy
 * `-t` specifies the image to use as a template.
 * `--name` specifies the container name.
 ```bash
-docker run --name ep_container -i -t extensiphy bash
+docker run --name ep_container -i -t mctavishlab/extensiphy bash
 ```
 
 Your command line prompt should change to indicate that you are now working
@@ -69,14 +71,14 @@ docker exec -it ep_container bash
 ```
 
 
-## 2. Quick test run
+## Example run
 If you have followed one of the install approaches above, you are now ready to try a test run!
 
 Either from the docker container, your anaconda env, or from the directory where you installed Extensiphy.
 
 
 
-4. Ok, Lets run Extensiphy and test our installation!  
+Ok, Lets run Extensiphy and test our installation!  
 We want to produce an updated alignment and estimate a phylogeny from that alignment.  
 You'll need to input some information using flags:
 * `-a` passes Extensiphy the alignment file you wish to update.
@@ -119,7 +121,7 @@ docker cp ep_container:/project/extensiphy/EP_output/outputs/RAxML_bestTree.cons
 * To get right down to business and update your own alignment, continue to the next section.
 
 
-### Using Extensiphy on your own data.
+### Using Extensiphy on your own data
 
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
@@ -142,7 +144,7 @@ We'll build a new Extensiphy Docker container and connect the directory containi
 * `-v` specifies the directory your linking to the container and where in the container your linking it.
 
 ```bash
-docker run --name ep_container_link -i -t -v [/path/to/my_data_dir]:/project/linked_data extensiphy bash
+docker run --name ep_container_link -i -t -v [/path/to/my_data_dir]:/project/linked_data mctavishlab/extensiphy bash
 ```
 
 This shares the 'my_data_dir' folder between your operating system and the docker container. (In this example it is named "my_data_dir" locally and "linked_data" in your docker container, but you can name them the same thing in both places if you prefer.)
@@ -159,7 +161,7 @@ Now you can run multi_map as earlier but we'll specify the directory where your 
 By putting the outputs into the linked directory, you can access them directly through your operating system without having to copy them. 
 
 
-## 3. Extensiphy Controls and Flags:
+## Extensiphy Controls and Flags:
 
 ### Required flags
 ```
@@ -188,12 +190,12 @@ By putting the outputs into the linked directory, you can access them directly t
 - (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
 ```
 
-## 4. Output Files
+## Output Files
 * Concatenated alignment file: found in your output folder ```[OUTDIR]/outputs/extended.aln```
 * Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/outputs/RAxML_bestTree.consensusFULL```
 * Taxon specific intermediate files (if you kept intermediate files): found in your output folder ```[OUTDIR]/[TAXON_NAME]```. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
-## 5. Gon phyling
+## De novo genome assembly and alignment
 Additionally, Extensiphy comes with an pipeline for generating a
 phylogenetic tree from scratch: **Gon\_phyling**.
 This program is not required for running Extensiphy itself but Gon\_phyling
@@ -220,7 +222,7 @@ the loci/genes you include in your alignment.
 - (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
 ```
 
-## 6. Starting from Raw Reads
+### Starting from Raw Reads
 Creating a starting alignment!
 You need a alignment with any number of taxa in order to update with new taxa.
 The commands below will use Gon_phyling to assemble a starting alignment that can then be built-upon with Extensiphy.
@@ -235,7 +237,7 @@ The commands below will use Gon_phyling to assemble a starting alignment that ca
  multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
 
-## 7. Anaconda Installation
+## Anaconda Installation
 You can install the dependencies of Extensiphy using the Anaconda package manager.
  Install instructions for Anaconda can be found [here](https://docs.conda.io/en/latest/miniconda.html).
 Once Anaconda has been installed, use this command to create an environment with
@@ -285,12 +287,9 @@ If you did not get this message, you'll have to check output log `[output_direct
 to learn more about the issue before proceeding.
 
 
-## 8. Advanced Installation Methods
+## Manual Installation
 
-**Using Extensiphy is limited to Linux at the moment.** Using Ubuntu will ensure
-the smoothest performance. If you want to use another distro,
-you'll have to make sure you install analogous one-liners and all that.
-You have been warned.
+**Extensiphy is only tested on Linux (Ubuntu specifically) currently.**
 
 
 ### Requirements
@@ -310,7 +309,7 @@ Dependencies (Separate programs you'll need to install):
 8. [Dendropy](https://dendropy.org/)
 
 **Gon\_phyling**.
-Gon\_phyling's dependencies are as follows:
+Gon\_phyling's (denovo genome assembly and alignment) dependencies are as follows:
 
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)

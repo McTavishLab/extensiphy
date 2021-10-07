@@ -165,18 +165,18 @@ the loci/genes you include in your alignment.
 ```
 
 ## 6. Starting from Raw Reads
-Creating a starting tree!
-You need a tree and alignment with any number of taxa in order to update these with new taxa.
-gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.
+Creating a starting alignment!
+You need a alignment with any number of taxa in order to update with new taxa.
+The commands below will use Gon_phyling to assemble a starting alignment that can then be built-upon with Extensiphy.
 
-1. Move some fraction of your reads to a new directory for assembly and starting tree inference.
+1. Move some fraction or subset of your read files to a new directory for assembly and starting alignment construction.
 2. run:
 ```bash
 ./gon_phyling.sh -d [PATH/TO/NEW/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2]
 ```
-3. Use the produced alignment file, tree file and the rest of the reads as the inputs for a full Extensiphy run by running:
+3. Use the produced alignment file and the rest of the reads as the inputs for a full Extensiphy run by running:
 ```bash
- multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -t [PATH/TO/TREE/FILE] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
+ multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
 
 ## 7. Anaconda Installation

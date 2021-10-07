@@ -32,12 +32,11 @@ the **Quick Install and Run** section will review the docker installation instru
 You can also install the dependencies of Extensiphy using Anaconda. The **Anaconda Installation** section of this readme will walk through this process in more detail.
 
 ### Advanced
-*For advanced users of Linux* If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you. Extensiphy dependencies are also found here.
+If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you. Extensiphy dependencies are also found here.
 
 ### Tutorial
 We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
-## 2. Quick Install and Run
 ### Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
 
@@ -55,64 +54,101 @@ within the container.
 ```bash
 docker run --name ep_container -i -t extensiphy bash
 ```
+. Your command line prompt should change to indicate that you are now working
+inside your Extensiphy container.
 
-4. Your command line prompt should change to indicate that you are now working
-inside your Extensiphy container. To test your installation, run this command:
+You can exit the docker container by typing 'exit'.
+
+To restart it and return to interactive analyses, run:
+
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+docker container restart ep_container
+docker exec -it ep_container bash
+
 ```
 
-Once Extensiphy has finished running on the test data, you should see a line saying:
+
+
+## 2. Quick test run
+If you have followed one of the install approaches above, you are now ready to try a test run!
+
+Either from the docker container, your anaconda env, or from the directory where you installed Extensiphy.
+
+
+4
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o EP_output
+```
+This is a simple run on three paired end read samples, which are found in the directory "extensiphy/testdata"
+The -a flag provides the path to the existing alignment to update.
+The -1 and -2 flags specify the filename endings for each of the readfiles. (defaults are \_R1.fq and \_R2.fq )
+The -u flag specfies what analysis to run. Here we are buildinga phylogeny. (default is ALIGN, building an alignment only.)
+The -o flag specifies the output directory. (default is 'EP_output')
+
+Once Extensiphy has finished running on the test data, you should see a lines saying:
 ```
 Alignment file is: /project/extensiphy/EP_output/outputs/extended.aln
+
+Tree file is: /project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL
+
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
 
-Exit the container by typing
+```bash
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 
+```
+
+If you are using docker - exit the container by typing
 ```
 exit
 ```
 
-You can still copy the extended alignemnt to your local directory using:
+You can copy the extended tree to your local directory using:
 
 ```
-docker cp ep_container:/project/extensiphy/EP_output/outputs/extended.aln .
+docker cp ep_container:/project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL .
 ```
 
-* For a deeper walk through of what has actually happened, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
+* For a deeper walk through, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
 
 * To get right down to business and update your own alignment, continue to the next section.
 
 
-### Using Extensiphy on your own data
+### Using Extensiphy on your own data.
 
-5. Next, you'll need to move the data you want to use to a directory we can link to a new container.
-First, let's create a new directory and move the data we want to use into the new directory:
-We'll use brackets `[]` to indicate variables you should replace with your own files or paths
-```bash
-mkdir new_data_dir
-mv [/path/to/your/alignment_file] [/path/to/new_data_dir]
-mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
-```
-
-6. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
+We'll use brackets `[]` to indicate variables you should replace with your own files or paths.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
+
+
+If you have installed Extensiphy locally, you can just pass in the paths to your data, and run the analysis.
+
+````bash
+./multi_map.sh -a [path to your_input_alignment] -d [path to your_directory_of_reads] -1 [r1_suffix] -2 [r2_siffx] -u [either PHYLO or ALIGN, depening on if you wnat a phylogeny or just and alignment] -o [your_output_dir]
+````
+
+#### Using Extensiphy on your own data, using a linked docker folder.
+
+If you are using docker, it is simplest to link your data directory to a new container.
+
+Put the input alignment and raw reads you want to align in a directory. e.g. [my_data_dir]
+
+We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
+
 ```bash
-docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/project/linked_data ep_image bash
+docker run --name ep_container_link -i -t -v [/path/to/my_data_dir]:/project/linked_data extensiphy bash
 ```
 
-7. Now you can run the same command as earlier but we'll specify the directory where your data is located.
-You will also need to specify the suffixes of your read files using the
-`-1` and `-2` flags.
+This shares the 'my_data_dir' folder between your operating system and the docker container. (In this example it is named "my_data_dir" locally and "linked_data" in your docker container, but you can name them the same thing in both places if you prefer.)
+
+Now you can run multi_map as earlier but we'll specify the directory where your data is located.
+
 ```bash
-./multi_map.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+./multi_map.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o linked_data/[output_dir_name]
 ```
 
-Once the Extensiphy run is finished, you can check the find your updated alignment in:
-```
-/project/extensiphy/EP_out/outputs/extended.aln
-```
+By putting the outputs into the linked directory, you can access them directly through your operating system without having to copy them. 
+
 
 ## 3. Extensiphy Controls and Flags:
 

@@ -16,7 +16,7 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [5. Gon_phyling](#5-gon-phyling)
 
-[6. If all you have is raw reads and you need to create a starting tree](#6-if-all-you-have-is-raw-reads-and-you-need-to-create-a starting-tree)
+[6. Starting from Raw Reads](#6-starting-from-raw-reads)
 
 [7. Anaconda Installation](#7-anaconda-installation)
 
@@ -134,13 +134,13 @@ Once the Extensiphy run is finished, you can check the find your updated alignme
 
 ## 4. Output Files
 * Concatenated alignment file: found in your output folder ```[OUTDIR]/outputs/extended.aln```
-* Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL```
+* Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/outputs/RAxML_bestTree.consensusFULL```
 * Taxon specific intermediate files (if you kept intermediate files): found in your output folder ```[OUTDIR]/[TAXON_NAME]```. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 ## 5. Gon phyling
-Additionally, Extensiphy comes with an additional pipeline for generating a
+Additionally, Extensiphy comes with an pipeline for generating a
 phylogenetic tree from scratch: **Gon\_phyling**.
-These programs are not required for running Extensiphy itself but Gon\_phyling
+This program is not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment.
 
@@ -164,7 +164,7 @@ the loci/genes you include in your alignment.
 - (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
 ```
 
-## 6. If all you have is raw reads and you need to create a starting tree
+## 6. Starting from Raw Reads
 Creating a starting tree!
 You need a tree and alignment with any number of taxa in order to update these with new taxa.
 gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.

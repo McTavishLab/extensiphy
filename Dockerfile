@@ -35,6 +35,6 @@ RUN cp ./bwa-mem2-2.0pre2_x64-linux/bwa-mem2* /usr/local/bin/
 RUN git clone https://github.com/McTavishLab/extensiphy.git
 
 WORKDIR /usr/src/app/extensiphy
-RUN git checkout dev
+#RUN git checkout dev
 
 #RUN ln -s /usr/src/app/linked_data/* /usr/src/app/extensiphy/data/

@@ -6,21 +6,21 @@ Extensiphy is a pipeline that assembles homologous loci by aligning reads to a r
 
 Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). Reads are aligned to a reference sequence and a consensus sequence is called (b). The new sequence is added to the alignment and the updated alignment is used to estimate a phylogeny (c).
 
-[Setup and Use](setup-and-use)
+[Setup and Use](#setup-and-use)
 
-[Building and testing your own Extensiphy Docker image](building-and-testing-your-own-extensiphy-docker-image)
+[Building and testing your own Extensiphy Docker image](#building-and-testing-your-own-extensiphy-docker-image)
 
-[Extensiphy Controls and Flags](extensiphy-controls-and-flags)
+[Extensiphy Controls and Flags](#extensiphy-controls-and-flags)
 
-[Output Files](output-files)
+[Output Files](#output-files)
 
-[Gon_phyling](gon-phyling)
+[Gon_phyling](#gon-phyling)
 
-[Starting from Raw Reads](starting-from-raw-reads)
+[Starting from Raw Reads](#starting-from-raw-reads)
 
-[Anaconda Installation](anaconda-installation)
+[Anaconda Installation](#anaconda-installation)
 
-[Advanced Installation Methods](advanced-installation-methods)
+[Advanced Installation Methods](#advanced-installation-methods)
 
 ## Setup and Use
 

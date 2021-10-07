@@ -70,12 +70,14 @@ You'll need to input some information using flags:
 * `-o` passes the name of the output directory.  
 To test your installation, run this command:
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq
+./multi_map.sh -u PHYLO -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -o ep_output
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
 ```
-Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
+Alignment file is: /usr/src/app/extensiphy/ep_output/outputs/extended.aln
+
+Tree file is: /usr/src/app/extensiphy/ep_output/outputs/RAxML_bestTree.consensusFULL
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.

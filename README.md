@@ -66,7 +66,7 @@ You'll need to input some information using flags:
 * `-a` passes Extensiphy the alignment file you wish to update.
 * `-d` passes the folder containing the fastq files.
 * `-1` and `-2` pass the suffixes of your fastq reads (assuming paired-end files!).
-* `-u PHYLO` tells Extensiphy to estimate a phylogeny from the updated alignment.
+* `-u PHYLO` estimate a phylogeny from the updated alignment. Can be omitted to stop after alignment updating.
 * `-o` passes the name of the output directory.  
 To test your installation, run this command:
 ```bash
@@ -90,7 +90,7 @@ to learn more about the issue before proceeding.
 ### Using Extensiphy on your own data
 
 5. Next, you'll need to move the data you want to use to a directory we can link to a new container.
-First, let's create a new directory and move the data we want to use into the new directory:
+First, let's create a new directory and move the data we want to use into the new directory.  
 We'll use brackets `[]` to indicate variables you should replace with your own files or paths
 ```bash
 mkdir new_data_dir

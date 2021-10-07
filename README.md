@@ -53,7 +53,7 @@ docker pull mctavishlab/extensiphy
 The `-i` flag will make the container interactive and allow you to run Extensiphy
 within the container.
 ```bash
-docker run --name ep_container -i -t ep_image bash
+docker run --name ep_container -i -t extensiphy bash
 ```
 
 4. Your command line prompt should change to indicate that you are now working
@@ -68,6 +68,17 @@ Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
+
+Exit the container by typing
+```
+exit
+```
+
+You can still copy the extended alignemnt to your local directory using:
+
+```
+docker cp ep_container:/usr/src/app/extensiphy/EP_output/outputs/extended.aln .
+```
 
 * For a deeper walk through of what has actually happened, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
 

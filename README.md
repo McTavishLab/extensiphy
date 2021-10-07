@@ -64,7 +64,7 @@ inside your Extensiphy container. To test your installation, run this command:
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
 ```
-Alignment file is: /usr/src/app/extensiphy/EP_output/outputs/extended.aln
+Alignment file is: /project/extensiphy/EP_output/outputs/extended.aln
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.
@@ -77,7 +77,7 @@ exit
 You can still copy the extended alignemnt to your local directory using:
 
 ```
-docker cp ep_container:/usr/src/app/extensiphy/EP_output/outputs/extended.aln .
+docker cp ep_container:/project/extensiphy/EP_output/outputs/extended.aln .
 ```
 
 * For a deeper walk through of what has actually happened, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
@@ -99,19 +99,19 @@ mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
 6. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
 ```bash
-docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
+docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/project/linked_data ep_image bash
 ```
 
 7. Now you can run the same command as earlier but we'll specify the directory where your data is located.
 You will also need to specify the suffixes of your read files using the
 `-1` and `-2` flags.
 ```bash
-./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
+./multi_map.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
 ```
 
 Once the Extensiphy run is finished, you can check the find your updated alignment in:
 ```
-/usr/src/app/extensiphy/EP_out/outputs/extended.aln
+/project/extensiphy/EP_out/outputs/extended.aln
 ```
 
 ## 3. Extensiphy Controls and Flags:

@@ -60,11 +60,14 @@ Your command line prompt should change to indicate that you are now working
 inside your Extensiphy container.
 
 
-4. Ok, Lets run Extensiphy and test our installation!
+4. Ok, Lets run Extensiphy and test our installation!  
+We want to produce an updated alignment and estimate a phylogeny from that alignment.  
 You'll need to input some information using flags:
 * `-a` passes Extensiphy the alignment file you wish to update.
-* `-d` passes the folder containing the fastq files
-* `-1` and `-2` pass the suffixes of your fastq reads (assuming paired-end files!)
+* `-d` passes the folder containing the fastq files.
+* `-1` and `-2` pass the suffixes of your fastq reads (assuming paired-end files!).
+* `-u PHYLO` tells Extensiphy to estimate a phylogeny from the updated alignment.
+* `-o` passes the name of the output directory.  
 To test your installation, run this command:
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq

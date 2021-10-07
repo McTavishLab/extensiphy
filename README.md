@@ -10,7 +10,17 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [2. Quick Install and Run](#2-quick-install-and-run)
 
-[3. Extensiphy Controls and Flags For Use](#3-extensiphy-controls-and-flags-for-use)
+[3. Extensiphy Controls and Flags](#3-extensiphy-controls-and-flags)
+
+[4. Output Files](#4-output-files)
+
+[5. Gon_phyling](#5-gon-phyling)
+
+[6. If all you have is raw reads and you need to create a starting tree](#6-if-all-you-have-is-raw-reads-and-you-need-to-create-a starting-tree)
+
+[7. Anaconda Installation](#7-anaconda-installation)
+
+[8. Advanced Installation Methods](#8-advanced-installation-methods)
 
 ## 1. Setup and Use
 
@@ -93,7 +103,7 @@ Once the Extensiphy run is finished, you can check the find your updated alignme
 /usr/src/app/extensiphy/EP_out/outputs/extended.aln
 ```
 
-## 3. Extensiphy Controls and Flags For Use:
+## 3. Extensiphy Controls and Flags:
 
 ### Required flags
 ```
@@ -122,39 +132,39 @@ Once the Extensiphy run is finished, you can check the find your updated alignme
 - (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
 ```
 
-## 4. Output Files!
-- Concatenated alignment file: found in your output folder `[OUTDIR]/outputs/extended.aln`
-- Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder `[OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL`
-- Taxon specific intermediate files (if you kept intermediate files): found in your output folder `[OUTDIR]/[TAXON_NAME]`. .sam, .bam and .vcf files can be found in here for any additional analyses.
+## 4. Output Files
+* Concatenated alignment file: found in your output folder ```[OUTDIR]/outputs/extended.aln```
+* Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/combine_and_infer/RAxML_bestTree.consensusFULL```
+* Taxon specific intermediate files (if you kept intermediate files): found in your output folder ```[OUTDIR]/[TAXON_NAME]```. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
-## 5. Gon_phyling Controls and Flags For Use
+## 5. Gon phyling
 Additionally, Extensiphy comes with an additional pipeline for generating a
 phylogenetic tree from scratch: **Gon\_phyling**.
 These programs are not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment.
 
-#### INPUT OPTIONS:
+### INPUT OPTIONS:
 ```
 - (-d) directory of paired end reads. All output folders and files will be contained here
 - (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)
 - (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)
 ```
 
-#### OUTPUT
+### OUTPUT
 ```
 - (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)
 - (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)
 - (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)
 ```
 
-#### RUNNING PROGRAM
+### RUNNING PROGRAM
 ```
 - (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)
 - (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
 ```
 
-## 6. If all you have is raw reads and you need to create a starting tree:
+## 6. If all you have is raw reads and you need to create a starting tree
 Creating a starting tree!
 You need a tree and alignment with any number of taxa in order to update these with new taxa.
 gon_phyling.sh is a simple pipeline to de novo assemble reads before using parsnp for loci selection and finally phylogenetic inference.

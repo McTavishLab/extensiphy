@@ -40,6 +40,13 @@ if [ $(which bbduk.sh | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
         printf "bbduk.sh found\n"
 fi
 
+if [ $(which repair.sh | wc -l) -lt 1 ] 
+    then
+        printf "repair.sh not found. Install and/or add to path\n" >&2
+    else
+        printf "repair.sh found\n"
+fi
+
 printf "\n\n"
 
 intermediate="KEEP"
@@ -124,6 +131,8 @@ done
 
 #printf "made it through changing into the read directory and fastqc"
 
+mkdir repaired_reads
+
 mkdir trimmed_reads
 
 trim_pwd=$(pwd)
@@ -134,7 +143,20 @@ for j in $(ls x*); do
   for i in $(cat $j); do
 
 # for i in $(ls *$r1_tail); do
-    bbduk.sh in1=$trim_pwd/"$i" in2=$trim_pwd/"${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=$trim_pwd/trimmed_reads/"$i" out2=$trim_pwd/trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out &
+    echo "repairing"
+    repair.sh in1=$trim_pwd/"$i" in2=$trim_pwd/"${i%$r1_tail}$r2_tail" out=$trim_pwd/repaired_reads/"fixed_${i}" out2=$trim_pwd/repaired_reads/"fixed_${i%$r1_tail}$r2_tail" &
+
+  done
+  wait
+done
+
+for j in $(ls x*); do
+  for i in $(cat $j); do
+
+# for i in $(ls *$r1_tail); do
+
+    echo "trimming"
+    bbduk.sh in1=$trim_pwd/repaired_reads/"fixed_${i}" in2=$trim_pwd/repaired_reads/"fixed_${i%$r1_tail}$r2_tail" ref=adapters ktrim=r trimq=10 out=$trim_pwd/trimmed_reads/"$i" out2=$trim_pwd/trimmed_reads/"${i%$r1_tail}$r2_tail" stats=trimmed_stats"$i".out &
   done
   wait
 done

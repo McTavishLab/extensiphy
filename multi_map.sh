@@ -10,10 +10,11 @@ set -o pipefail
 # establishes the path to find the phycorder directory
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# changing location of .cfg file to a variable
-# for easy use of multiple config num_files
-#source $1
-
+# # # keep track of the last executed command
+# current_command=$BASH_COMMAND
+# trap last_command=$current_command DEBUG
+# # # echo an error message before exiting
+# trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 ############################################################
 
@@ -39,19 +40,12 @@ if [ $(which seqtk | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     else
         printf "seqtk found\n"
 fi
-if [ $(which hisat2 | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
+if [ $(which bwa-mem2 | wc -l) -lt 1 ]
     then
-        printf "hisat2 not found. Install and/or add to path\n" >&2
+        printf "bwa-mem2 not found. Install and/or add to path\n" >&2
 	exit 0
     else
-        printf "hisat2 found\n"
-fi
-if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
-    then
-        printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
-	exit 0
-    else
-        printf "raxmlHPC found\n"
+        printf "bwa-mem2 found\n"
 fi
 if [ $(which fastx_collapser | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
     then
@@ -70,7 +64,7 @@ fi
 
 printf "\n\n"
 
-outdir="rapup_run"
+outdir="EP_output"
 threads=0
 r1_tail="R1.fq"
 r2_tail="R2.fq"
@@ -85,8 +79,9 @@ bootstrapping="OFF"
 tree="NONE"
 ref_select="RANDOM"
 intermediate="KEEP"
+use="ALIGN"
 
-while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
+while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
   case $opt in
     a) align="$OPTARG"
     ;;
@@ -122,15 +117,17 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:h" opt; do
     ;;
     i) intermediate="$OPTARG"
     ;;
-    h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \
-    View the README for more specific information. \
-    Inputs are generally a multiple sequence file in. \
-    fasta format and a directory of. \
+    u) use="$OPTARG"
+    ;;
+    h) printf  " Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. \n \
+    View the README for more specific information. \n \
+    Inputs are generally a multiple sequence file in fasta format and a directory of \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
     \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
     \n\n (-a) alignment in fasta format, \
     \n (-d) directory of paired end fastq read files for all query taxa, \
+    \n (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
     \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
     \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
     \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
@@ -159,6 +156,16 @@ if [ -z "$align" ]; then
    exit
 fi
 
+if [ ${use} == "PHYLO" ]; then
+# If user is trying to also build a phylogeny, make sure the RAxML is installed.
+        if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ]; then
+                printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
+	        exit 0
+        else
+                printf "raxmlHPC found\n"
+        fi
+
+fi
 #Ttest if files actually exist
 #Check to make sure mapping has occured if re-mapping
 
@@ -189,6 +196,7 @@ if [ $align_type == "CONCAT_MSA" ]; then
 	        printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
 	        exit
         fi
+
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
         if [ ! -d $align ]; then
                 printf "\nAlignment file doesn't exist or pathing is incorrect.\n"
@@ -273,7 +281,7 @@ echo "$read_dir"
 #                                exit
 #                        fi
 #                done
-#				
+#
 #		:
 #		#printf "\nRead suffixes for paired end reads found in specified read directory. Continuing with analysis.\n"
 #	else
@@ -290,7 +298,7 @@ echo "$read_dir"
 #                printf "\nRead suffixes for single end reads not found in specified read directory. Check your read suffixes and try again.\n"
 #                exit
 #        fi
-#	
+#
 #fi
 
 
@@ -311,19 +319,24 @@ printf "#################################################\n"
 
 #if [ -d $outdir ]; then
 #	printf "Output folder exists. Choose a different name.\n"
-#	exit       
+#	exit
 #fi
 
+echo "${outdir}"
+mkdir -p ${outdir}
 
-mkdir -p $outdir
+tmp_outdir=$(realpath ${outdir})
+outdir=${tmp_outdir}
+echo "${outdir}"
+cd ${outdir}
 
-cd $outdir
+mkdir ${outdir}/outputs
 
 workd=$(pwd)
 
-touch $workd/rapup_dev_log.txt
+touch ${workd}/ep_dev_log.txt
 
-if [ $align_type == "PARSNP_XMFA" ]; then
+if [ ${align_type} == "PARSNP_XMFA" ]; then
 
 	mkdir locus_msa_files
 
@@ -338,25 +351,25 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 
                 for j in $(ls x*); do
                         for i in $(cat $j); do
-			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/rapup_dev_log.txt 2>&1
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
                 done
 
 
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
-	
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
+
         elif [ $loci_len != "700" ]; then
                 for j in $(ls x*); do
                         for i in $(cat $j); do
-			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/rapup_dev_log.txt 2>&1
+			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
                 done
 
 
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
-	
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
+
         fi
 
         align=$( realpath ../combo.fas)
@@ -369,18 +382,18 @@ if [ $align_type == "PARSNP_XMFA" ]; then
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
         if [ $loci_len == "700" ]; then
                 printf "\nFiltering and combining input single locus alignments by default length of $loci_len\n"
-	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/rapup_dev_log.txt 2>&1
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
 	        #printf "$outdir\n"
-	        #printf "$PHYCORDER\n"	
+	        #printf "$PHYCORDER\n"
 
 	        align=$( realpath $workd/combo.fas )
 	        loci_positions=$( realpath $loci_positions)
-        
+
         elif [ $loci_len != "700" ]; then
                 printf "\nFiltering and combining input single locus alignments by user specified length of $loci_len\n"
-                $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/rapup_dev_log.txt 2>&1
+                $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
 	        #printf "$outdir\n"
-	        #printf "$PHYCORDER\n"	
+	        #printf "$PHYCORDER\n"
 
 	        align=$( realpath $workd/combo.fas )
 	        loci_positions=$( realpath $loci_positions)
@@ -400,49 +413,30 @@ fi
 # Also strips gap characters ('-') from each sequence
 $PHYCORDER/modules/degen_fixer.py --align_file $align --output $workd/ref_nogap.fas
 
-# if [[ ! -z $(grep "-" $align) ]]; then
-#   printf "\nGAP FOUND BEFORE REMOVAL\n"
-# else
-#   printf "\nNO GAPS FOUND BEFORE REMOVAL\n";
-# fi
-
-# #printf "sed 's/-//g' <$align > $new_out/ref_nogap.fas"
-
-# #printf "current wd\n"
-# #pwd
-# #pull all the gaps from the aligned taxa bc mappers cannot cope.
-# sed 's/-//g' <$align > $workd/ref_nogap.fas
-
-
-# if [[ ! -z $(grep "-" ./ref_nogap.fas) ]]; then
-#   printf "\nGAP FOUND AFTER REMOVAL!\n"
-# else
-#   printf "\nNO GAPS FOUND AFTER REMOVAL\n";
-# fi
 
 if [ $ref_select != "RANDOM" ]; then
 
         printf "\nProducing reference based on input $ref_select\n"
-        $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $align --ref_select $ref_select --out_file $workd/best_ref_gaps.fas >> $workd/ep_dev_log.txt 2>&1
 
         printf "\nProducing no gap reference based on input $ref_select\n"
-        $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+        $PHYCORDER/modules/ref_producer.py -s --align_file $workd/ref_nogap.fas --ref_select $ref_select --out_file $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 
 elif [ $ref_select == "RANDOM" ]; then
 	# PRODUCE SINGLE REFERENCE SEQUENCES, BOTH WITH AND WITHOUT GAPS FOR ALIGNMENT AND EVENTUAL INCLUSION OF NEW SEQUENCES INTO ALIGNMENT
 
         printf "\nProducing a random reference with gaps\n"
-	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $align --out_file $workd/best_ref_gaps.fas >> $workd/ep_dev_log.txt 2>&1
 
         printf "\nProducing random reference without gaps\n"
-	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/ref_producer.py -r --align_file $workd/ref_nogap.fas --out_file $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 fi
 
 	# BUILD REFERENCE ALIGNMENT LIBRARY
 #hisat2-build --threads $threads $workd/best_ref.fas $workd/best_ref >> $workd/rapup_dev_log.txt 2>&1
-bwa-mem2 index $workd/best_ref.fas >> $workd/rapup_dev_log.txt 2>&1
+bwa-mem2 index $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 
 # ls ${read_dir}/*$r1_tail | split -a 5 -l $phycorder_runs
 
@@ -458,7 +452,10 @@ printf "\nBeginning RapUp runs\n"
 #TODO: ADD MORE FUNCTIONS TO THIS PARALLEL RUNNING SECTION IF POSSIBLE
 # SUCH AS REMOVING FILES IF CLEAN OPTION IS SPECIFIED
 
-if [ "$end_setting" == "PE" ]; then 
+wd=$(pwd)
+mkdir -p combine_and_infer
+
+if [ "$end_setting" == "PE" ]; then
 	for j in $(ls x*); do
 		for i in $(cat $j); do
     			base=$(basename $i $r1_tail)
@@ -475,12 +472,36 @@ if [ "$end_setting" == "PE" ]; then
     			#echo "${base}_output_dir"
     			#echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
     			#echo "Time for $j Phycorder run:"
-    			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 & 
+    			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
     			#> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
     			#wait
     			printf "\nadding new map_to_align run\n"
 		done
 		wait
+
+                for i in $(ls -d *output_dir); do
+                        cd $i
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                cp *_align.fas $wd/combine_and_infer/
+                        elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                echo "$i NO FASTA PRODUCED"
+                                continue
+                        fi
+                        cd ..
+                done
+
+                if [ ${intermediate} == "CLEAN" ]; then
+                        printf "\nCleaning up intermediate output files.\n"
+	                for i in $(ls -d *output_dir); do
+		                cd $i
+		                for j in $(ls -1); do
+			                rm ./$j
+		                done
+		                cd ..
+		                rmdir $i
+	                done
+                fi
+
 	done
 
 elif [ "$end_setting" == "SE" ]; then
@@ -488,7 +509,7 @@ elif [ "$end_setting" == "SE" ]; then
                 for i in $(cat $j); do
                         base=$(basename $i $r1_tail)
                         #echo $base
-                        #echo $i
+                        #echo $imv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
                         #echo $PHYCORDER
                         #echo "$workd ####################################################################################################\n"
                         #echo $align
@@ -500,49 +521,43 @@ elif [ "$end_setting" == "SE" ]; then
                         #echo "${base}_output_dir"
                         #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
                         #echo "Time for $j Phycorder run:"
-                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/rapup_dev_log.txt 2>&1 &
+                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
                         #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
                         #wait
                         printf "\nadding new map_to_align run\n"
                 done
                 wait
+
+                for i in $(ls -d *output_dir); do
+                        cd $i
+                        if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                cp *_align.fas $wd/combine_and_infer/
+                        elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
+                                echo "$i NO FASTA PRODUCED"
+                                continue
+                        fi
+                        cd ..
+                        done
+
+                if [ ${intermediate} == "CLEAN" ]; then
+                        printf "\nCleaning up intermediate output files.\n"
+	                for i in $(ls -d *output_dir); do
+		                cd $i
+		                for j in $(ls -1); do
+			                rm ./$j
+		                done
+		                cd ..
+		                rmdir $i
+	                done
+                fi
         done
 fi
 
 
 printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
-mkdir -p combine_and_infer
 
-
-wd=$(pwd)
-
-# loop through phycorder run directories and move finished fasta files to /combine_and_infer/
-# for tree inference
-for i in $(ls -d *output_dir); do
- cd $i
-if [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then 
-   cp *_align.fas $wd/combine_and_infer/
- elif [ $(ls -l | grep "_align.fas" | wc -l) -gt 0 ]; then
-   echo "$i"
-   continue
- fi
- cd ..
-done
-
-# check if user specified to clean up intermediary files and do so if specified
-# else just leave them
-if [ $intermediate == "CLEAN" ]; then
-	printf "\nCleaning up intermediate output files.\n"
-	for i in $(ls -d *output_dir); do
-		cd $i
-		for j in $(ls -1); do
-			rm ./$j
-		done	
-		cd ..
-		rmdir $i
-	done
-elif [ $intermediate == "KEEP" ]; then
+if [ $intermediate == "KEEP" ]; then
 	printf "\nKeeping intermediate output files\n"
 fi
 
@@ -552,7 +567,7 @@ cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
 printf "\nExtended alignment file creaded (extended.aln).\n"
 
-cd combine_and_infer
+cd ${outdir}/outputs
 
 # strip the unnecessary information from the taxa names in the alignment.
 # this assumes you've used the renaming tool to rename all of the reads for this experiment
@@ -561,51 +576,63 @@ cd combine_and_infer
 
 INFER=$(pwd)
 
- # handling of bootstrapping
+mv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
 
-printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
-if [ $bootstrapping == "ON" ]; then
+if [ $use == "ALIGN" ]; then
+    printf "\nAlignment updating complete.\n"
+    printf "\nAlignment file will be in ${outdir}/outputs \n"
 
-# handles whether user wants to use a starting tree or not
-  if [ $tree == "NONE" ]; then
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+elif [ $use == "PHYLO" ]; then
+    printf "\nAlignment updating complete.\n"
+    printf "\nPhylogenetic estimation selected.\n"
+    printf "\n"
+     # handling of bootstrapping
 
-    time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
+    #printf "\nAlignment updating complete. Moving to phylogenetic inference.\n"
+    if [ $bootstrapping == "ON" ]; then
 
-    time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
+    # handles whether user wants to use a starting tree or not
+      if [ $tree == "NONE" ]; then
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
 
-    printf "\nMultiple taxa update of phylogenetic tree complete\n"
+        time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/ep_dev_log.txt 2>&1
 
-  elif [ $tree != "NONE" ]; then
+        time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
 
-   time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+        printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
-   time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/rapup_dev_log.txt 2>&1
+      elif [ $tree != "NONE" ]; then
 
-   time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/rapup_dev_log.txt 2>&1
+       time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
 
-   printf "\nMultiple taxa update of phylogenetic tree complete\n"
+       time raxmlHPC-PTHREADS -s extended.aln -n consensusFULL_bootstrap -m GTRGAMMA  -p 12345 -T $threads -N 100 -x 12345 >> $workd/ep_dev_log.txt 2>&1
 
- fi
+       time raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
 
-elif [ $bootstrapping == "OFF" ]; then
+       printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
-  # handles whether user wants to use a starting tree or not
-  if [ $tree == "NONE" ]; then
+     fi
 
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+    elif [ $bootstrapping == "OFF" ]; then
 
-  elif [ $tree != "NONE" ]; then
+      # handles whether user wants to use a starting tree or not
+      if [ $tree == "NONE" ]; then
 
-    time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/rapup_dev_log.txt 2>&1
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
 
-    printf "\nMultiple taxa update of phylogenetic tree complete\n"
+      elif [ $tree != "NONE" ]; then
 
-  fi
+        time raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
 
-else
-  printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
+        printf "\nMultiple taxa update of phylogenetic tree complete\n"
 
+      fi
+
+    else
+      printf "\nSwitch bootstrapping option to 'ON' or 'OFF' and re-run program.\n"
+
+    fi
+#end of phylo inference "if" statement
 fi
 
 output_dir=$(pwd)
@@ -615,18 +642,21 @@ output_dir=$(pwd)
 # for now, it serves as a SNP check
 if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
-	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/rapup_dev_log.txt 2>&1
+	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/ep_dev_log.txt 2>&1
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-	printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        if [ $use == "PHYLO" ]; then
+	    printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        fi
 	printf "\nSingle locus alignment files are in: "$output_dir/"updated_single_loci\n"
 
 elif [ $output_type == "CONCAT_MSA" ]; then
 	printf "\nSingle concatenated loci MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"
-        printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
-
+        if [ $use == "PHYLO" ]; then
+            printf "\nTree file is: "$output_dir/"RAxML_bestTree.consensusFULL\n"
+        fi
 
 
 fi

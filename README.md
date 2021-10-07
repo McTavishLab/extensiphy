@@ -50,16 +50,24 @@ docker pull mctavishlab/extensiphy
 ```
 
 3. We'll build your Extensiphy Docker container using this command.
-The `-i` flag will make the container interactive and allow you to run Extensiphy
-within the container.
+* `-i` makes the container interactive.
+* `-t` specifies the image to use as a template.
+* `--name` specifies the container name.
 ```bash
-docker run --name ep_container -i -t ep_image bash
+docker run --name ep_container -i -t extensiphy bash
 ```
+Your command line prompt should change to indicate that you are now working
+inside your Extensiphy container.
 
-4. Your command line prompt should change to indicate that you are now working
-inside your Extensiphy container. To test your installation, run this command:
+
+4. Ok, Lets run Extensiphy and test our installation!
+You'll need to input some information using flags:
+* `-a` passes Extensiphy the alignment file you wish to update.
+* `-d` passes the folder containing the fastq files
+* `-1` and `-2` pass the suffixes of your fastq reads (assuming paired-end files!)
+To test your installation, run this command:
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:
@@ -87,13 +95,12 @@ mv [/path/to/your/raw_read_files] [/path/to/new_data_dir]
 
 6. We'll build a new Extensiphy Docker container and connect the directory containing your data to the container.
 Replace the `[stuff inside the brackets]` with the appropriate paths and folder names you've used so far.
+* `-v` specifies the directory your linking to the container and where in the container your linking it.
 ```bash
-docker run --name ep_container -i -t -v [/path/to/new_data_dir]:/usr/src/app/linked_data ep_image bash
+docker run --name ep_container -i -v [/path/to/new_data_dir]:/usr/src/app/linked_data -t extensiphy bash
 ```
 
-7. Now you can run the same command as earlier but we'll specify the directory where your data is located.
-You will also need to specify the suffixes of your read files using the
-`-1` and `-2` flags.
+7. Now you can run the same command as earlier but you'll specify the directory where your data is located and your file suffixes.
 ```bash
 ./multi_map.sh -a /usr/src/app/linked_data/[alignment_file] -d /usr/src/app/linked_data -1 [suffix_1] -2 [suffix_2] -o [output_dir_name]
 ```

@@ -32,7 +32,7 @@ the **Quick Install and Run** section will review the docker installation instru
 You can also install the dependencies of Extensiphy using Anaconda. The **Anaconda Installation** section of this readme will walk through this process in more detail.
 
 ### Advanced
-*For advanced users of Linux* If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you.
+*For advanced users of Linux* If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you. Extensiphy dependencies are also found here.
 
 ### Tutorial
 We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
@@ -144,21 +144,21 @@ This program is not required for running Extensiphy itself but Gon\_phyling
 can be useful if you have a lot of data and aren't interested in hand selecting
 the loci/genes you include in your alignment.
 
-### INPUT OPTIONS:
+#### Input Options:
 ```
 - (-d) directory of paired end reads. All output folders and files will be contained here
 - (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)
 - (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)
 ```
 
-### OUTPUT
+#### Output Options
 ```
 - (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)
 - (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)
 - (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)
 ```
 
-### RUNNING PROGRAM
+#### Performance Options
 ```
 - (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)
 - (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
@@ -253,16 +253,12 @@ Dependencies (Separate programs you'll need to install):
 7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
 
-Additionally, Extensiphy comes with an additional pipeline for generating a
-phylogenetic tree from scratch: **Gon\_phyling**.
-These programs are not required for running Extensiphy itself but Gon\_phyling
-can be useful if you have a lot of data and aren't interested in hand selecting
-the loci/genes you include in your alignment. Gon\_phyling's dependencies are as
-follows:
+**Gon\_phyling**.
+Gon\_phyling's dependencies are as follows:
 
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)
-3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/) (BBDUK.sh)
+3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/) (BBDUK.sh is the program you need from this package)
 4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
 

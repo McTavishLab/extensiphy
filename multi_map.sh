@@ -253,12 +253,24 @@ if [ $tree != "NONE" ]; then
 	fi
 fi
 
-echo "$r1_tail"
-echo "$r2_tail"
-echo "$read_dir"
-#ls ${read_dir}/*${r1_tail}
-#ls $read_dir | grep "$r1_tail"
-#echo "WAFFLE"
+#echo "$r1_tail"
+#echo "$r2_tail"
+#echo "$read_dir"
+
+echo $( ls $read_dir/*$r1_tail )
+
+myarray_r1=(`find  $read_dir -maxdepth 1 -name "*$r1_tail"`)
+myarray_r2=(`find  $read_dir -maxdepth 1 -name "*$r2_tail"`)
+
+count_r1=${#myarray_r1[@]}
+count_r2=${#myarray_r2[@]}
+
+echo "$count_r1 files found in $read_dir with suffix $r1_tail"
+echo "$count_r2 files found in $read_dir with suffix $r2_tail"
+
+if  [ $count_r1 == 0 ] ; then echo "No files found in $read_dir with suffix $r1_tail" && exit 1;  fi
+if  [ $count_r2 == 0 ]; then echo "No files found in $read_dir with suffix $r2_tail" && exit 1;  fi
+
 
 # CHECK READ FILES SUFFIX
 #printf "\nBeginning check of read and suffix accuracy\n"

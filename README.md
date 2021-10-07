@@ -41,7 +41,7 @@ We recommend you run through the [tutorial](https://github.com/McTavishLab/exten
 ### Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
 
-1. Make sure you have [Docker desktop installed](https://www.docker.com/products/docker-desktop). The latest locally built version of Extensiphy can be found on the [Mctavish Lab Dockerhub](https://hub.docker.com/r/mctavishlab/extensiphy).
+1. Make sure you have [Docker installed](https://www.docker.com/products/docker-desktop) according to your operating system.
 
 2. To pull the Docker build of Extensiphy, run this command.
 

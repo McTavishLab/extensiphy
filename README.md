@@ -69,20 +69,21 @@ docker exec -it ep_container bash
 
 
 ### Quick test run
-If you have followed one of the install approaches above, you are now ready to try a test run!
+If you have followed one of the install approaches above, you are now ready to try a test run!  
 We'll use the `combo.fas` alignment file as our starting alignment. `combo.fas` can be found in:
 ```
 /extensiphy/testdata/combo.fas
 ```
 When you examine the alignment file with a viewer like [Seaview](http://doua.prabi.fr/software/seaview), you should see something like ![this](tutorial/images/starting_alignment.png?raw=true)
 
-Either from the docker container, your anaconda env, or from the directory where you installed Extensiphy, run:
+Now, either from the docker container, your anaconda env, or from the directory where you installed Extensiphy, run:
 
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o EP_output
 ```
 This is a simple run on three paired end read samples, which are found in the directory `extensiphy/testdata`
 * The `-a` flag provides the path to the existing alignment to update.
+* The `-d` flag provides the path to your directory of fastq files.
 * The `-1` and `-2` flags specify the filename endings for each of the readfiles. (defaults are `_R1.fq` and `_R2.fq` )
 * The `-u` flag specfies what analysis to run. Here we are buildinga phylogeny. (default is `ALIGN`, building an alignment only.)
 * The `-o` flag specifies the output directory. (default is `EP_output`)
@@ -97,18 +98,18 @@ Tree file is: /project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.  
 
-The alignment file should now look like ![this](tutorial/images/updated_alignment.png?raw=true)  
+The alignment file should now 3 new sequences ![this](tutorial/images/updated_alignment.png?raw=true)  
 and you should when you examine the phylogeny (`RAxML_bestTree.consensusFULL`), you should see ![this](tutorial/images/tree_image_2.png?raw=true)  
 
 We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.  
 
 
-If you are using docker - exit the container by typing
+* If you are using docker - exit the container by typing
 ```
 exit
 ```
 
-You can copy the extended tree to your local directory using:
+* You can copy the extended tree to your local directory using:
 
 ```
 docker cp ep_container:/project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL .

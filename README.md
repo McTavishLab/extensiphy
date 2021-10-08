@@ -70,8 +70,13 @@ docker exec -it ep_container bash
 
 ### Quick test run
 If you have followed one of the install approaches above, you are now ready to try a test run!
+We'll use the `combo.fas` alignment file as our starting alignment. `combo.fas` can be found in:
+```
+/extensiphy/testdata/combo.fas
+```
+When you examine the alignment file with a viewer like [Seaview](http://doua.prabi.fr/software/seaview), you should see something like ![this](tutorial/images/starting_alignment.png?raw=true)
 
-Either from the docker container, your anaconda env, or from the directory where you installed Extensiphy.
+Either from the docker container, your anaconda env, or from the directory where you installed Extensiphy, run:
 
 ```bash
 ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o EP_output
@@ -90,7 +95,13 @@ Tree file is: /project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL
 
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
-to learn more about the issue before proceeding.
+to learn more about the issue before proceeding.  
+
+The alignment file should now look like ![this](tutorial/images/updated_alignment.png?raw=true)  
+and you should when you examine the phylogeny (`RAxML_bestTree.consensusFULL`), you should see ![this](tutorial/images/tree_image_2.png?raw=true)  
+
+We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.  
+
 
 If you are using docker - exit the container by typing
 ```
@@ -296,7 +307,7 @@ Gon\_phyling's dependencies are as follows:
 
 1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
 2. [Spades](https://github.com/ablab/spades)
-3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/) (BBDUK.sh is the program you need from this package)
+3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/) (BBDUK.sh and repair.sh are the programs you need from this package)
 4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
 

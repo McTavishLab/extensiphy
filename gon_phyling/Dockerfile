@@ -31,9 +31,7 @@ RUN cp ./SPAdes-3.15.3-Linux/bin/spades* /usr/local/bin/
 #install BBDUK and repair
 RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_38.94.tar.gz
 RUN tar -xzf BBMap_38.94.tar.gz
-#RUN cp ./bbmap/bbduk.sh /usr/local/bin/
-#RUN cp ./bbmap/repair.sh /usr/local/bin/
-RUN export PATH=/usr/src/app/bbmap:$PATH
+ENV PATH="/usr/src/app/bbmap:/usr/src/app/SPAdes-3.15.3-Linux/bin/:/usr/src/app/Parsnp-Linux64-v1.2/:$PATH"
 
 # install Extensiphy
 RUN git clone https://github.com/McTavishLab/extensiphy.git

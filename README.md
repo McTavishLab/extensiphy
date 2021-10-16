@@ -14,9 +14,7 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [Output Files](#output-files)
 
-[Gon_phyling](#gon-phyling)
-
-[Starting from Raw Reads](#starting-from-raw-reads)
+[Additional Software](#additional-software)
 
 [Anaconda Installation](#anaconda-installation)
 
@@ -35,7 +33,7 @@ You can also install the dependencies of Extensiphy using Anaconda. The **Anacon
 If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you. Extensiphy dependencies are also found here.
 
 ### Tutorial
-We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
+We recommend you run through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
 ## Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
@@ -187,47 +185,13 @@ By putting the outputs into the linked directory, you can access them directly t
 * Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/outputs/RAxML_bestTree.consensusFULL```
 * Taxon specific intermediate files (if you kept intermediate files): found in your output folder ```[OUTDIR]/[TAXON_NAME]```. .sam, .bam and .vcf files can be found in here for any additional analyses.
 
-## Gon phyling
-Additionally, Extensiphy comes with an pipeline for generating a
-phylogenetic tree from scratch: **Gon\_phyling**.
-This program is not required for running Extensiphy itself but Gon\_phyling
-can be useful if you have a lot of data and aren't interested in hand selecting
-the loci/genes you include in your alignment.
+## Additional Software
+Extensiphy is the primary program of this software package.
+However, another piece of software is included: Gon\_phyling.
+Gon\_phyling is a piece of software for building starting alignments and phylogenies when you only have raw-read fastq files.
+Gon\_phyling isn't the focus software but we provide it in case you might find it useful.
+Checkout the program and README in the `gon_phyling` directory.
 
-#### Input Options:
-```
-- (-d) directory of paired end reads. All output folders and files will be contained here
-- (-g) the name of the genome you wish to use as a reference during loci selection (if any)(DEFAULT: NONE)
-- (-1, -2) suffixes of paired-end input files in read directory (DEFAULT: -1 R1.fastq -2 R2.fastq)
-```
-
-#### Output Options
-```
-- (-b) bootstrapping setting. Do you want to perform 100 boostrap replicates and add the support values to the best tree? (DEFAULT: OFF)
-- (-o) output type. Output either a concatenated multiple sequence alignment only or also output separate loci alignment files (DEFAULT: LOCI) (OPTIONS: LOCI, LOCUS)
-- (-l) Locus position file. Use if selecting -o LOCUS. Outputs a csv file tracking the loci names and their positions within the concatenated MSA (DEFAULT: gon_phy_locus_positions.csv)
-```
-
-#### Performance Options
-```
-- (-r) gon_phyling runs. This is the number of genomes assembled at a single time (DEFAULT: 2)
-- (-c) Threads for each gon_phyling run. Figure out how many cores you have available and input [# of threads x # of parrallel genome assemblies] = cores you can allocate. (DEFAULT: 2)
-```
-
-## Starting from Raw Reads
-Creating a starting alignment!
-You need a alignment with any number of taxa in order to update with new taxa.
-The commands below will use Gon_phyling to assemble a starting alignment that can then be built-upon with Extensiphy.
-
-1. Move some fraction or subset of your read files to a new directory for assembly and starting alignment construction.
-2. run:
-```bash
-./gon_phyling.sh -d [PATH/TO/NEW/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2]
-```
-3. Use the produced alignment file and the rest of the reads as the inputs for a full Extensiphy run by running:
-```bash
- multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
-```
 
 ## Anaconda Installation
 You can install the dependencies of Extensiphy using the Anaconda package manager.
@@ -287,7 +251,7 @@ you'll have to make sure you install analogous one-liners and all that.
 You have been warned.
 
 
-### Requirements
+## Dependencies and Additional Software
 
 You can forgo installing dependencies with Conda or Docker and
 instead install everything by hand if you feel comfortable with computer pathing.
@@ -302,14 +266,6 @@ Dependencies (Separate programs you'll need to install):
 6. [Bcftools](http://www.htslib.org/)
 7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
-
-**Gon\_phyling**.
-Gon\_phyling's dependencies are as follows:
-
-1. [PARSNP](https://harvest.readthedocs.io/en/latest/content/parsnp.html)
-2. [Spades](https://github.com/ablab/spades)
-3. [BBmap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/) (BBDUK.sh and repair.sh are the programs you need from this package)
-4. [RAxMLHPC](https://github.com/stamatak/standard-RAxML)
 
 
 ### Apt-get dependency install

@@ -40,7 +40,7 @@ if [ $(which bbduk.sh | wc -l) -lt 1 ] #TODO steup for greater than 1.2?
         printf "bbduk.sh found\n"
 fi
 
-if [ $(which repair.sh | wc -l) -lt 1 ] 
+if [ $(which repair.sh | wc -l) -lt 1 ]
     then
         printf "repair.sh not found. Install and/or add to path\n" >&2
     else
@@ -205,7 +205,7 @@ ls *$r1_tail | split -d -l $gon_phy_runs
 
 for j in $(ls x*); do
   for i in $(cat $j); do
-    
+
     printf "\n$i\n"
     name_base=$(basename $i $r1_tail)
     printf "\nname_base\n"
@@ -266,15 +266,15 @@ do
                 cd $i
                 #cp contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
 		            #ln -s contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
-                
+
                 if [ $(ls -l | grep "contigs.fasta" | wc -l) -gt 0 ]; then
 		              mv contigs.fasta  ../genomes_for_parsnp/$slash_strip.fasta
-                
+
                 elif [ $(ls -l | grep "contigs.fasta" | wc -l) -eq 0 ]; then
                   printf "\n NO ASSEMBLED SEQUENCE FROM $i\n"
-                
+
                 fi
-                
+
                 cd ..
         fi
 
@@ -337,10 +337,10 @@ printf "$ref_genome is ref genome selection"
 # CHECKING FOR REFERENCE USE
 if [ $ref_genome == "NONE" ]; then
 
-  parsnp -c -p $threads -d ./ -r ! 
+  parsnp -c -p $threads -d ./ -r !
 
 elif [ $ref_genome != "NONE" ]; then
-  
+
   tmp_ref_genome=$(realpath $ref_genome)
   ref_genome=$tmp_ref_genome
   parsnp -c -p $threads -d ./ -r $ref_genome
@@ -364,37 +364,37 @@ if [ $output_type == "LOCUS" ]; then
 	mkdir locus_msa_files
 
        cat parsnp.xmfa | grep -Po "cluster\d+" | sort | uniq > ./locus_msa_files/locus_IDs.txt
-	
+
 	cd ./locus_msa_files
 
 	echo pwd
 	cat ./locus_IDs.txt | split -d -l $threads
 
-	
+
   if [ $loci_len != "700" ]; then
     printf "\nSplitting loci using user specificed cutoff of ${loci_len} nucleotides\n"
     for j in $(ls x*); do
 		  for i in $(cat $j); do
-			  $GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len
+			  $GON_PHYLING/../modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len
 			  #$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 		  done
 		  wait
 	  done
-  
+
   elif [ $loci_len == "700" ]; then
-  
+
     printf "\nSplitting loci using default minimum cutoff of 700 nucleotides.\n"
 	  for j in $(ls x*); do
 		  for i in $(cat $j); do
-			  $GON_PHYLING/modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 700
+			  $GON_PHYLING/../modules/locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 700
 			  #$GON_PHYLING/limit_len_locus_splitter.py --align_file ../parsnp.xmfa --out_file ./$i-.fasta --locus_id $i --locus_size 1000
 		  done
 		  wait
 	  done
   fi
 
-	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions 	
-	$GON_PHYLING/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
+	#$GON_PHYLING/locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_dict_file $loci_positions
+	$GON_PHYLING/../modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $loci_positions --len_filter 50
 	cd ..
 
 	# STRIP TAILS FROM NAMES FOR CLEANER TAXON NAMES
@@ -405,7 +405,7 @@ elif [ $output_type == "LOCI" ]; then
 
 # new parallel parsnp processing
 # grab the number of taxa in the parsnp.xmfa output file
-$GON_PHYLING/modules/parsnp_taxa_count.sh > taxa_count.txt
+$GON_PHYLING/../modules/parsnp_taxa_count.sh > taxa_count.txt
 
 # split each number of taxa into a set that can be iterrated over and processed in parallel
 #cat taxa_count.txt | split -a 10 -l $threads
@@ -416,7 +416,7 @@ sed -i -e 's/.fasta//g' ./parsnp.xmfa
 for j in $(ls x*); do
   for i in $(cat $j); do
 
-    $GON_PHYLING/modules/parallel_parsnp_splitter.py parsnp.xmfa $i &
+    $GON_PHYLING/../modules/parallel_parsnp_splitter.py parsnp.xmfa $i &
 
   done
   wait
@@ -475,7 +475,15 @@ else
 
 fi
 
-printf "\nAssembly and inference of genomes complete.\n"
+mkdir ${read_dir}/outputs
+
+mv RAxML_bestTree.core_genome_run.out ${read_dir}/outputs/
+mv combo.fas ${read_dir}/outputs/
+
+printf "\n Newly constructed alignment file can be found here: ${read_dir}/outputs/RAxML_bestTree.core_genome_run.out\n"
+printf "\n Newly estimated phylogeny file can be found here: ${read_dir}/outputs/combo.fas\n"
+
+printf "\n Genome assembly, alignment construction and phylogenetic estimation complete.\n"
 
 if [ $intermediate != "KEEP" ]; then
 
@@ -497,4 +505,4 @@ if [ $intermediate != "KEEP" ]; then
 	rm ./*chunk*
 	printf "\nFinished cleaning up intermediate files\n"
 
-fi	
+fi

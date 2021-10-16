@@ -27,6 +27,11 @@ then the
 ```
 part is the suffix.  
 
+The beginning of the file name is called the prefix:
+```
+fandom_file
+```
+
 The suffix could be anything like `.doc`, `.xls`, `.csv`, `.fastq`, etc.
 
 
@@ -74,8 +79,32 @@ ultimately want you to slice the file names into shared components (in this case
 
 Now, it can be even trickier than that.  
 
-We described these portions of the files as our suffixes:
+Our files are:
+```
+raw_reads_R1.fastq
+raw_reads_R2.fastq
+```
+
+And we described these portions of the files as our suffixes:
 ```
 _R1.fastq
-_R1.fastq
+_R2.fastq
 ```
+
+There is some nuance in what the suffixes are.
+We could use the taxon name:
+```
+raw_reads_
+```
+
+Notice that we kept the underscore `_` at the end of the name.  
+In this scenario, the suffixes would now be:
+```
+R1.fastq
+R2.fastq
+```
+
+You have a lot of control over describing how the file name is split into prefix and suffix.
+You'll have to make sure that some sort of identifier between the two separate files is kept in the suffix, in this case `R1` and `R2`.  
+
+This is the end of the prefix-suffix tutorial. Hopefully this has helped you understand how to work with suffixes when a program requires them.

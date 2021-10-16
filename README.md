@@ -181,16 +181,29 @@ By putting the outputs into the linked directory, you can access them directly t
 ```
 
 ## Output Files
-* Concatenated alignment file: found in your output folder ```[OUTDIR]/outputs/extended.aln```
-* Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder ```[OUTDIR]/outputs/RAxML_bestTree.consensusFULL```
-* Taxon specific intermediate files (if you kept intermediate files): found in your output folder ```[OUTDIR]/[TAXON_NAME]```. .sam, .bam and .vcf files can be found in here for any additional analyses.
+* Concatenated alignment file: found in your output folder
+```
+[OUTDIR]/outputs/extended.aln
+```
+
+* Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder
+ ```
+ [OUTDIR]/outputs/RAxML_bestTree.consensusFULL
+ ```
+
+* Taxon specific intermediate files (if you kept intermediate files): found in your output folder
+ ```
+ [OUTDIR]/[TAXON_NAME]
+ ```
+  .sam, .bam and .vcf files can be found in here for any additional analyses.
+
 
 ## Additional Software
 Extensiphy is the primary program of this software package.
 However, another piece of software is included: Gon\_phyling.
 Gon\_phyling is a piece of software for building starting alignments and phylogenies when you only have raw-read fastq files.
 Gon\_phyling isn't the focus software but we provide it in case you might find it useful.
-Checkout the program and README in the `gon_phyling` directory.
+Checkout the [program and README](https://github.com/McTavishLab/extensiphy/tree/main/gon_phyling) in the `gon_phyling` directory.
 
 
 ## Anaconda Installation

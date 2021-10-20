@@ -16,24 +16,24 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [Additional Software](#additional-software)
 
-[Anaconda Installation](#anaconda-installation)
-
 [Advanced Installation Methods](#advanced-installation-methods)
+
+[Dependencies](#dependnecies)
 
 ## Setup and Use
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the **Quick Install and Run** section will review the docker installation instructions.
+the [Quick Install and Run](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions.
 
 ### Anaconda
-You can also install the dependencies of Extensiphy using Anaconda. The **Anaconda Installation** section of this readme will walk through this process in more detail.
+You can also install the dependencies of Extensiphy using Anaconda. The [Anaconda Installation](#anaconda-installation) section of this readme will walk through this process in more detail.
 
 ### Advanced
-If you're comfortable installing programs by hand, the **Advanced Installation Methods** section is for you. Extensiphy dependencies are also found here.
+If you're comfortable installing programs by hand, the [Advanced Installation Methods](#advanced-installation-methods) section is for you. Extensiphy dependencies are also found here.
 
 ### Extensiphy Tutorial
-We recommend you run through the [Extensiphy tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through different installation methods and how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
+We recommend you run through the [Extensiphy tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
 
 ### Additional Tutorials
 To help explain some of the jargon (technical words and terms) that goes along with bioinformatics programs, we've also included some other tutorials.
@@ -211,68 +211,7 @@ Gon\_phyling isn't the focus software but we provide it in case you might find i
 Checkout the [program and README](https://github.com/McTavishLab/extensiphy/tree/main/gon_phyling) in the `gon_phyling` directory.
 
 
-## Anaconda Installation
-You can install the dependencies of Extensiphy using the Anaconda package manager.
- Install instructions for Anaconda can be found [here](https://docs.conda.io/en/latest/miniconda.html).
-Once Anaconda has been installed, use this command to create an environment with
- all of the Extensiphy dependencies added to it.
-
-1. Add appropriate channels to your conda install:
-
-```bash
-conda config --prepend channels conda-forge
-conda config --prepend channels bioconda
-```
-
-2. Run this command to create a new environment (extensiphy_env) and add the necessary dependencies:
-
-```bash
-conda create -n extensiphy_env samtools bwa-mem2 seqtk bcftools fastx-toolkit dendropy raxml
-```
-
-3. Activate your installation
-
-```bash
-conda activate extensiphy_env
-```
-
-4. Once all installation processes are complete and you've activated your environment,
-you can clone the Extensiphy repository.
-
-```bash
-git clone https://github.com/McTavishLab/extensiphy.git
-cd extensiphy
-```
-
-5. Finally, you can test your installation by running the following command.
-
-```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata
-```
-
-Once Extensiphy has finished running on the test data, you should see a line saying:
-```bash
-Alignment file is: [path/to]/EP_output/outputs/extended.aln
-```
-
-This indicates that the run completed successfully and you can find the updated
-alignment file in the `output` directory.
-If you did not get this message, you'll have to check output log `ep_dev_log.txt`
-to learn more about the issue before proceeding.
-
-
-## Advanced Installation Methods
-
-**Using Extensiphy is limited to Linux at the moment.** Using Ubuntu will ensure
-the smoothest performance. If you want to use another distro,
-you'll have to make sure you install analogous one-liners and all that.
-You have been warned.
-
-
-## Dependencies and Additional Software
-
-You can forgo installing dependencies with Conda or Docker and
-instead install everything by hand if you feel comfortable with computer pathing.
+## Dependencies
 
 Dependencies (Separate programs you'll need to install):
 
@@ -284,19 +223,3 @@ Dependencies (Separate programs you'll need to install):
 6. [Bcftools](http://www.htslib.org/)
 7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
-
-
-### Apt-get dependency install
-Many programs for running Extensiphy are available with apt-get.
-Run the commands found below to install:
-
-```bash
-apt-get install raxml
-apt-get install seqtk
-apt-get install samtools
-apt-get install bcftools
-pip install dendropy
-```
-
-Installs with apt-get for Gon\_phyling are not currently available.
-You will have to install these programs manually or with conda.

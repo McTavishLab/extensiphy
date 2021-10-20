@@ -22,7 +22,7 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the [Quick Install and Run](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions.
+the [Building and testing your own Extensiphy Docker image](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions.
 
 ### Anaconda
 You can also install the dependencies of Extensiphy using Anaconda. The [Anaconda Installation](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-dependencies-with-anaconda) section of this repository will walk through this process in more detail.

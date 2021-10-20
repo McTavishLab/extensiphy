@@ -16,8 +16,6 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [Additional Software](#additional-software)
 
-[Advanced Installation Methods](#advanced-installation-methods)
-
 [Dependencies](#dependnecies)
 
 ## Setup and Use
@@ -27,10 +25,10 @@ The simplest and most hassle free way to run Extensiphy is using Docker.
 the [Quick Install and Run](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions.
 
 ### Anaconda
-You can also install the dependencies of Extensiphy using Anaconda. The [Anaconda Installation](#anaconda-installation) section of this readme will walk through this process in more detail.
+You can also install the dependencies of Extensiphy using Anaconda. The [Anaconda Installation](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-dependencies-with-anaconda) section of this repository will walk through this process in more detail.
 
 ### Advanced
-If you're comfortable installing programs by hand, the [Advanced Installation Methods](#advanced-installation-methods) section is for you. Extensiphy dependencies are also found here.
+If you're comfortable installing programs by hand, the [Advanced Installation Methods](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-depedencies-by-hand) section is for you.
 
 ### Extensiphy Tutorial
 We recommend you run through the [Extensiphy tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.
@@ -38,7 +36,7 @@ We recommend you run through the [Extensiphy tutorial](https://github.com/McTavi
 ### Additional Tutorials
 To help explain some of the jargon (technical words and terms) that goes along with bioinformatics programs, we've also included some other tutorials.
 * The [command line tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/command_line_tutorial.md) will help you get a grasp on how to find files in your computer using the shell/terminal/command line (you'll be a hacker in no time!).
-* The [Suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help explain what suffixes are in the context of bioinformatics and how they are used with many programs, including Extensiphy.
+* The [suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help explain what suffixes are in the context of bioinformatics and how they are used with many programs, including Extensiphy.
 
 ## Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!

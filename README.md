@@ -219,5 +219,5 @@ Dependencies (Separate programs you'll need to install):
 4. [Seqtk](https://github.com/lh3/seqtk)
 5. [Samtools](http://www.htslib.org/)
 6. [Bcftools](http://www.htslib.org/)
-7. [Fastx](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
+7. [Fastx toolkit](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)

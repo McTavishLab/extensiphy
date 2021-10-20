@@ -9,7 +9,7 @@ The other fast way to install the dependency programs of Extensiphy is to use th
 The Conda package manager is excellent because it handles installing dependency programs very well.
 The steps for installing the Extensiphy dependencies are pretty straight forward so lets walk through them.
 
-1. Clone the Extensiphy repository (if you havent done this already) We need the `extensiphy.yml` file.
+1. Clone the Extensiphy repository (if you havent done this already) We need the `install.yml` file.
 
 ```bash
 $ git clone https://github.com/McTavishLab/extensiphy.git
@@ -21,7 +21,7 @@ $ cd extensiphy
 3. Once you've cloned the Extensiphy repository and have Conda installed, create an Extensiphy environment by running this command.
 
 ```bash
-conda env create -f extensiphy.yml
+conda env create -f install.yml
 ```
 
 4. Activate your environment.

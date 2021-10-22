@@ -126,7 +126,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     Inputs are generally a multiple sequence file in fasta format and a directory of \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
-    \n\n /path/to/multi_map.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
+    \n\n /path/to/extensiphy.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
     \n\n REQUIRED FLAGS \
     \n (-a) alignment in fasta format, \
     \n (-d) directory of paired end fastq read files for all query taxa, \
@@ -134,7 +134,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     \n\n OPTIONAL FLAGS \
     \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
     \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
-    \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
+    \n (-o) directory name to hold results (DEFAULT: creates EP_output), \
     \n (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP), \
     \n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM), \
     \n (-p) number of taxa to process in parallel, \

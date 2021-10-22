@@ -168,7 +168,7 @@ By putting the outputs into the linked directory, you can access them directly t
 - (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
-- (-o) directory name to hold results (DEFAULT: creates rapup_run),
+- (-o) directory name to hold results (DEFAULT: creates EP_output),
 - (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
 - (-p) number of taxa to process in parallel,
 - (-c) number of threads per taxon being processed,

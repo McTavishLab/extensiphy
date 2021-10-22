@@ -77,22 +77,25 @@ has the following output:
 
 ```
 Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.
-    View the README for more specific information.
-    Inputs are generally a multiple sequence file in fasta format and a directory of
-    Fastq paired-end read sequences.    
+     View the README for more specific information.
+     Inputs are generally a multiple sequence file in fasta format and a directory of
+     Fastq paired-end read sequences.     
 
 
  EXAMPLE COMMAND:     
 
- /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]     
+ /path/to/extensiphy.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]     
 
+ REQUIRED FLAGS     
  (-a) alignment in fasta format,     
  (-d) directory of paired end fastq read files for all query taxa,     
  (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
 
+
+ OPTIONAL FLAGS     
  (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),     
  (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),     
- (-o) directory name to hold results (DEFAULT: creates rapup_run),     
+ (-o) directory name to hold results (DEFAULT: creates EP_output),     
  (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),     
  (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),     
  (-p) number of taxa to process in parallel,     
@@ -222,7 +225,7 @@ ATGACCGTCGCCGGTCGCCGTGCCGACTACGGCAAACGGGCAGCGTTCGCGTTCGCAGAGGGCGCGGAAGGTGTACAAAT
 @taxonxon_66_R1_sim_taxonxon_127_R1-2036/1
 ```
 
-Bioinformatics data is often formatted in destressing ways. Again, DONT PANIC.
+Bioinformatics data is often formatted in distressing ways. Again, DONT PANIC.
 This is what we want to see. Its not critical that you recognize all of the lines of a fastq file.
 A cursory glance will show you lines that have the taxon's name and lines that have the DNA sequence information.
 Great! With all of our files containing short reads, we're ready to run Extensiphy and update our alignment with these new taxa.
@@ -456,7 +459,7 @@ $ ./extensiphy.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t
 Maybe you also want to output single locus alignment files that have been updated with your new query sequences. Run this command to do that:
 
 ```bash
-$ ./multi_map.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
+$ ./extensiphy.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
 
 ```
 

@@ -75,7 +75,6 @@ We'll use the `combo.fas` alignment file as our starting alignment. `combo.fas` 
 ```
 /extensiphy/testdata/combo.fas
 ```
-When you examine the alignment file with a viewer like [Seaview](http://doua.prabi.fr/software/seaview), you should see something like ![this](tutorial/images/starting_alignment.png?raw=true)
 
 Now, either from the docker container, your anaconda env, or from the directory where you installed Extensiphy, run:
 

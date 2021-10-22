@@ -1,7 +1,7 @@
 #! /bin/bash
 # inputs: a sequence alignment and a tree inferred from that alignment.
 # inputs: a directory of paired end reads for new taxa to be added to the alignment and corresponding tree.
-# example command: ./multi_map.sh ./sample_phycorder.cfg
+
 
 set -e
 set -u
@@ -326,7 +326,7 @@ printf "tree file = $tree\n"
 printf "directory of reads = $read_dir\n"
 printf "reference selection = $ref_select\n"
 printf "number of Extensiphy runs = $phycorder_runs\n"
-printf "number of threads per RapUp run = $threads\n"
+printf "number of threads per Extensiphy run = $threads\n"
 printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
 printf "suffix for right reads (if paired end only) = $r2_tail\n"
 printf "output directory = $outdir\n"

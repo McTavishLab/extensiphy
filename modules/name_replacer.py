@@ -20,7 +20,7 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
                 file_1 = file
 
                 replacement_name_count+=1
-                
+
                 for potential_second_file in filenames:
                     if potential_second_file == file_1.replace(tail_1, tail_2):
                         file_2 = potential_second_file
@@ -28,17 +28,17 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
                         print(dirpath + '/' + file_2)
                         print("next pair")
                         # data_container.append([replacement_name_count, file_1, file_2, tail_1, tail_2])
-                        
+
                         replacement_file_1 = str(replacement_name_count) + '_' + tail_1
                         replacement_file_2 = str(replacement_name_count) + '_' + tail_2
-                        
+
                         data_container.append([replacement_name_count, file_1, file_2, replacement_file_1, replacement_file_2, tail_1, tail_2, "null", "read"])
 
                         os.rename(dirpath + '/' + file_1, replacement_file_1)
                         os.rename(dirpath + '/' + file_2, replacement_file_2)
 
     # df_ = pd.DataFrame(data_container, columns=columns)
-    
+
     # print(df_)
 
     # write_csv(df_, "NONE")
@@ -46,7 +46,7 @@ def process_reads(input_file, data_container, name_file_input, tail_1, tail_2):
     # return data_container
 
 def process_align(align_file, data_container):
-    
+
     num_seqs = 0
     name = ''
     read_align = open(align_file,'r')
@@ -54,9 +54,9 @@ def process_align(align_file, data_container):
     output = open("fixed_align.fas", 'w')
 
     for line in data:
-    
+
         if line.startswith(">"):
-    
+
             num_seqs+=1
             name_line = line.replace(">","")
             new_name = str(num_seqs) + "_"
@@ -72,7 +72,7 @@ def process_align(align_file, data_container):
     return data_container
 
 
-    
+
 
 def write_csv(df, output_file_name):
     if output_file_name == "NONE":
@@ -94,9 +94,9 @@ def fix_names(name_file, dir_path):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    # parser.add_argument('-r', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in rapup')
-    # parser.add_argument('-a', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in rapup')
-    # parser.add_argument('-ra', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in rapup')
+    # parser.add_argument('-r', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in extensiphy')
+    # parser.add_argument('-a', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in extensiphy')
+    # parser.add_argument('-ra', action='store_true', help='parses fasta files and creates a name replacement for each file name that is then used in extensiphy')
     parser.add_argument('--align', type=str, default="NONE")
     parser.add_argument('--read_dir', type=str, default="NONE")
     parser.add_argument('--tail_1', type=str, default="NONE")
@@ -112,13 +112,13 @@ def main():
     # df_ = pd.DataFrame(index=index, columns=columns)
 
     data = []
-    
+
     if args.read_dir != "NONE" and args.name_file == "NONE" and args.align == "NONE":
         print("process reads")
         process_reads(args.read_dir, data, "NONE", args.tail_1, args.tail_2)
 
         df_ = pd.DataFrame(data, columns=columns)
-    
+
         # print(df_)
 
         write_csv(df_, "NONE")
@@ -130,7 +130,7 @@ def main():
         process_reads(args.read_dir, align_name_data, "NONE", args.tail_1, args.tail_2)
 
         df_ = pd.DataFrame(data, columns=columns)
-    
+
         # print(df_)
 
         write_csv(df_, "NONE")

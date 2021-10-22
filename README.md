@@ -145,7 +145,7 @@ docker run --name ep_container_link -i -t -v [/path/to/my_data_dir]:/project/lin
 
 This shares the 'my_data_dir' folder between your operating system and the docker container. (In this example it is named "my_data_dir" locally and "linked_data" in your docker container, but you can name them the same thing in both places if you prefer.)
 
-Now you can run multi_map as earlier but we'll specify the directory where your data is located.
+Now you can run `extensiphy.sh` as earlier but we'll specify the directory where your data is located.
 
 ```bash
 ./extensiphy.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o linked_data/[output_dir_name]

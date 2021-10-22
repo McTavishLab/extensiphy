@@ -77,22 +77,25 @@ has the following output:
 
 ```
 Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.
-    View the README for more specific information.
-    Inputs are generally a multiple sequence file in fasta format and a directory of
-    Fastq paired-end read sequences.    
+     View the README for more specific information.
+     Inputs are generally a multiple sequence file in fasta format and a directory of
+     Fastq paired-end read sequences.     
 
 
  EXAMPLE COMMAND:     
 
- /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]     
+ /path/to/extensiphy.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options]     
 
+ REQUIRED FLAGS     
  (-a) alignment in fasta format,     
  (-d) directory of paired end fastq read files for all query taxa,     
  (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
 
+
+ OPTIONAL FLAGS     
  (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),     
  (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),     
- (-o) directory name to hold results (DEFAULT: creates rapup_run),     
+ (-o) directory name to hold results (DEFAULT: creates EP_output),     
  (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),     
  (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),     
  (-p) number of taxa to process in parallel,     
@@ -222,7 +225,7 @@ ATGACCGTCGCCGGTCGCCGTGCCGACTACGGCAAACGGGCAGCGTTCGCGTTCGCAGAGGGCGCGGAAGGTGTACAAAT
 @taxonxon_66_R1_sim_taxonxon_127_R1-2036/1
 ```
 
-Bioinformatics data is often formatted in destressing ways. Again, DONT PANIC.
+Bioinformatics data is often formatted in distressing ways. Again, DONT PANIC.
 This is what we want to see. Its not critical that you recognize all of the lines of a fastq file.
 A cursory glance will show you lines that have the taxon's name and lines that have the DNA sequence information.
 Great! With all of our files containing short reads, we're ready to run Extensiphy and update our alignment with these new taxa.
@@ -240,7 +243,7 @@ $ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that Extensiphy will add the taxa sequences from the read files to combo.fas. You can examine the results by looking at the updated alignment file:
 
 ```
-~/first_extensiphy_run/outputs/extended.aln
+~/first_extensiphy_run/RESULTS/extended.aln
 ```
 
 Lets take a look at our new alignment file that SHOULD have 3 new taxa/sequences added to it.
@@ -280,7 +283,7 @@ The output you should see is:
 Follow that up with a quick count of the number of sequences in the alignment file.
 
 ```bash
-$ grep -c ">" ./first_extensiphy_run/outputs/extended.aln
+$ grep -c ">" ./first_extensiphy_run/RESULTS/extended.aln
 ```
 
 This command should return
@@ -303,7 +306,7 @@ $ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_exten
 
 ```
 
-The outputs will all appear in the `outputs` folder. When looking at your `outputs` folder, you'll see all the RAxML output files.
+The outputs will all appear in the `RESULTS` folder. When looking at your `RESULTS` folder, you'll see all the RAxML output files.
 
 ```
 extended.aln          RAxML_bestTree.consensusFULL  RAxML_log.consensusFULL            RAxML_result.consensusFULL
@@ -339,7 +342,7 @@ Run this command to run Extensiphy on our test data with bootstrapping on for ou
 $ ./extensiphy.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o fourth_extensiphy_run
 ```
 One the run completes, you should see a few additional files compared to our previous outputs.
-The complete `outputs` folder should look something like this:
+The complete `RESULTS` folder should look something like this:
 
 ```
 extended.aln                                                      RAxML_info.consensusFULL
@@ -456,7 +459,7 @@ $ ./extensiphy.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t
 Maybe you also want to output single locus alignment files that have been updated with your new query sequences. Run this command to do that:
 
 ```bash
-$ ./multi_map.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
+$ ./extensiphy.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -o locus_out_Extensiphy_run
 
 ```
 
@@ -465,7 +468,7 @@ The -g flag allows you to specify the format you wish your output alignments to 
 From the Extensiphy folder, run:
 
 ```bash
-$ ls ./locus_out_Extensiphy_run/outputs/updated_single_loci/
+$ ls ./locus_out_Extensiphy_run/RESULTS/updated_single_loci/
 
 single_locus_1_.fasta
 ```

@@ -166,7 +166,7 @@ The commands below will use Gon_phyling to assemble a starting alignment that ca
 ```
 3. Use the produced alignment file and the rest of the reads as the inputs for a full Extensiphy run by running:
 ```bash
- ./multi_map.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
+ ./extensiphy.sh -a [PATH/TO/ALIGNMENT/FILE] -d [PATH/TO/READ/DIRECTORY] -1 [READ SUFFIX 1] -2 [READ SUFFIX 2].
 ```
 ## Dependencies
 Gon\_phyling's dependencies are as follows:

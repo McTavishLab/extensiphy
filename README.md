@@ -91,9 +91,9 @@ This is a simple run on three paired end read samples, which are found in the di
 
 Once Extensiphy has finished running on the test data, you should see a lines saying:
 ```
-Alignment file is: /project/extensiphy/EP_output/outputs/extended.aln
+Alignment file is: /project/extensiphy/EP_output/RESULTS/extended.aln
 
-Tree file is: /project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL
+Tree file is: /project/extensiphy/EP_output/RESULTS/RAxML_bestTree.consensusFULL
 
 ```
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
@@ -113,7 +113,7 @@ exit
 * You can copy the extended tree to your local directory using:
 
 ```
-docker cp ep_container:/project/extensiphy/EP_output/outputs/RAxML_bestTree.consensusFULL .
+docker cp ep_container:/project/extensiphy/EP_output/RESULTS/RAxML_bestTree.consensusFULL .
 ```
 
 * For a deeper walk through, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
@@ -145,7 +145,7 @@ docker run --name ep_container_link -i -t -v [/path/to/my_data_dir]:/project/lin
 
 This shares the 'my_data_dir' folder between your operating system and the docker container. (In this example it is named "my_data_dir" locally and "linked_data" in your docker container, but you can name them the same thing in both places if you prefer.)
 
-Now you can run multi_map as earlier but we'll specify the directory where your data is located.
+Now you can run `extensiphy.sh` as earlier but we'll specify the directory where your data is located.
 
 ```bash
 ./extensiphy.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o linked_data/[output_dir_name]
@@ -160,15 +160,15 @@ By putting the outputs into the linked directory, you can access them directly t
 ```
 - (-a) alignment in fasta format,
 - (-d) directory of paired end fastq read files for all query taxa,
+- (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN),
 ```
 
 ### Optional flags
 ```
-- (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN),
 - (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
-- (-o) directory name to hold results (DEFAULT: creates rapup_run),
+- (-o) directory name to hold results (DEFAULT: creates EP_output),
 - (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
 - (-p) number of taxa to process in parallel,
 - (-c) number of threads per taxon being processed,
@@ -186,12 +186,12 @@ By putting the outputs into the linked directory, you can access them directly t
 ## Output Files
 * Concatenated alignment file: found in your output folder
 ```
-[OUTDIR]/outputs/extended.aln
+[OUTDIR]/RESULTS/extended.aln
 ```
 
 * Phylogeny in newick file format (if you selected to output a phylogeny): found in your output folder
  ```
- [OUTDIR]/outputs/RAxML_bestTree.consensusFULL
+ [OUTDIR]/RESULTS/RAxML_bestTree.consensusFULL
  ```
 
 * Taxon specific intermediate files (if you kept intermediate files): found in your output folder

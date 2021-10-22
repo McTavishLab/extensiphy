@@ -1,7 +1,7 @@
 #! /bin/bash
 # inputs: a sequence alignment and a tree inferred from that alignment.
 # inputs: a directory of paired end reads for new taxa to be added to the alignment and corresponding tree.
-# example command: ./multi_map.sh ./sample_phycorder.cfg
+
 
 set -e
 set -u
@@ -126,7 +126,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     Inputs are generally a multiple sequence file in fasta format and a directory of \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
-    \n\n /path/to/multi_map.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
+    \n\n /path/to/extensiphy.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
     \n\n REQUIRED FLAGS \
     \n (-a) alignment in fasta format, \
     \n (-d) directory of paired end fastq read files for all query taxa, \
@@ -134,7 +134,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     \n\n OPTIONAL FLAGS \
     \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
     \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
-    \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
+    \n (-o) directory name to hold results (DEFAULT: creates EP_output), \
     \n (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP), \
     \n (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM), \
     \n (-p) number of taxa to process in parallel, \
@@ -325,8 +325,8 @@ printf "alignment file = $align\n"
 printf "tree file = $tree\n"
 printf "directory of reads = $read_dir\n"
 printf "reference selection = $ref_select\n"
-printf "number of RapUp runs = $phycorder_runs\n"
-printf "number of threads per RapUp run = $threads\n"
+printf "number of Extensiphy runs = $phycorder_runs\n"
+printf "number of threads per Extensiphy run = $threads\n"
 printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
 printf "suffix for right reads (if paired end only) = $r2_tail\n"
 printf "output directory = $outdir\n"
@@ -419,7 +419,7 @@ elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 elif [ $align_type == "CONCAT_MSA" ]; then
 
 	printf "Concatenated Multiple Sequence Alignment selected as input.\n"
-	printf "Assuming loci are all longer than 1000bp. Continuing with rapid updating\n"
+	printf "Assuming loci are all longer than 700bp. Continuing with rapid updating\n"
 
 fi
 
@@ -464,7 +464,7 @@ bwa-mem2 index $workd/best_ref.fas >> $workd/ep_dev_log.txt 2>&1
 ls ${read_dir}/*$r1_tail | split -d -l $phycorder_runs
 
 printf "\nNumber of cores allocated enough to process all read sets\n"
-printf "\nBeginning RapUp runs\n"
+printf "\nBeginning Extensiphy runs\n"
 
 #TODO: ADD MORE FUNCTIONS TO THIS PARALLEL RUNNING SECTION IF POSSIBLE
 # SUCH AS REMOVING FILES IF CLEAN OPTION IS SPECIFIED
@@ -492,7 +492,7 @@ if [ "$end_setting" == "PE" ]; then
     			time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
     			#> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
     			#wait
-    			printf "\nadding new map_to_align run\n"
+    			printf "\nadding new Extensiphy run\n"
 		done
 		wait
 
@@ -541,7 +541,7 @@ elif [ "$end_setting" == "SE" ]; then
                         time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
                         #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
                         #wait
-                        printf "\nadding new map_to_align run\n"
+                        printf "\nadding new Extensiphy run\n"
                 done
                 wait
 
@@ -571,7 +571,7 @@ elif [ "$end_setting" == "SE" ]; then
 fi
 
 
-printf "\nIndividual Phycorder runs finished. Combining aligned query sequences and adding them to starting alignment\n"
+printf "\nIndividual Extensiphy runs finished. Combining aligned query sequences and adding them to starting alignment\n"
 
 
 if [ $intermediate == "KEEP" ]; then
@@ -603,7 +603,7 @@ mv ${outdir}/x* ${outdir}/${storage}/
 
 if [ $use == "ALIGN" ]; then
     printf "\nAlignment updating complete.\n"
-    printf "\nAlignment file will be in ${outdir}/outputs \n"
+    printf "\nAlignment file will be in ${outdir}/RESULTS \n"
 
 elif [ $use == "PHYLO" ]; then
     printf "\nAlignment updating complete.\n"

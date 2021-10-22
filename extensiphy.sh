@@ -162,7 +162,7 @@ fi
 
 if [ ${use} == "PHYLO" ]; then
 # If user is trying to also build a phylogeny, make sure the RAxML is installed.
-        if [ $(which raxmlHPC-PTHREADS | wc -l) -lt 1 ]; then
+        if [ $(which raxmlHPC | wc -l) -lt 1 ]; then
                 printf "raxmlHPC not found. Install and/or alias or add to path\n" >&2
 	        exit 0
         else

@@ -243,7 +243,7 @@ $ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 This command takes in an alignment file (combo.fas) with the -a flag and a directory containing some paired-end read files with the -d flag. The -o flag specifies the name of our output folder. The other flags use their default values in this case. The result of this is that Extensiphy will add the taxa sequences from the read files to combo.fas. You can examine the results by looking at the updated alignment file:
 
 ```
-~/first_extensiphy_run/outputs/extended.aln
+~/first_extensiphy_run/RESULTS/extended.aln
 ```
 
 Lets take a look at our new alignment file that SHOULD have 3 new taxa/sequences added to it.
@@ -283,7 +283,7 @@ The output you should see is:
 Follow that up with a quick count of the number of sequences in the alignment file.
 
 ```bash
-$ grep -c ">" ./first_extensiphy_run/outputs/extended.aln
+$ grep -c ">" ./first_extensiphy_run/RESULTS/extended.aln
 ```
 
 This command should return
@@ -306,7 +306,7 @@ $ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_exten
 
 ```
 
-The outputs will all appear in the `outputs` folder. When looking at your `outputs` folder, you'll see all the RAxML output files.
+The outputs will all appear in the `RESULTS` folder. When looking at your `RESULTS` folder, you'll see all the RAxML output files.
 
 ```
 extended.aln          RAxML_bestTree.consensusFULL  RAxML_log.consensusFULL            RAxML_result.consensusFULL
@@ -342,7 +342,7 @@ Run this command to run Extensiphy on our test data with bootstrapping on for ou
 $ ./extensiphy.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o fourth_extensiphy_run
 ```
 One the run completes, you should see a few additional files compared to our previous outputs.
-The complete `outputs` folder should look something like this:
+The complete `RESULTS` folder should look something like this:
 
 ```
 extended.aln                                                      RAxML_info.consensusFULL
@@ -468,7 +468,7 @@ The -g flag allows you to specify the format you wish your output alignments to 
 From the Extensiphy folder, run:
 
 ```bash
-$ ls ./locus_out_Extensiphy_run/outputs/updated_single_loci/
+$ ls ./locus_out_Extensiphy_run/RESULTS/updated_single_loci/
 
 single_locus_1_.fasta
 ```

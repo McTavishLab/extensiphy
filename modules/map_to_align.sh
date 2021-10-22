@@ -12,7 +12,7 @@ set -o pipefail
 PHYCORDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 
-printf "phycorder directory is %s\n" "$PHYCORDER"
+printf "Extensiphy directory is %s\n" "$PHYCORDER"
 
 
 PE=0
@@ -147,16 +147,16 @@ echo "refname is $refnam"
 
 hisat_idx=$(echo "$align" | cut -f 1 -d '.')
 
-echo "Time for bowtie2-build:"
+
 
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
-echo "time for bowtie2 mapping:"
-printf "\nPE = $PE\n" 
+echo "time for read mapping:"
+printf "\nPE = $PE\n"
 if [ "$PE" -eq 2 ]; then
 	printf "\nRunning in Paired-End Mode\n"
 	#bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
 	#hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
-	
+
 	bwa-mem2 mem -t $threads $align $read_one $read_two > $outdir/best_map.sam
 	printf "\nRun with command: bwa-mem2 mem -t ${threads} ${align} ${read_one} ${read_two} > ${outdir}/best_map.sam\n"
 	#printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal\n"

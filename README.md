@@ -80,7 +80,7 @@ When you examine the alignment file with a viewer like [Seaview](http://doua.pra
 Now, either from the docker container, your anaconda env, or from the directory where you installed Extensiphy, run:
 
 ```bash
-./multi_map.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o EP_output
+./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o EP_output
 ```
 This is a simple run on three paired end read samples, which are found in the directory `extensiphy/testdata`
 * The `-a` flag provides the path to the existing alignment to update.
@@ -130,7 +130,7 @@ Replace the `[stuff inside the brackets]` with the appropriate paths and folder 
 If you have installed Extensiphy locally, you can just pass in the paths to your data, and run the analysis.
 
 ````
-./multi_map.sh -a [path to your_input_alignment] -d [path to your_directory_of_reads] -1 [r1_suffix] -2 [r2_suffix] -u [either PHYLO or ALIGN, depending on if you want a phylogeny or just and alignment] -o [your_output_dir]
+./extensiphy.sh -a [path to your_input_alignment] -d [path to your_directory_of_reads] -1 [r1_suffix] -2 [r2_suffix] -u [either PHYLO or ALIGN, depending on if you want a phylogeny or just and alignment] -o [your_output_dir]
 ````
 
 If you are using docker, it is simplest to link your data directory to a new container.
@@ -148,7 +148,7 @@ This shares the 'my_data_dir' folder between your operating system and the docke
 Now you can run multi_map as earlier but we'll specify the directory where your data is located.
 
 ```bash
-./multi_map.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o linked_data/[output_dir_name]
+./extensiphy.sh -a /project/linked_data/[alignment_file] -d /project/linked_data -1 [suffix_1] -2 [suffix_2] -o linked_data/[output_dir_name]
 ```
 
 By putting the outputs into the linked directory, you can access them directly through your operating system without having to copy them.

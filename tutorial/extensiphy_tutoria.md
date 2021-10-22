@@ -63,14 +63,14 @@ Lets get to it!
 Extensiphy takes command line arguments to update a sequence alignment with new taxa sequences. Lets look at the options used by Extensiphy. Extensiphy use revolves around calling the
 
 ```bash
-$ ./multi_map.sh
+$ ./extensiphy.sh
 ```
 
 command followed by flags (dashes next to a letter corresponding the option you wish to use or input).
 Calling the help menu with the following command:
 
 ```bash
-$ ./multi_map.sh -h
+$ ./extensiphy.sh -h
 ```
 
 has the following output:
@@ -233,7 +233,7 @@ Lets use Extensiphy to update a multiple sequence alignment with some new data. 
 
 ```bash
 
-$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
+$ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -o first_extensiphy_run
 
 ```
 
@@ -299,7 +299,7 @@ Here is our new command.
 
 ```bash
 
-$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extensiphy_run
+$ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata -u PHYLO -o second_extensiphy_run
 
 ```
 
@@ -318,7 +318,7 @@ In some cases, you might already have a phylogeny and you want to add your new s
 Run the following command:
 
 ```bash
-$ ./multi_map.sh -u PHYLO -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o third_extensiphy_run
+$ ./extensiphy.sh -u PHYLO -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o third_extensiphy_run
 ```
 All of the output files will be the same as generating a phylogeny from scratch.
 The -t flag indicates that you're assigning a tree file as input that corresponds with the alignment file you indicated. The tree file is then used as a starting tree when performing the new, full maximum likelihood search instead of a de novo generated tree.
@@ -336,7 +336,7 @@ You'll need to specify `-b ON` to turn on bootstrapping. Bootstrapping is off by
 Run this command to run Extensiphy on our test data with bootstrapping on for our phylogenetic estimation.
 
 ```bash
-$ ./multi_map.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o fourth_extensiphy_run
+$ ./extensiphy.sh -u PHYLO -b ON -a ./testdata/combo.fas -t ./testdata/combo.tre -d ./testdata -o fourth_extensiphy_run
 ```
 One the run completes, you should see a few additional files compared to our previous outputs.
 The complete `outputs` folder should look something like this:
@@ -390,7 +390,7 @@ You should see something like this:
 Lets take one of our taxa and use that sequence as the reference. I chose taxon_11 because its on a long branch far from where we expect our sequences to placed in the tree. Make sure you leave off the carrot (>) from the taxon name. Run this command:
 
 ```bash
-$ ./multi_map.sh -a ./testdata/combo.fas -u PHYLO -d ./testdata -t ./testdata/combo.tre -o fifth_Extensiphy_run -r taxon_11
+$ ./extensiphy.sh -a ./testdata/combo.fas -u PHYLO -d ./testdata -t ./testdata/combo.tre -o fifth_Extensiphy_run -r taxon_11
 ```
 
 Did you get the same tree as the output of our original run?
@@ -430,7 +430,7 @@ Lets run a new analyses.
 Now, enter the following command:
 
 ```bash
-$ ./multi_map.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES -o sixth_Extensiphy_run
+$ ./extensiphy.sh -a ./testdata/single_locus_align_dir -d ./testdata -m SINGLE_LOCUS_FILES -o sixth_Extensiphy_run
 ```
 
 The `-m` flag allows you to specify a directory with any number of input options. by using -m SINGLE_LOCUS_FILES, we are indicating that the alignment option (-a) will point to a directory containing multiple single locus alignment files that share all the sample taxon names. It is VERY important that all the taxa labels have the same names or this function will not work. This run will take the single loci MSA files, check for loci longer than the cut-off of 700 nucleotides and construct a concatenated alignment of those loci. A file capturing the length and positions of those loci can be found in the file:
@@ -447,7 +447,7 @@ This file is a comma delimited file capturing the loci's position in the concate
 If you have already produced a species-tree from multiple single locus alignments, Extensiphy can take that tree as input along with your separate locus files. Run the following command to read in some multiple single locus alignments and the tree corresponding to the relationships inferred from all of the combined loci. We'll also give our new Extensiphy run output folder a new name so we can distinguish it from our old run.
 
 ```bash
-$ ./multi_map.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o split_Extensiphy_run
+$ ./extensiphy.sh -u PHYLO -a ./testdata/single_locus_align_dir -d ./testdata -t ./testdata/combo.tre -m SINGLE_LOCUS_FILES -o split_Extensiphy_run
 
 ```
 

@@ -2,7 +2,7 @@
 
 Extensiphy is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment. Homologous loci may be kept concatenated or split back into individual alignments prior to phylogenetic estimation.
 
-![Extensiphy_worlflow](./doc/images/EP_workflow_2.png)
+![Extensiphy_worlflow](./tutorial/images/EP_workflow_4.png)
 
 Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). Reads are aligned to a reference sequence and a consensus sequence is called (b). The new sequence is added to the alignment and the updated alignment is used to estimate a phylogeny (c).
 

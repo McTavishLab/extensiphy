@@ -84,8 +84,8 @@ Now, either from the docker container, your anaconda env, or from the directory 
 This is a simple run on three paired end read samples, which are found in the directory `extensiphy/testdata`
 * The `-a` flag provides the path to the existing alignment to update.
 * The `-d` flag provides the path to your directory of fastq files.
-* The `-1` and `-2` flags specify the filename endings for each of the readfiles. (defaults are `_R1.fq` and `_R2.fq` )
-* The `-u` flag specfies what analysis to run. Here we are buildinga phylogeny. (default is `ALIGN`, building an alignment only.)
+* The `-1` and `-2` flags specify the filename endings for each of the readfiles. (defaults are `_R1.fq` and `_R2.fq`, more info at https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) 
+* The `-u` flag specfies what analysis to run. Here we are building a phylogeny. (default is `ALIGN`, building an alignment only.)
 * The `-o` flag specifies the output directory. (default is `EP_output`)
 
 Once Extensiphy has finished running on the test data, you should see a lines saying:

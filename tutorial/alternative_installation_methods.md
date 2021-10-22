@@ -31,6 +31,8 @@ $ conda activate extensiphy_env
 ```
 
 5. Finally, you can test your installation by running the following command.
+More details at :
+https://github.com/McTavishLab/extensiphy/blob/main/README.md#quick-test-run
 
 ```bash
 $ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata
@@ -41,6 +43,7 @@ Once Extensiphy has finished running on the test data, you should see a line say
 Alignment file is: [path/to]/EP_output/outputs/extended.aln
 ```
 Congratulations! You're install of Extensiphy is complete and you are ready to run analyses.
+
 
 
 ## Installing Dependencies With `apt-get`

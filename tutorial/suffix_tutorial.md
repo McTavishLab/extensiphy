@@ -10,7 +10,7 @@ output: html_document
 
 ## Short read paired end file suffixes
 
-The files for paired end reads come in paris - usally signified by an R1 and R2 before the file extention.
+The files for paired end reads come in pairs - usally signified by an R1 and R2 before the file extention.
 
 e.g.
 
@@ -25,7 +25,7 @@ _R1.fastq
 _R2.fastq
 ```
 
-Depending on how the data was generated or processed, the suffixes can be thinge like 'r1_001.fq' and 'r2_001.fq'.
-So for paired end reads, pass in the suffix and the extention to -1 and -2.
+Depending on how the data was generated or processed, the suffixes can be things like 'taxonid_r1_001.fq' and 'taxonid_r2_001.fq'.
+So for those paired end reads, you would pass in -1 r1_001.fq and -2 r2_001.fq.
 
 

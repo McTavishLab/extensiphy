@@ -343,6 +343,7 @@ echo "${outdir}"
 cd ${outdir}
 
 mkdir ${outdir}/outputs
+mkdir ${outdir}/intermediate_files
 
 workd=$(pwd)
 
@@ -588,7 +589,13 @@ cd ${outdir}/outputs
 
 INFER=$(pwd)
 
+# move files into appropriate places for later storage or user use
 mv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
+mv ${outdir}/best_ref* ${outdir}/intermediate_files/
+mv ${outdir}/ref_nogap.fas ${outdir}/intermediate_files/
+mv ${outdir}/snps.txt ${outdir}/intermediate_files/
+mv ${outdir}/x* ${outdir}/intermediate_files/
+
 
 if [ $use == "ALIGN" ]; then
     printf "\nAlignment updating complete.\n"
@@ -654,7 +661,7 @@ output_dir=$(pwd)
 # for now, it serves as a SNP check
 if [ $output_type == "SINGLE_LOCUS_FILES" ]; then
 
-	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir $INFER/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/ep_dev_log.txt 2>&1
+	$PHYCORDER/modules/locus_position_identifier.py --out_file_dir ${INFER}/updated_single_loci --position_csv_file $loci_positions --concatenated_fasta $INFER/extended.aln >> $workd/ep_dev_log.txt 2>&1
 
 	printf "\nMultiple single locus MSA file handling selected\n"
 	printf "\nAlignment file is: "$output_dir/"extended.aln\n"

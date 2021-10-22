@@ -80,6 +80,8 @@ tree="NONE"
 ref_select="RANDOM"
 intermediate="KEEP"
 use="ALIGN"
+outputs_dir="RESULTS"
+storage="intermediate_files"
 
 while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
   case $opt in
@@ -124,10 +126,12 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     Inputs are generally a multiple sequence file in fasta format and a directory of \n \
     Fastq paired-end read sequences. \
     \n\n\n EXAMPLE COMMAND: \
-    \n\n /path/to/multi_map.sh -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
-    \n\n (-a) alignment in fasta format, \
+    \n\n /path/to/multi_map.sh -u ALIGN -a /path/to/alignment_file -d /path/to/directory_of_reads [any other options] \
+    \n\n REQUIRED FLAGS \
+    \n (-a) alignment in fasta format, \
     \n (-d) directory of paired end fastq read files for all query taxa, \
     \n (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
+    \n\n OPTIONAL FLAGS \
     \n (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE), \
     \n (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA), \
     \n (-o) directory name to hold results (DEFAULT: creates rapup_run), \
@@ -342,8 +346,8 @@ outdir=${tmp_outdir}
 echo "${outdir}"
 cd ${outdir}
 
-mkdir ${outdir}/outputs
-mkdir ${outdir}/intermediate_files
+mkdir ${outdir}/${outputs_dir}
+mkdir ${outdir}/${storage}
 
 workd=$(pwd)
 
@@ -580,7 +584,7 @@ cat combine_and_infer/*.fas $align > combine_and_infer/extended.aln
 
 printf "\nExtended alignment file creaded (extended.aln).\n"
 
-cd ${outdir}/outputs
+cd ${outdir}/${outputs_dir}
 
 # strip the unnecessary information from the taxa names in the alignment.
 # this assumes you've used the renaming tool to rename all of the reads for this experiment
@@ -590,11 +594,11 @@ cd ${outdir}/outputs
 INFER=$(pwd)
 
 # move files into appropriate places for later storage or user use
-mv ${outdir}/combine_and_infer/extended.aln ${outdir}/outputs/
-mv ${outdir}/best_ref* ${outdir}/intermediate_files/
-mv ${outdir}/ref_nogap.fas ${outdir}/intermediate_files/
-mv ${outdir}/snps.txt ${outdir}/intermediate_files/
-mv ${outdir}/x* ${outdir}/intermediate_files/
+mv ${outdir}/combine_and_infer/extended.aln ${outdir}/${outputs_dir}/
+mv ${outdir}/best_ref* ${outdir}/${storage}/
+mv ${outdir}/ref_nogap.fas ${outdir}/${storage}/
+mv ${outdir}/snps.txt ${outdir}/${storage}/
+mv ${outdir}/x* ${outdir}/${storage}/
 
 
 if [ $use == "ALIGN" ]; then

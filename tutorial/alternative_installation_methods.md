@@ -33,7 +33,7 @@ $ conda activate extensiphy_env
 5. Finally, you can test your installation by running the following command.
 
 ```bash
-$ ./multi_map.sh -a ./testdata/combo.fas -d ./testdata
+$ ./extensiphy.sh -a ./testdata/combo.fas -d ./testdata
 ```
 
 Once Extensiphy has finished running on the test data, you should see a line saying:

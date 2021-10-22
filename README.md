@@ -98,10 +98,7 @@ Tree file is: /project/extensiphy/EP_output/RESULTS/RAxML_bestTree.consensusFULL
 * If you did not get this message, you'll have to check output log `ep_dev_log.txt`
 to learn more about the issue before proceeding.  
 
-The alignment file should now 3 new sequences ![this](tutorial/images/updated_alignment.png?raw=true)  
-and you should when you examine the phylogeny (`RAxML_bestTree.consensusFULL`), you should see ![this](tutorial/images/tree_image_2.png?raw=true)  
-
-We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa. Notice that the new sequences we wanted to add (taxon_30, taxon_31 and taxon_32) have been added to the clade highlighted in the red box.  
+We just added 3 new taxa to a starting multiple sequence alignment and obtained a tree that includes these new taxa.
 
 
 * If you are using docker - exit the container by typing

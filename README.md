@@ -22,13 +22,13 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 ### Docker
 The simplest and most hassle free way to run Extensiphy is using Docker.
-the [Building and testing your own Extensiphy Docker image](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions. *Not recommended on new macs with apple silicon chip - use Anaconda install instructions*
+the [Building and testing your own Extensiphy Docker image](#building-and-testing-your-own-extensiphy-docker-image) section will review the docker installation instructions. *Not recommended on new macs with apple silicon chip - use Anaconda install instructions instead*
 
 ### Anaconda
 You can also install the dependencies of Extensiphy using Anaconda. The [Anaconda Installation](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-dependencies-with-anaconda) section of this repository will walk through this process in more detail.
 
 ### Advanced
-If you're comfortable installing programs by hand, the [Advanced Installation Methods](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-depedencies-by-hand) section is for you.
+If you're comfortable installing programs by hand, the [Advanced Installation Methods](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/alternative_installation_methods.md#installing-depedencies-by-hand) section is for you. This is largely only tested on Linux (Ubuntu) operating systems.
 
 ### Extensiphy Tutorial
 We recommend you run through the [Extensiphy tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md) for a more in-depth walkthrough of Extensiphy's features. The tutorial will walk through how to run Extensiphy using different data types and options. You can copy code snippets into your terminal window.

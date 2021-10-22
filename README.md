@@ -112,7 +112,7 @@ exit
 docker cp ep_container:/project/extensiphy/EP_output/RESULTS/RAxML_bestTree.consensusFULL .
 ```
 
-* For a deeper walk through, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/dev/tutorial/extensiphy_tutoria.md).
+* For a deeper walk through, take a look through the [tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md).
 
 * To get right down to business and update your own alignment, continue to the next section.
 

@@ -31,10 +31,15 @@ test_help_menu () {
 
 }
 
-# test_basic_run () {
-#
-#
-#
-# }
-
 test_help_menu
+
+touch logfile.txt
+# Test that EP runs and produces and updated alignment
+# Tests flags: -a. -d, -1, -2, -u ALIGN, -o
+# Examine: extended.aln
+../extensiphy.sh -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -2 _R2.fq -u ALIGN -o first_ep_run >> logfile.txt 2>&1
+
+# Test that EP runs and produces and alignment and phylogeny
+# Tests flags: -a, -d, -1, -2 , -u PHYLO, -o
+# Examine: extended.aln, RAxML_bestTree.consensusFULL
+../extensiphy.sh -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -2 _R2.fq -u PHYLO -o second_ep_run >> logfile.txt 2>&1

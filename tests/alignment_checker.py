@@ -11,6 +11,9 @@ def parse_args():
 def main():
     args = parse_args()
 
+    name_lines = 0
+    seq_lines = 0
+
     input_file = os.path.realpath(args.align_file)
 
     with open(input_file, 'r') as alignment:
@@ -27,7 +30,8 @@ def check_alignment_lines(line):
     search_name = re.search(compiled_find_name, line)
     search_seq = re.search(compiled_find_seq, line)
 
-    
+    if 
+
 
 
 

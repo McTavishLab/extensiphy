@@ -35,19 +35,38 @@ def test_help_menu(test_dir, ep_dir):
     clean_output = str(stdout.decode("utf-8")).replace(" ", "").replace("\n","")
 
     assert no_lines_expected_output == clean_output
+    print("EP help mentu test: PASSED")
 
 
 def test_basic_run(ep_dir):
 
-    ep_run = sp.Popen([ep_dir + "/extensiphy.sh", "-a", ep_dir + "/testdata/combo.fas", "-d", ep_dir + "/testdata", "-1", "_R1.fq", "-2", "_R2.fq", "-u", "ALIGN", "-o", ep_dir + "/tests/EP_output"], stdout=sp.PIPE, stderr=sp.PIPE)
+    output_location = ep_dir + "/tests/EP_output"
+
+    ep_run = sp.Popen([ep_dir + "/extensiphy.sh", "-a", ep_dir + "/testdata/combo.fas", "-d", ep_dir + "/testdata", "-1", "_R1.fq", "-2", "_R2.fq", "-u", "ALIGN", "-o", output_location], stdout=sp.PIPE, stderr=sp.PIPE)
     stdout, stderr = ep_run.communicate()
 
-    print(stdout.decode("utf-8"))
+    # print(stdout.decode("utf-8"))
+    find_alignment(output_location)
 
-    ep_remove = sp.Popen(["rm", "-r", ep_dir + "/tests/EP_output"], stdout=sp.PIPE, stderr=sp.PIPE)
+    ep_remove = sp.Popen(["rm", "-r", output_location], stdout=sp.PIPE, stderr=sp.PIPE)
     stdout, stderr = ep_remove.communicate()
 
 
+def find_alignment(DIR):
+    alignment_file_types = ["aln", "fas", "fasta"]
+    alignment_path = DIR + "/RESULTS/"
+    files = os.listdir(alignment_path)
+
+    for file in files:
+        split_file_name = file.split(".")
+        suffix_check = any(split_file_name[1] in x for x in alignment_file_types)
+        if suffix_check:
+            check_alignment(alignment_path, file)
+
+def check_alignment(PATH, FILE):
+    with open (PATH + "/" + FILE) as fasta:
+        for line in fasta:
+            print(line)
 
 if __name__ == '__main__':
     main()

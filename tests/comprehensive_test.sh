@@ -1,37 +1,27 @@
 #! /bin/bash
 # Comprehensive test of Extensiphy options and outputs
-
-
-set -e
-set -u
-set -o pipefail
-
 # establishes the path to find the phycorder directory
-TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-EP_DIR=$(cd "$( dirname "${TEST_DIR/..}" )" && pwd)
 
-test_help_menu () {
 
-  # echo "${TEST_DIR}"
-  # echo "${EP_DIR}"
+touch test_results.txt
 
-  ep_menu_test=$(${EP_DIR}/extensiphy.sh -h)
-  ep_menu_expected_results_1='Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.'
+../extensiphy.sh -h > test_help.txt
+## Question do we want the help mneu to crash if programs not installed?
 
- #echo "${ep_menu_test}"
- #echo "${ep_menu_expected_results}"
+# Check that some expected text is there
+VAR=$(grep 'Extensiphy is a program for quickly adding genomic sequence' test_help.txt | wc)
 
- if [[ ${ep_menu_test} != *${ep_menu_expected_results_1}* ]]
- then
-   echo "PROBLEM WITH HELP MENU"
-   exit
- else
-   echo "Help Menu Test: PASSED"
- fi
+if [[ $(echo $VAR | cut -f1 -d' ') -eq 1 ]]
+then
+  echo "text found in help output."
+  echo "test help test passed" > test_results.txt
+else
+  echo "NOOOOOOOO"
+  echo "test help test FAILED" > test_results.txt
+fi
 
-}
 
-test_help_menu
+
 
 touch logfile.txt
 # Test that EP runs and produces and updated alignment

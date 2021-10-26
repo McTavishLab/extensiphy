@@ -9,9 +9,9 @@ touch test_results.txt
 ## Question do we want the help mneu to crash if programs not installed?
 
 # Check that some expected text is there
-VAR=$(grep 'Extensiphy is a program for quickly adding genomic sequence' test_help.txt | wc)
+VAR=$(grep 'Extensiphy is a program for quickly adding genomic sequence' test_help.txt | wc -l)
 
-if [[ $(echo $VAR | cut -f1 -d' ') -eq 1 ]]
+if [[ $VAR -eq 1 ]]
 then
   echo "text found in help output."
   echo "test help test passed" > test_results.txt
@@ -19,6 +19,9 @@ else
   echo "NOOOOOOOO"
   echo "test help test FAILED" > test_results.txt
 fi
+
+
+exit
 
 
 

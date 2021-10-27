@@ -120,7 +120,7 @@ PHYLO=./fourth_extensiphy_run/RESULTS/RAxML_bestTree.consensusFULL
 BOOT=./fourth_extensiphy_run/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus
 num_lines=$(wc -l ./fourth_extensiphy_run/RESULTS/extended.aln)
 check_tree=$(grep -c ":0.0;" ./fourth_extensiphy_run/RESULTS/RAxML_bestTree.consensusFULL)
-check_boot=$(grep -c "(" ./fourth_extensiphy_run/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus)
+check_boot=$(grep -c "taxon_17" ./fourth_extensiphy_run/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus)
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ] && [ ${check_boot} -gt 1 ]
 then

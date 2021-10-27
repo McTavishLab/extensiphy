@@ -26,23 +26,8 @@ set -o pipefail
 #(rightmost) command to exit with a non-zero status, or zero if all commands in
 #the pipeline exit successfully. This option is disabled by default.
 
-
 ################################################################################
-# Tests selecting a specific reference taxon
-# Tests flags: -a, -d, -1, -2, -u PHYLO -o, -t, -r
-# Examine:  extended.aln, RAxML_bestTree.consensusFULL
-../extensiphy.sh -a ../testdata/combo.fas -u PHYLO -d ../testdata -t ../testdata/combo.tre -1 _R1.fq -2 _R2.fq -o ep_test_five -r taxon_11 >> logfile.txt 2>&1
-
-ALIGN=./ep_test_five/RESULTS/extended.aln
-PHYLO=./ep_test_five/RESULTS/RAxML_bestTree.consensusFULL
-num_seqs=$(grep -c ">" ./ep_test_five/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_five/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_five/RESULTS/RAxML_bestTree.consensusFULL)
-
-
-if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]
-then
-  echo "test alignment update and phylo update for specific reference: PASSED" >> test_results.txt
-else
-  echo "test alignment update and phylo update for specific reference: FAILED" >> test_results.txt
-fi
+# Tests an alignment using single-end read data
+# Tests flags: -a, -d, -1, -e SE
+# Examine:  extended.aln
+../extensiphy.sh -u ALIGN -s SE -a ../testdata/single_locus_align_dir -d ../testdata -1 _R1.fq -o ep_test_two >> logfile.txt 2>&1

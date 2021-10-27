@@ -122,7 +122,7 @@ num_lines=$(wc -l ./fourth_extensiphy_run/RESULTS/extended.aln)
 check_tree=$(grep -c ":0.0;" ./fourth_extensiphy_run/RESULTS/RAxML_bestTree.consensusFULL)
 check_boot=$(grep -c "taxon_17" ./fourth_extensiphy_run/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus)
 
-if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ] && [ ${check_boot} -gt 1 ]
+if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ] && [ ${check_boot} -eq 1 ]
 then
   echo "text found in help output."
   echo "test alignment update and bootstrap phylo update: PASSED" >> test_results.txt

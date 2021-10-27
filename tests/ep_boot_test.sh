@@ -36,6 +36,7 @@ ALIGN=./ep_test_four/RESULTS/extended.aln
 PHYLO=./ep_test_four/RESULTS/RAxML_bestTree.consensusFULL
 BOOT=./ep_test_four/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus
 num_lines=$(wc -l ./ep_test_four/RESULTS/extended.aln)
+num_seqs=$(grep -c ">" ./ep_test_four/RESULTS/extended.aln)
 check_tree=$(grep -c ":0.0;" ./ep_test_four/RESULTS/RAxML_bestTree.consensusFULL)
 check_boot=$(grep -c "taxon_17" ./ep_test_four/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus)
 

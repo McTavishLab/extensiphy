@@ -35,6 +35,7 @@ set -o pipefail
 
 ALIGN=./ep_test_two/RESULTS/extended.aln
 PHYLO=./ep_test_two/RESULTS/RAxML_bestTree.consensusFULL
+num_seqs=$(grep -c ">" ./ep_test_two/RESULTS/extended.aln)
 num_lines=$(wc -l ./ep_test_two/RESULTS/extended.aln)
 check_tree=$(grep -c ":0.0;" ./ep_test_two/RESULTS/RAxML_bestTree.consensusFULL)
 

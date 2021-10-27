@@ -29,13 +29,13 @@ set -o pipefail
 # Test that EP updates an existing phylogeny
 # Tests flags: -a, -d, -1, -2, -u PHYLO, -t, -o
 # Examine: extended.aln, RAxML_bestTree.consensusFULL
-../extensiphy.sh -u PHYLO -a ../testdata/combo.fas -t ../testdata/combo.tre -d ../testdata -1 _R1.fq -2 _R2.fq -o ep_test_three >> logfile.txt 2>&1
+../extensiphy.sh -u PHYLO -a ../testdata/combo.fas -t ../testdata/combo.tre -d ../testdata -1 _R1.fq -2 _R2.fq -o ep_test_four >> logfile.txt 2>&1
 
-ALIGN=./ep_test_three/RESULTS/extended.aln
-PHYLO=./ep_test_three/RESULTS/RAxML_bestTree.consensusFULL
-num_seqs=$(grep -c ">" ./ep_test_three/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_three/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_three/RESULTS/RAxML_bestTree.consensusFULL)
+ALIGN=./ep_test_four/RESULTS/extended.aln
+PHYLO=./ep_test_four/RESULTS/RAxML_bestTree.consensusFULL
+num_seqs=$(grep -c ">" ./ep_test_four/RESULTS/extended.aln)
+num_lines=$(wc -l ./ep_test_four/RESULTS/extended.aln)
+check_tree=$(grep -c ":0.0;" ./ep_test_four/RESULTS/RAxML_bestTree.consensusFULL)
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]
 then

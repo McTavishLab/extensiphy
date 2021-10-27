@@ -75,6 +75,13 @@ touch logfile.txt
 ./ep_update_align_test.sh
 
 ###############################################################################
+# Test that EP runs with single-end read data
+# Tests flags: -a, -d, -1, -s SE, -u ALIGN, -o
+# Examine: extended.aln
+./ep_single_end_reads_test.sh
+
+
+###############################################################################
 # Test that EP runs and produces and alignment and phylogeny
 # Tests flags: -a, -d, -1, -2 , -u PHYLO, -o
 # Examine: extended.aln, RAxML_bestTree.consensusFULL
@@ -165,9 +172,6 @@ touch logfile.txt
 
 ./ep_ref_test.sh
 
-cat test_results.txt
-
-exit
 ################################################################################
 # Tests using single locus alignment files as inputs instead of concatenated
 # Tests flags: -a, -d, -1, -2, -u ALIGN, -o, -m
@@ -175,6 +179,11 @@ exit
 # ../extensiphy.sh -u ALIGN -a ../testdata/single_locus_align_dir -d ../testdata -m SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o sixth_extensiphy_run >> logfile.txt 2>&1
 
 ./ep_single_locus_in_test.sh
+
+
+cat test_results.txt
+
+exit
 
 ################################################################################
 # Tests building a tree from single locus alignment files

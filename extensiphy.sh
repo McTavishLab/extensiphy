@@ -261,20 +261,33 @@ fi
 #echo "$r2_tail"
 #echo "$read_dir"
 
-echo $( ls $read_dir/*$r1_tail )
+if [ "${end_setting}" == "PE" ]; then
+  echo $( ls $read_dir/*$r1_tail )
 
-myarray_r1=(`find  $read_dir -maxdepth 1 -name "*$r1_tail"`)
-myarray_r2=(`find  $read_dir -maxdepth 1 -name "*$r2_tail"`)
+  myarray_r1=(`find  $read_dir -maxdepth 1 -name "*$r1_tail"`)
+  myarray_r2=(`find  $read_dir -maxdepth 1 -name "*$r2_tail"`)
 
-count_r1=${#myarray_r1[@]}
-count_r2=${#myarray_r2[@]}
+  count_r1=${#myarray_r1[@]}
+  count_r2=${#myarray_r2[@]}
 
-echo "$count_r1 files found in $read_dir with suffix $r1_tail"
-echo "$count_r2 files found in $read_dir with suffix $r2_tail"
+  echo "$count_r1 files found in $read_dir with suffix $r1_tail"
+  echo "$count_r2 files found in $read_dir with suffix $r2_tail"
 
-if  [ $count_r1 == 0 ] ; then echo "No files found in $read_dir with suffix $r1_tail" && exit 1;  fi
-if  [ $count_r2 == 0 ]; then echo "No files found in $read_dir with suffix $r2_tail" && exit 1;  fi
+  if  [ $count_r1 == 0 ] ; then echo "No files found in $read_dir with suffix $r1_tail" && exit 1;  fi
+  if  [ $count_r2 == 0 ]; then echo "No files found in $read_dir with suffix $r2_tail" && exit 1;  fi
 
+elif [ "${end_setting}" == "SE" ]; then
+  echo $( ls $read_dir/*$r1_tail )
+
+  myarray_r1=(`find  $read_dir -maxdepth 1 -name "*$r1_tail"`)
+
+  count_r1=${#myarray_r1[@]}
+
+  echo "$count_r1 files found in $read_dir with suffix $r1_tail"
+
+  if  [ $count_r1 == 0 ] ; then echo "No files found in $read_dir with suffix $r1_tail" && exit 1;  fi
+
+fi
 
 # CHECK READ FILES SUFFIX
 #printf "\nBeginning check of read and suffix accuracy\n"
@@ -538,7 +551,7 @@ elif [ "$end_setting" == "SE" ]; then
                         #echo "${base}_output_dir"
                         #echo "$PHYCORDER/map_to_align.sh -a $outdir/best_ref.fas -t $tree -p $i -e ${i%$r1_tail}$r2_tail -1 $r1_tail -2 $r2_tail -c $threads -o ${base}output_dir > parallel-$base-dev.log &"
                         #echo "Time for $j Phycorder run:"
-                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -2 $r2_tail -c $threads -d "$workd" -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
+                        time $PHYCORDER/modules/map_to_align.sh -a $workd/best_ref.fas -t $tree -p $i -1 $r1_tail -c $threads -d ${workd} -g $workd/best_ref_gaps.fas -o ${base}output_dir >> $workd/ep_dev_log.txt 2>&1 &
                         #> rapup-dev-logs/parallel-$base-dev.log 2> rapup-dev-logs/parallel-$base-dev-err.log &
                         #wait
                         printf "\nadding new Extensiphy run\n"

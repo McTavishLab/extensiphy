@@ -92,7 +92,9 @@ fi
 
 printf "master dir == %s\n" "$master_dir"
 printf "tail_1 is %s\n" "$r1_tail"
-printf "tail_2 is %s\n" "$r2_tail"
+if [ ${PE} == 2 ]; then
+  printf "tail_2 is %s\n" "$r2_tail"
+fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument threads is %s\n" "$threads"

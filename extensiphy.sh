@@ -341,7 +341,9 @@ printf "reference selection = $ref_select\n"
 printf "number of Extensiphy runs = $phycorder_runs\n"
 printf "number of threads per Extensiphy run = $threads\n"
 printf "suffix for left reads (if paired end or single end) = $r1_tail\n"
-printf "suffix for right reads (if paired end only) = $r2_tail\n"
+if [ ${end_setting} == "PE" ]; then
+  printf "suffix for right reads (if paired end only) = $r2_tail\n"
+fi
 printf "output directory = $outdir\n"
 printf "#################################################\n"
 
@@ -484,6 +486,8 @@ printf "\nBeginning Extensiphy runs\n"
 
 wd=$(pwd)
 mkdir -p combine_and_infer
+
+echo "end setting == ${end_setting}"
 
 if [ "$end_setting" == "PE" ]; then
 	for j in $(ls x*); do

@@ -146,7 +146,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     \n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF) \
     \n\n\n if using single locus MSA files as input, \
     \n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv), \
-    \n (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700) \
+    \n (-n) Set size of locus minimum size cutoff used as input or output (Options: int number)(DEFAULT: 700) \
     \n"
     exit
     ;;
@@ -379,9 +379,20 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
         #echo pwd
         cat ./locus_IDs.txt | split -d -l $threads
 
+        if [ $loci_len == "700" ]; then
 
                 for j in $(ls x*); do
                         for i in $(cat $j); do
+                    $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/ep_dev_log.txt 2>&1
+                        done
+                        wait
+                done
+
+
+            $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
+
+        elif [ $loci_len != "700" ]; then
+                for j in $(ls x*); do                        for i in $(cat $j); do
 			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
@@ -391,7 +402,8 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
 	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
 
 
-        align=$( realpath ../combo.fas)
+   fi
+           align=$( realpath ../combo.fas)
 
 	printf "\nNew alignment file produced\n"
 	printf "$align"

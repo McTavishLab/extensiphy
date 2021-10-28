@@ -146,7 +146,7 @@ while getopts ":a:t:o:c:p:e:1:2:m:d:g:s:f:n:b:r:i:u:h" opt; do
     \n (-b) bootstrapping tree ON or OFF (DEFAULT: OFF) \
     \n\n\n if using single locus MSA files as input, \
     \n (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv), \
-    \n (-n) Set size of loci size cutoff used as input or output (Options: int number) \
+    \n (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700) \
     \n"
     exit
     ;;
@@ -399,6 +399,16 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
 	cd ..
 
 elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
+        if [ $loci_len == "700" ]; then
+                printf "\nFiltering and combining input single locus alignments by default length of $loci_len\n"
+	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
+	        #printf "$outdir\n"
+	        #printf "$PHYCORDER\n"
+
+	        align=$( realpath $workd/combo.fas )
+	        loci_positions=$( realpath $loci_positions)
+
+        elif [ $loci_len != "700" ]; then
                 printf "\nFiltering and combining input single locus alignments by user specified length of $loci_len\n"
                 $PHYCORDER/modules/new_locus_combiner.py --msa_folder $align --suffix $single_locus_suffix --out_file $workd/combo.fas --position_csv_file $loci_positions --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
 	        #printf "$outdir\n"
@@ -406,6 +416,7 @@ elif [ $align_type == "SINGLE_LOCUS_FILES" ]; then
 
 	        align=$( realpath $workd/combo.fas )
 	        loci_positions=$( realpath $loci_positions)
+        fi
 
 elif [ $align_type == "CONCAT_MSA" ]; then
 

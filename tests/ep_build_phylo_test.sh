@@ -41,7 +41,7 @@ check_tree=$(grep -c ":0.0;" ./ep_test_three/RESULTS/RAxML_bestTree.consensusFUL
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]
 then
-  echo "test alignment update and phylo build: PASSED" >> test_results.txt
+  echo "test alignment update and phylo build: PASSED"
 else
-  echo "test alignment update and phylo build: FAILED" >> test_results.txt
+  echo "test alignment update and phylo build: FAILED"
 fi

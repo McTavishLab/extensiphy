@@ -42,7 +42,7 @@ check_tree=$(grep -c ":0.0;" ./ep_test_seven/RESULTS/RAxML_bestTree.consensusFUL
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]
 then
-  echo "test build and update alignment from single locus files: PASSED" >> test_results.txt
+  echo "test build and update alignment from single locus files: PASSED"
 else
-  echo "test build and update alignment from single locus files: FAILED" >> test_results.txt
+  echo "test build and update alignment from single locus files: FAILED"
 fi

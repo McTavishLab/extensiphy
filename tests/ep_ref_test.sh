@@ -42,7 +42,7 @@ check_tree=$(grep -c ":0.0;" ./ep_test_six/RESULTS/RAxML_bestTree.consensusFULL)
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]
 then
-  echo "test alignment update and phylo update for specific reference: PASSED" >> test_results.txt
+  echo "test alignment update and phylo update for specific reference: PASSED"
 else
-  echo "test alignment update and phylo update for specific reference: FAILED" >> test_results.txt
+  echo "test alignment update and phylo update for specific reference: FAILED"
 fi

@@ -35,7 +35,7 @@ VAR=$(grep 'Extensiphy is a program for quickly adding genomic sequence' test_he
 
 if [[ $VAR -eq 1 ]]
 then
-  echo "test help menu: PASSED" >> test_results.txt
+  echo "test help menu: PASSED"
 else
-  echo "test help menu: FAILED" >> test_results.txt
+  echo "test help menu: FAILED"
 fi

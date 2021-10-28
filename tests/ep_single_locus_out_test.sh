@@ -26,23 +26,20 @@ set -o pipefail
 #(rightmost) command to exit with a non-zero status, or zero if all commands in
 #the pipeline exit successfully. This option is disabled by default.
 
-###############################################################################
-# Test that EP bootstraps a phylogeny thats being updated
-# # Tests flags: -a, -d, -1, -2, -u PHYLO, -t, -b, -o
-# Examine: extended.aln, RAxML_bestTree.consensusFULL, RAxML_bootstrap.consensusFULL_bootstrap, RAxML_bipartitionsBranchLabels.majority_rule_bootstrap_consensus
-../extensiphy.sh -u PHYLO -b ON -a ../testdata/combo.fas -t ../testdata/combo.tre -d ../testdata -1 _R1.fq -2 _R2.fq -o ep_test_five >> logfile.txt 2>&1
 
-ALIGN=./ep_test_five/RESULTS/extended.aln
-PHYLO=./ep_test_five/RESULTS/RAxML_bestTree.consensusFULL
-BOOT=./ep_test_five/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus
-num_lines=$(wc -l ./ep_test_five/RESULTS/extended.aln)
-num_seqs=$(grep -c ">" ./ep_test_five/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_five/RESULTS/RAxML_bestTree.consensusFULL)
-check_boot=$(grep -c "taxon_17" ./ep_test_five/RESULTS/RAxML_bipartitions.majority_rule_bootstrap_consensus)
+../extensiphy.sh -u PHYLO -a ../testdata/single_locus_align_dir -d ../testdata -t ../testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o locus_out_Extensiphy_run >> logfile.txt 2>&1
 
-if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ] && [ ${check_boot} -eq 1 ]
+ALIGN=./ep_test_single_locus_output/RESULTS/extended.aln
+PHYLO=./ep_test_single_locus_output/RESULTS/RAxML_bestTree.consensusFULL
+LOCUS_ALIGN=./ep_test_single_locus_output/RESULTS/updated_single_loci/
+num_seqs=$(grep -c ">" ./ep_test_single_locus_output/RESULTS/extended.aln)
+single_locus_align=$(cat ./ep_test_single_locus_output/RESULTS/updated_single_loci/single_locus_1_.fasta | wc -l)
+num_lines=$(wc -l ./ep_test_single_locus_output/RESULTS/extended.aln)
+check_tree=$(grep -c ":0.0;" ./ep_test_single_locus_output/RESULTS/RAxML_bestTree.consensusFULL)
+
+if [ ${num_seqs} -eq 23 ] && [ ${check_tree} -eq 1 ] && [ ${single_locus_align} -eq 46]
 then
-  echo "test alignment update and bootstrap phylo update: PASSED"
+  echo "test output single locus alignment files: PASSED"
 else
-  echo "test alignment update and bootstrap phylo update: FAILED"
+  echo "test output single locus alignment files: FAILED"
 fi

@@ -93,7 +93,6 @@ echo "Running reference selection test."
 # Tests using single locus alignment files as inputs instead of concatenated
 # Tests flags: -a, -d, -1, -2, -u PHYLO, -o, -m
 # Examine:  extended.aln, RAxML_bestTree.consensusFULL
-# ../extensiphy.sh -u ALIGN -a ../testdata/single_locus_align_dir -d ../testdata -m SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o sixth_extensiphy_run >> logfile.txt 2>&1
 
 echo "Running single locus alignment input test."
 ./ep_single_locus_in_test.sh >> test_results.txt

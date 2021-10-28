@@ -76,9 +76,9 @@ $ ./extensiphy.sh -h
 has the following output:
 
 ```
-Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies.
-     View the README for more specific information.
-     Inputs are generally a multiple sequence file in fasta format and a directory of
+Extensiphy is a program for quickly adding genomic sequence data to multiple sequence alignments and phylogenies. 
+     View the README for more specific information. 
+     Inputs are generally a multiple sequence file in fasta format and a directory of 
      Fastq paired-end read sequences.     
 
 
@@ -90,14 +90,14 @@ Extensiphy is a program for quickly adding genomic sequence data to multiple seq
  (-a) alignment in fasta format,     
  (-d) directory of paired end fastq read files for all query taxa,     
  (-u) produce only an updated alignment or perform full phylogenetic estimation (ALIGN or PHYLO) (DEFAULT: ALIGN)
-
+    
 
  OPTIONAL FLAGS     
  (-t) tree in Newick format produced from the input alignment that you wish to update with new sequences or specify NONE to perform new inference (DEFAULT: NONE),     
  (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),     
  (-o) directory name to hold results (DEFAULT: creates EP_output),     
  (-i) clean up intermediate output files to save HD space (Options: CLEAN, KEEP)(DEFAULT: KEEP),     
- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),     
+ (-r) Select a reference sequence from the alignment file for read mapping or leave as default and the first sequence in the alignment used (DEFAULT: RANDOM),     
  (-p) number of taxa to process in parallel,     
  (-c) number of threads per taxon being processed,     
  (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE)     
@@ -109,7 +109,7 @@ Extensiphy is a program for quickly adding genomic sequence data to multiple seq
 
  if using single locus MSA files as input,     
  (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),     
- (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
+ (-n) Set size of loci size cutoff used as input or output (Options: int number)     
  ```
 
 Extensiphy has a number of default settings for these so you will not always have to explicitly use all of these options for every run. The use of these flags depends on the input you wish to use and the output you desire to have at the end of a run.

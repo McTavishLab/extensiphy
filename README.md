@@ -36,7 +36,7 @@ We recommend you run through the [Extensiphy tutorial](https://github.com/McTavi
 ### Additional Tutorials
 To help explain some of the jargon (technical words and terms) that goes along with bioinformatics programs, we've also included some other tutorials.
 * The [command line tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/command_line_tutorial.md) will help you get a grasp on how to find files in your computer using the shell/terminal/command line (you'll be a hacker in no time!).
-* The [suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help explain what suffixes are in the context of bioinformatics and how they are used with many programs, including Extensiphy.
+* The [suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help clarify the read suffix arguments.
 
 ## Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!
@@ -165,7 +165,7 @@ By putting the outputs into the linked directory, you can access them directly t
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
 - (-o) directory name to hold results (DEFAULT: creates EP_output),
-- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
+- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and the first sequence in the alignment will be chosen (DEFAULT: RANDOM),
 - (-p) number of taxa to process in parallel,
 - (-c) number of threads per taxon being processed,
 - (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE),
@@ -176,7 +176,7 @@ By putting the outputs into the linked directory, you can access them directly t
 
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),
-- (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
+- (-n) Set size of locus minimum size cutoff used as input or output (Options: int number)(DEFAULT: 700)     
 ```
 
 ## Output Files

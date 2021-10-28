@@ -89,36 +89,12 @@ else
      echo $threads
 fi
 
-#######################################################################
-assert ()                 #  If condition false,
-{                         #+ exit from script
-                          #+ with appropriate error message.
-  E_PARAM_ERR=98
-  E_ASSERT_FAILED=99
-
-
-  if [ -z "$2" ]          #  Not enough parameters passed
-  then                    #+ to assert() function.
-    return $E_PARAM_ERR   #  No damage done.
-  fi
-
-  lineno=$2
-
-  if [ ! $1 ]
-  then
-    echo "Assertion failed:  \"$1\""
-    echo "File \"$0\", line $lineno"    # Give name of file and line number.
-    exit $E_ASSERT_FAILED
-  # else
-  #   return
-  #   and continue executing the script.
-  fi
-}
-#######################################################################
 
 printf "master dir == %s\n" "$master_dir"
 printf "tail_1 is %s\n" "$r1_tail"
-printf "tail_2 is %s\n" "$r2_tail"
+if [ ${PE} == 2 ]; then
+  printf "tail_2 is %s\n" "$r2_tail"
+fi
 printf "Argument out is %s\n" "$outdir"
 printf "Argument name is %s\n" "$nam"
 printf "Argument threads is %s\n" "$threads"
@@ -131,8 +107,6 @@ cd $workd
 
 # TEST OF GAP REMOVAL FINISHED
 
-
-### TODO PLAY WITH BOWTIE2 --very-fast command to chekc speed up time
 
 #pretend the alignemnt is a set of chromosomes
 
@@ -152,7 +126,7 @@ hisat_idx=$(echo "$align" | cut -f 1 -d '.')
 #TOTDO THINK HARD ABOUT IMPLAICTIONS OF LOCAL VS GLOBAL AIGN!!!
 echo "time for read mapping:"
 printf "\nPE = $PE\n"
-if [ "$PE" -eq 2 ]; then
+if [[ ${PE} == 2 ]]; then
 	printf "\nRunning in Paired-End Mode\n"
 	#bowtie2 -p $threads --very-fast -x $outdir/best_ref -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal --local
 	#hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal
@@ -161,7 +135,7 @@ if [ "$PE" -eq 2 ]; then
 	printf "\nRun with command: bwa-mem2 mem -t ${threads} ${align} ${read_one} ${read_two} > ${outdir}/best_map.sam\n"
 	#printf "\nRun with command: hisat2 -p $threads --very-fast -x $hisat_idx -1 $read_one -2 $read_two -S $outdir/best_map.sam --no-unal\n"
 
-elif [ "$PE" -eq 0 ]; then
+elif [[ ${PE} == 0 ]]; then
 	printf "\nRunning in Single-End Mode\n"
 	#hisat2 -p $threads --very-fast -x $hisat_idx -U $read_one -S $outdir/best_map.sam --no-unal
 	bwa-mem2 mem -t $threads $align $read_one > $outdir/best_map.sam

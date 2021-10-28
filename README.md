@@ -176,7 +176,7 @@ By putting the outputs into the linked directory, you can access them directly t
 
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),
-- (-n) Set size of loci size cutoff used as input or output (Options: int number)
+- (-n) Set size of locus minimum size cutoff used as input or output (Options: int number)(DEFAULT: 700)     
 ```
 
 ## Output Files

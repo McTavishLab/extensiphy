@@ -37,7 +37,7 @@ single_locus_align=$(cat ./ep_test_single_locus_out/RESULTS/updated_single_loci/
 num_lines=$(wc -l ./ep_test_single_locus_out/RESULTS/extended.aln)
 check_tree=$(grep -c ":0.0;" ./ep_test_single_locus_out/RESULTS/RAxML_bestTree.consensusFULL)
 
-if [ ${num_seqs} -eq 23 ] && [ ${check_tree} -eq 1 ] && [ ${single_locus_align} -eq 46]
+if [ ${num_seqs} -eq 23 ] && [ ${check_tree} -eq 1 ] && [ ${single_locus_align} -eq 46 ]
 then
   echo "test output single locus alignment files: PASSED"
 else

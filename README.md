@@ -36,7 +36,7 @@ We recommend you run through the [Extensiphy tutorial](https://github.com/McTavi
 ### Additional Tutorials
 To help explain some of the jargon (technical words and terms) that goes along with bioinformatics programs, we've also included some other tutorials.
 * The [command line tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/command_line_tutorial.md) will help you get a grasp on how to find files in your computer using the shell/terminal/command line (you'll be a hacker in no time!).
-* The [suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help explain what suffixes are in the context of bioinformatics and how they are used with many programs, including Extensiphy.
+* The [suffix tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) will help clarify the read suffix arguments.
 
 ## Building and testing your own Extensiphy Docker image
 First we'll building the Docker image and a container to test your Extensiphy installation. Then we'll connect your data to a new container so you can begin updating your own alignments!

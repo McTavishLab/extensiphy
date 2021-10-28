@@ -28,9 +28,13 @@ set -o pipefail
 
 
 # clear previous test results
-rm test_results.txt
-rm logfile.txt
-rm -r ep_test_*
+if [ -e test_results.txt ] && [ -e test_help.txt ] && [ -e logfile.txt ]
+then
+  rm test_results.txt
+  rm logfile.txt
+  rm test_help.txt
+  rm -r ep_test_*
+fi
 
 touch test_results.txt
 touch logfile.txt

@@ -31,13 +31,13 @@ set -o pipefail
 # Test that EP runs and produces and updated alignment
 # Tests flags: -a. -d, -1, -2, -u ALIGN, -o
 # Examine: extended.aln
-../extensiphy.sh -u ALIGN -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -2 _R2.fq -o ep_test_one >> logfile.txt 2>&1
+../extensiphy.sh -u ALIGN -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -2 _R2.fq -o ep_test_update_align >> logfile.txt 2>&1
 
-ALIGN=./ep_test_one/RESULTS/extended.aln
+ALIGN=./ep_test_update_align/RESULTS/extended.aln
 
-num_seqs=$(grep -c ">" ./ep_test_one/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_one/RESULTS/extended.aln)
-num_chars=$(wc ./ep_test_one/RESULTS/extended.aln | cut -f11 -d ' ')
+num_seqs=$(grep -c ">" ./ep_test_update_align/RESULTS/extended.aln)
+num_lines=$(wc -l ./ep_test_update_align/RESULTS/extended.aln)
+num_chars=$(wc ./ep_test_update_align/RESULTS/extended.aln | cut -f11 -d ' ')
 
 if [[ ${num_seqs} -eq 23 ]]
 then

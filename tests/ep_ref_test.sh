@@ -31,13 +31,13 @@ set -o pipefail
 # Tests selecting a specific reference taxon
 # Tests flags: -a, -d, -1, -2, -u PHYLO -o, -t, -r
 # Examine:  extended.aln, RAxML_bestTree.consensusFULL
-../extensiphy.sh -a ../testdata/combo.fas -u PHYLO -d ../testdata -t ../testdata/combo.tre -1 _R1.fq -2 _R2.fq -o ep_test_six -r taxon_11 >> logfile.txt 2>&1
+../extensiphy.sh -a ../testdata/combo.fas -u PHYLO -d ../testdata -t ../testdata/combo.tre -1 _R1.fq -2 _R2.fq -o ep_test_ref -r taxon_11 >> logfile.txt 2>&1
 
-ALIGN=./ep_test_six/RESULTS/extended.aln
-PHYLO=./ep_test_six/RESULTS/RAxML_bestTree.consensusFULL
-num_seqs=$(grep -c ">" ./ep_test_six/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_six/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_six/RESULTS/RAxML_bestTree.consensusFULL)
+ALIGN=./ep_test_ref/RESULTS/extended.aln
+PHYLO=./ep_test_ref/RESULTS/RAxML_bestTree.consensusFULL
+num_seqs=$(grep -c ">" ./ep_test_ref/RESULTS/extended.aln)
+num_lines=$(wc -l ./ep_test_ref/RESULTS/extended.aln)
+check_tree=$(grep -c ":0.0;" ./ep_test_ref/RESULTS/RAxML_bestTree.consensusFULL)
 
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]

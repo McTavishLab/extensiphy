@@ -30,11 +30,11 @@ set -o pipefail
 # Tests an alignment using single-end read data
 # Tests flags: -a, -d, -1, -e SE
 # Examine:  extended.aln
-../extensiphy.sh -u ALIGN -e SE -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -o ep_test_two >> logfile.txt 2>&1
+../extensiphy.sh -u ALIGN -e SE -a ../testdata/combo.fas -d ../testdata -1 _R1.fq -o ep_test_single_end_reads >> logfile.txt 2>&1
 
-ALIGN=./ep_test_two/RESULTS/extended.aln
-num_seqs=$(grep -c ">" ./ep_test_two/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_two/RESULTS/extended.aln)
+ALIGN=./ep_test_single_end_reads/RESULTS/extended.aln
+num_seqs=$(grep -c ">" ./ep_test_single_end_reads/RESULTS/extended.aln)
+num_lines=$(wc -l ./ep_test_single_end_reads/RESULTS/extended.aln)
 
 
 if [[ ${num_seqs} == 23 ]]

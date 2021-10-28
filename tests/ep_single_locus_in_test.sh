@@ -31,13 +31,13 @@ set -o pipefail
 # Tests using single locus alignment files as inputs instead of concatenated
 # Tests flags: -a, -d, -1, -2, -u PHYLO, -o, -m
 # Examine:  extended.aln
-../extensiphy.sh -u PHYLO -a ../testdata/single_locus_align_dir -d ../testdata -m SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o ep_test_seven >> logfile.txt 2>&1
+../extensiphy.sh -u PHYLO -a ../testdata/single_locus_align_dir -d ../testdata -m SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o ep_test_single_locus_in >> logfile.txt 2>&1
 
-ALIGN=./ep_test_seven/RESULTS/extended.aln
-PHYLO=./ep_test_seven/RESULTS/RAxML_bestTree.consensusFULL
-num_seqs=$(grep -c ">" ./ep_test_seven/RESULTS/extended.aln)
-num_lines=$(wc -l ./ep_test_seven/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_seven/RESULTS/RAxML_bestTree.consensusFULL)
+ALIGN=./ep_test_single_locus_in/RESULTS/extended.aln
+PHYLO=./ep_test_single_locus_in/RESULTS/RAxML_bestTree.consensusFULL
+num_seqs=$(grep -c ">" ./ep_test_single_locus_in/RESULTS/extended.aln)
+num_lines=$(wc -l ./ep_test_single_locus_in/RESULTS/extended.aln)
+check_tree=$(grep -c ":0.0;" ./ep_test_single_locus_in/RESULTS/RAxML_bestTree.consensusFULL)
 
 
 if [ ${num_seqs} == 23 ] && [ ${check_tree} -eq 1 ]

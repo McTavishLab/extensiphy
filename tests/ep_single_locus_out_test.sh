@@ -27,15 +27,15 @@ set -o pipefail
 #the pipeline exit successfully. This option is disabled by default.
 
 
-../extensiphy.sh -u PHYLO -a ../testdata/single_locus_align_dir -d ../testdata -t ../testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o locus_out_Extensiphy_run >> logfile.txt 2>&1
+../extensiphy.sh -u PHYLO -a ../testdata/single_locus_align_dir -d ../testdata -t ../testdata/combo.tre -m SINGLE_LOCUS_FILES -g SINGLE_LOCUS_FILES -1 _R1.fq -2 _R2.fq -o ep_test_single_locus_out >> logfile.txt 2>&1
 
-ALIGN=./ep_test_single_locus_output/RESULTS/extended.aln
-PHYLO=./ep_test_single_locus_output/RESULTS/RAxML_bestTree.consensusFULL
-LOCUS_ALIGN=./ep_test_single_locus_output/RESULTS/updated_single_loci/
-num_seqs=$(grep -c ">" ./ep_test_single_locus_output/RESULTS/extended.aln)
-single_locus_align=$(cat ./ep_test_single_locus_output/RESULTS/updated_single_loci/single_locus_1_.fasta | wc -l)
-num_lines=$(wc -l ./ep_test_single_locus_output/RESULTS/extended.aln)
-check_tree=$(grep -c ":0.0;" ./ep_test_single_locus_output/RESULTS/RAxML_bestTree.consensusFULL)
+ALIGN=./ep_test_single_locus_out/RESULTS/extended.aln
+PHYLO=./ep_test_single_locus_out/RESULTS/RAxML_bestTree.consensusFULL
+LOCUS_ALIGN=./ep_test_single_locus_out/RESULTS/updated_single_loci/
+num_seqs=$(grep -c ">" ./ep_test_single_locus_out/RESULTS/extended.aln)
+single_locus_align=$(cat ./ep_test_single_locus_out/RESULTS/updated_single_loci/single_locus_1_.fasta | wc -l)
+num_lines=$(wc -l ./ep_test_single_locus_out/RESULTS/extended.aln)
+check_tree=$(grep -c ":0.0;" ./ep_test_single_locus_out/RESULTS/RAxML_bestTree.consensusFULL)
 
 if [ ${num_seqs} -eq 23 ] && [ ${check_tree} -eq 1 ] && [ ${single_locus_align} -eq 46]
 then

@@ -41,7 +41,7 @@ num_chars=$(wc ./ep_test_one/RESULTS/extended.aln | cut -f11 -d ' ')
 
 if [[ ${num_seqs} -eq 23 ]]
 then
-  echo "test simple alignment update: PASSED" >> test_results.txt
+  echo "test simple alignment update: PASSED"
 else
-  echo "test simple alignment update: FAILED" >> test_results.txt
+  echo "test simple alignment update: FAILED"
 fi

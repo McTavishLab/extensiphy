@@ -27,8 +27,14 @@ set -o pipefail
 #the pipeline exit successfully. This option is disabled by default.
 
 
+# clear previous test results
+rm test_results.txt
+rm logfile.txt
+rm -r ep_test_*
+
 touch test_results.txt
 touch logfile.txt
+
 
 echo "Running help menu test."
 ./ep_menu_test.sh >> test_results.txt

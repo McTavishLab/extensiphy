@@ -380,9 +380,8 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
         cat ./locus_IDs.txt | split -d -l $threads
 
         if [ $loci_len == "700" ]; then
-
-                for j in $(ls x*); do
-                        for i in $(cat $j); do
+            for j in $(ls x*); do
+                for i in $(cat $j); do
                     $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size 700 >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
@@ -392,18 +391,19 @@ if [ ${align_type} == "PARSNP_XMFA" ]; then
             $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter 700 >> $workd/ep_dev_log.txt 2>&1
 
         elif [ $loci_len != "700" ]; then
-                for j in $(ls x*); do                        for i in $(cat $j); do
+            for j in $(ls x*); do 
+                for i in $(cat $j); do
 			        $PHYCORDER/modules/locus_splitter.py --align_file $align --out_file ./$i-.fasta --locus_id $i --locus_size $loci_len >> $workd/ep_dev_log.txt 2>&1
                         done
                         wait
-                done
+            done
 
 
 	        $PHYCORDER/modules/new_locus_combiner.py --msa_folder ./ --suffix .fasta --out_file ../combo.fas --position_csv_file $workd/$loci_positions --suffix $single_locus_suffix --len_filter $loci_len >> $workd/ep_dev_log.txt 2>&1
 
 
-   fi
-           align=$( realpath ../combo.fas)
+        fi
+        align=$( realpath ../combo.fas)
 
 	printf "\nNew alignment file produced\n"
 	printf "$align"

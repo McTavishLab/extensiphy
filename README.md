@@ -165,7 +165,7 @@ By putting the outputs into the linked directory, you can access them directly t
 - (-1, -2) suffix (ex: R1.fastq or R2.fastq) for both sets of paired end files. Required if suffix is different than default (DEFAULTS: R1.fq and R2.fq),
 - (-m) alignment type (SINGLE_LOCUS_FILES, PARSNP_XMFA or CONCAT_MSA) (DEFAULT: CONCAT_MSA),
 - (-o) directory name to hold results (DEFAULT: creates EP_output),
-- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and a random reference will be chosen (DEFAULT: RANDOM),
+- (-r) Selected a reference sequence from the alignment file for read mapping or leave as default and the first sequence in the alignment will be chosen (DEFAULT: RANDOM),
 - (-p) number of taxa to process in parallel,
 - (-c) number of threads per taxon being processed,
 - (-e) set read-type as single end (SE) or pair-end (PE) (DEFAULT: PE),
@@ -176,7 +176,7 @@ By putting the outputs into the linked directory, you can access them directly t
 
  if using single locus MSA files as input,
 - (-f) csv file name to keep track of individual loci when concatenated (DEFAULT: loci_positions.csv),
-- (-n) Set size of loci size cutoff used as input or output (Options: int number)(DEFAULT: 700)
+- (-n) Set size of loci size cutoff used as input or output (Options: int number)
 ```
 
 ## Output Files

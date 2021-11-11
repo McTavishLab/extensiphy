@@ -18,6 +18,8 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [Dependencies](#dependnecies)
 
+[Reporting Problems](#reporting_problems)
+
 ## Setup and Use
 
 ### Docker
@@ -84,7 +86,7 @@ Now, either from the docker container, your anaconda env, or from the directory 
 This is a simple run on three paired end read samples, which are found in the directory `extensiphy/testdata`
 * The `-a` flag provides the path to the existing alignment to update.
 * The `-d` flag provides the path to your directory of fastq files.
-* The `-1` and `-2` flags specify the filename endings for each of the readfiles. (defaults are `_R1.fq` and `_R2.fq`, more info at https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md) 
+* The `-1` and `-2` flags specify the filename endings for each of the readfiles. (defaults are `_R1.fq` and `_R2.fq`, more info at https://github.com/McTavishLab/extensiphy/blob/main/tutorial/suffix_tutorial.md)
 * The `-u` flag specfies what analysis to run. Here we are building a phylogeny. (default is `ALIGN`, building an alignment only.)
 * The `-o` flag specifies the output directory. (default is `EP_output`)
 
@@ -197,6 +199,13 @@ By putting the outputs into the linked directory, you can access them directly t
   .sam, .bam and .vcf files can be found in here for any additional analyses.
 
 
+## Phylogenetic Estimation
+Extensiphy is targeted towards producing an updated sequence alignment and allowing users to use the alignment with any phylogenetic estimation method they choose. We provide a phylogenetic estimation as a convenience but you are in no way locked into using this estimation method. You can simply take the [alignment output by Extensiphy](#output-files) and use that alignment as input for your favorite estimation method. A few notes:
+
+* Currently, phylogenetic estimation with Extensiphy is performed by RAxML using the GTR model. This setting cannot be changed at this time.
+
+* To avoid estimating a phylogeny using the packaged RAxML program and settings, use the `-u ALIGN` option when running Extensiphy. When the run is complete, the `[OUTDIR]/RESULTS/extended.aln` file should be used as input for your chosen estimation method.
+
 ## Additional Software
 Extensiphy is the primary program of this software package.
 However, another piece of software is included: Gon\_phyling.
@@ -217,3 +226,9 @@ Dependencies (Separate programs you'll need to install):
 6. [Bcftools](http://www.htslib.org/)
 7. [Fastx toolkit](http://hannonlab.cshl.edu/fastx_toolkit/download.html)
 8. [Dendropy](https://dendropy.org/)
+
+## Reporting Problems
+Software will have bugs. We try to address issues with Extensiphy as they arise.
+If you run into an issue, please report it using Extensiphy's [Issue Tracker](https://github.com/McTavishLab/extensiphy/issues).
+You can also search the Issue Tracker for solved fixes for previously identified issues.
+Finally, you can contact us at jtoscanifield@ucmerced.edu to discuss any problems with installing or running Extensiphy.

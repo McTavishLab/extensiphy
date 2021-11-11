@@ -206,7 +206,11 @@ Extensiphy is targeted towards producing an updated sequence alignment and allow
 
 * Currently, phylogenetic estimation with Extensiphy is performed by RAxML using the GTR model. This setting cannot be changed at this time.
 
-* To avoid estimating a phylogeny using the packaged RAxML program and settings, use the `-u ALIGN` option when running Extensiphy. When the run is complete, the `[OUTDIR]/RESULTS/extended.aln` file should be used as input for your chosen estimation method.
+* To avoid estimating a phylogeny using the packaged RAxML program and settings, use the `-u ALIGN` option when running Extensiphy.
+
+* To use an alternative method of phylogenetic estimation, when an Extensiphy run is complete, the `[OUTDIR]/RESULTS/extended.aln` file should be used as input for your chosen estimation method.
+
+* If you wish to use multiple single locus alignment files as input to another estimation method, please see the [tutorial](https://github.com/McTavishLab/extensiphy/blob/main/tutorial/extensiphy_tutoria.md#outputting-updated-single-locus-alignment-files) for more information on updating single locus alignments.
 
 ## Additional Software
 Extensiphy is the primary program of this software package.

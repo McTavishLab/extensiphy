@@ -14,6 +14,8 @@ Extensiphy takes an alignment and sets of sequencing reads from query taxa (a). 
 
 [Output Files](#output-files)
 
+[Phylogenetic Estimation](#phylogenetic-estimation)
+
 [Additional Software](#additional-software)
 
 [Dependencies](#dependnecies)

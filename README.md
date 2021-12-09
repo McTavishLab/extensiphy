@@ -1,5 +1,7 @@
 # Extensiphy
 
+[![DOI](https://zenodo.org/badge/409755022.svg)](https://zenodo.org/badge/latestdoi/409755022)
+
 Extensiphy is a pipeline that assembles homologous loci by aligning reads to a reference from a multiple sequence alignment, calls consensus, adds to the existing alignment. Homologous loci may be kept concatenated or split back into individual alignments prior to phylogenetic estimation.
 
 ![Extensiphy_worlflow](./tutorial/images/EP_workflow_4.png)

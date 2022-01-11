@@ -3,9 +3,8 @@
 # in the flattened consensus sequence when the reference is an 'N'
 # instead of the nucleotide found in the reads
 # USE: vcffixer.py --vcf_file [VCF_FILE] --align_file [ALIGNMENT_FILE]
-# TODO add functionality to handle dropped nucleotides in the sequence
-# to prevent off-by-one errors
-
+# TODO: Write this program in bash to reduce processing time.
+# TODO: Contiguity of the VCF isnt necessary, just check the Ns to make sure there isnt an alt nucleotide at that position
 import os
 import subprocess
 import argparse
@@ -27,6 +26,7 @@ def main():
     # create an empty list that will hold the fixed sequence
     ref_sequence_list = []
     ref_sequence_dict = {}
+    output_list = []
 
     # initialize dictionary for location of nucleotide to be replaced
     # and the nucleotide that will go there
@@ -51,7 +51,12 @@ def main():
     vcf_length = split_last_line[1]
     print(vcf_length)
 
-    process_vcf(args.vcf_file, replace_nuc_dict)
+    vcf_to_dict = process_vcf(args.vcf_file, replace_nuc_dict)
+    # print(vcf_to_dict)
+
+    check_contiguity(vcf_to_dict, vcf_length)
+
+    output = compare_and_fix(vcf_to_dict, ref_sequence_list, output_list, ref_str, nuc_set)
 
     # # open sequence file that will have the nucleotides replaced
     # seq_file = open(args.align_file, 'r')
@@ -154,6 +159,18 @@ def main():
     # new_file.write('\n')
     # new_file.write(fixed_seq)
 
+def check_contiguity(vcf_dict, seq_len):
+    """Makes sure all lines are present in the VCF"""
+    count_check = 0
+    for num in range(0, int(seq_len)):
+        count_check+=1
+        # print(num)
+        check_key = vcf_dict[num + 1]
+        assert len(check_key) > 0
+
+
+
+
 def process_vcf(vcf_file, dict):
     """Read VCF file and add nucleotides and positions to a dictionary. \
     Dict protects against multiple nucleotide options at a single position"""
@@ -161,8 +178,9 @@ def process_vcf(vcf_file, dict):
         for line_num, line in enumerate(vcf):
             if not line.startswith("#"):
                 splitter = line.split()
+                nucs_list = []
                 ref_name = splitter[0]
-                ref_str = ''.join(ref_name)
+                # ref_str = ''.join(ref_name)
                 pos = splitter[1]
                 # ref = splitter[3:4]
                 # alt = splitter[4:5]
@@ -173,28 +191,50 @@ def process_vcf(vcf_file, dict):
 
                 dupe_check = check_dict_duplicate(dict, pos)
                 if dupe_check == False:
-                    if 'N' in ref:
-                        if alt in nuc_set:
-                            pos_str = ''.join(pos)
-                            str_alt = ''.join(alt)
-                            split_alt = str_alt.split(',')
-                            alt_nuc = split_alt[0]
-                            replace_nuc_dict[pos_str] = alt_nuc
-                        elif alt not in nuc_set:
-                            pos_str = ''.join(pos)
-                            str_alt = ''.join(alt)
-                            split_alt = str_alt.split(',')
-                            alt_nuc = 'N'
-                            replace_nuc_dict[pos_str] = alt_nuc
-                        else:
-                            print('YOU HAVE A LARGE PROBLEM WITH YOUR VCFFIXER.PY')
+                    nucs_list.append(ref)
+                    nucs_list.append(alt)
+                    # print(nucs_list)
+                    dict[int(pos)] = nucs_list
 
+    return dict
+                    # if 'N' in ref:
+                    #     if alt in nuc_set:
+                    #         pos_str = ''.join(pos)
+                    #         str_alt = ''.join(alt)
+                    #         split_alt = str_alt.split(',')
+                    #         alt_nuc = split_alt[0]
+                    #         replace_nuc_dict[pos_str] = alt_nuc
+                    #     elif alt not in nuc_set:
+                    #         pos_str = ''.join(pos)
+                    #         str_alt = ''.join(alt)
+                    #         split_alt = str_alt.split(',')
+                    #         alt_nuc = 'N'
+                    #         replace_nuc_dict[pos_str] = alt_nuc
+                    #     else:
+                    #         print('YOU HAVE A LARGE PROBLEM WITH YOUR VCFFIXER.PY')
+
+def compare_and_fix(vcf_dict, align_list, output_list, taxon_name, nuc_set_):
+    """Reads over alignment sequence and checks if an alternative nucleotide was recorded where mpileup placed an N. \
+    The N is replaced by the alternative nucleotide"""
+    for num, nuc in enumerate(align_list):
+        if nuc == "N":
+            pos_in_vcf = num + 1
+            ref_and_alt = vcf_dict[pos_in_vcf]
+            # print(ref_and_alt)
+
+        elif nuc != "N" and nuc.upper() in nuc_set_:
+            output_list.append(nuc.upper())
+
+    return output_list
 
 
 def check_dict_duplicate(dict, check_key):
     """Check if a key/value is already present in a dictionary."""
+    # print(dict.keys())
     if check_key in dict.keys():
         print("DUPLICATE POSITION FOUND at position: ", check_key)
+        return True
+    else:
         return False
 
 def process_alignment(align_file, output_dict, base_count, taxon_name):

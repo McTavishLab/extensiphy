@@ -54,10 +54,13 @@ def main():
     vcf_to_dict = process_vcf(args.vcf_file, replace_nuc_dict)
     # print(vcf_to_dict)
 
-    check_contiguity(vcf_to_dict, vcf_length)
+    # check_contiguity(vcf_to_dict, vcf_length)
 
-    output = compare_and_fix(vcf_to_dict, ref_sequence_list, output_list, ref_str, nuc_set)
+    fixed_unchecked_length_seq = compare_and_fix(vcf_to_dict, ref_sequence_list, output_list, ref_str, nuc_set)
 
+    assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
+
+    updated_seq = ensure_seq_length(fixed_unchecked_length_seq, vcf_length)
     # # open sequence file that will have the nucleotides replaced
     # seq_file = open(args.align_file, 'r')
     #
@@ -197,35 +200,52 @@ def process_vcf(vcf_file, dict):
                     dict[int(pos)] = nucs_list
 
     return dict
-                    # if 'N' in ref:
-                    #     if alt in nuc_set:
-                    #         pos_str = ''.join(pos)
-                    #         str_alt = ''.join(alt)
-                    #         split_alt = str_alt.split(',')
-                    #         alt_nuc = split_alt[0]
-                    #         replace_nuc_dict[pos_str] = alt_nuc
-                    #     elif alt not in nuc_set:
-                    #         pos_str = ''.join(pos)
-                    #         str_alt = ''.join(alt)
-                    #         split_alt = str_alt.split(',')
-                    #         alt_nuc = 'N'
-                    #         replace_nuc_dict[pos_str] = alt_nuc
-                    #     else:
-                    #         print('YOU HAVE A LARGE PROBLEM WITH YOUR VCFFIXER.PY')
+
 
 def compare_and_fix(vcf_dict, align_list, output_list, taxon_name, nuc_set_):
     """Reads over alignment sequence and checks if an alternative nucleotide was recorded where mpileup placed an N. \
     The N is replaced by the alternative nucleotide"""
+    print("align list length prior to adjustment: ", len(align_list))
     for num, nuc in enumerate(align_list):
-        if nuc == "N":
+        # print(nuc)
+        if nuc.upper() == "N":
             pos_in_vcf = num + 1
-            ref_and_alt = vcf_dict[pos_in_vcf]
-            # print(ref_and_alt)
+            # ref_and_alt = vcf_dict[pos_in_vcf]
+            ref_and_alt = vcf_dict.get(pos_in_vcf)
+            if ref_and_alt == None:
+                output_list.append("N")
+            elif ref_and_alt != None:
+                ref = ref_and_alt[0]
+                alt = ref_and_alt[1]
+                split_alts = alt.split(',')
+                if len(split_alts) > 1:
+                    # print(split_alts)
 
-        elif nuc != "N" and nuc.upper() in nuc_set_:
+                    # OK, here we just take the first alternative nucleotide
+                    # There is probably a better way to handle this but for now, this works
+                    selected_alt = split_alts[0]
+                    if selected_alt in nuc_set_:
+                        output_list.append(selected_alt.upper())
+
+        elif nuc.upper() in nuc_set_:
             output_list.append(nuc.upper())
 
+        elif nuc.upper() != "N" and nuc.upper() not in nuc_set_:
+            output_list.append("N")
+
+        else:
+            print("UNACCOUNTED NUCLEOTIDE")
+            print(nuc)
+            print(num)
+
+
     return output_list
+
+def ensure_seq_length(new_seq, vcf_length_):
+    """adds Ns at the end of the sequence to make the new, corrected sequence \
+    as long as the length the VCF says it should be"""
+    print(len(new_seq))
+    print(vcf_length_)
 
 
 def check_dict_duplicate(dict, check_key):

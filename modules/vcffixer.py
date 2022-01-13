@@ -58,9 +58,21 @@ def main():
 
     fixed_unchecked_length_seq = compare_and_fix(vcf_to_dict, ref_sequence_list, output_list, ref_str, nuc_set)
 
-    assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
+    # assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
+    print("Sequence length after processing: ", len(ref_sequence_list))
 
-    updated_seq = ensure_seq_length(fixed_unchecked_length_seq, vcf_length)
+    length_fix = ensure_seq_length(ref_sequence_list, vcf_length)
+
+    #Write output sequence
+    fasta_output_file = open(args.out_file, 'w')
+    fasta_output_file.write(proc_seq)
+    fasta_output_file.write("\n")
+    fasta_output_file.write(length_fix)
+    fasta_output_file.close()
+
+
+
+
     # # open sequence file that will have the nucleotides replaced
     # seq_file = open(args.align_file, 'r')
     #
@@ -206,6 +218,7 @@ def compare_and_fix(vcf_dict, align_list, output_list, taxon_name, nuc_set_):
     """Reads over alignment sequence and checks if an alternative nucleotide was recorded where mpileup placed an N. \
     The N is replaced by the alternative nucleotide"""
     print("align list length prior to adjustment: ", len(align_list))
+    # print(align_list)
     for num, nuc in enumerate(align_list):
         # print(nuc)
         if nuc.upper() == "N":
@@ -225,27 +238,38 @@ def compare_and_fix(vcf_dict, align_list, output_list, taxon_name, nuc_set_):
                     # There is probably a better way to handle this but for now, this works
                     selected_alt = split_alts[0]
                     if selected_alt in nuc_set_:
-                        output_list.append(selected_alt.upper())
+                        # output_list.append(selected_alt.upper())
+                        align_list[num] = selected_alt.upper()
+                        print("N replaced with {} and position {} from vcf position {}.".format(selected_alt, num, pos_in_vcf))
 
-        elif nuc.upper() in nuc_set_:
-            output_list.append(nuc.upper())
+        # elif nuc.upper() in nuc_set_:
+        #     output_list.append(nuc.upper())
 
-        elif nuc.upper() != "N" and nuc.upper() not in nuc_set_:
-            output_list.append("N")
-
-        else:
-            print("UNACCOUNTED NUCLEOTIDE")
-            print(nuc)
-            print(num)
+        elif nuc.upper() != "N":
+            if nuc.upper() not in nuc_set_:
+            # output_list.append("N")
+                align_list[num] = "N"
 
 
-    return output_list
 
-def ensure_seq_length(new_seq, vcf_length_):
+    #return output_list
+
+def ensure_seq_length(processed_seq, vcf_length_):
     """adds Ns at the end of the sequence to make the new, corrected sequence \
-    as long as the length the VCF says it should be"""
-    print(len(new_seq))
+    as long as the length the VCF says it should be. Convert list to string \
+    and return to be written to file."""
+    print(len(processed_seq))
     print(vcf_length_)
+    if len(processed_seq) < int(vcf_length_):
+        diff_in_len = int(vcf_length_) - len(processed_seq)
+        print(diff_in_len)
+        for num in range(0, diff_in_len):
+            processed_seq.append("N")
+    print(len(processed_seq))
+    processed_seq = ''.join(processed_seq)
+
+    return processed_seq
+
 
 
 def check_dict_duplicate(dict, check_key):
@@ -269,7 +293,7 @@ def process_alignment(align_file, output_dict, base_count, taxon_name):
     split_seqs = read_seq.split('\n')
     # tax_name = split_seqs[0:1]
     tax_name = split_seqs[0]
-    # print(tax_name)
+    print(tax_name)
     str_tax_name = ''.join(tax_name)
 
     # seperate out the original sequence produced by mpileup
@@ -281,6 +305,8 @@ def process_alignment(align_file, output_dict, base_count, taxon_name):
         base_count+=1
 
     print("Alignment nucleotide count: ", base_count)
+
+    return tax_name
 
 
 def find_length_difference(dict_of_positions, vcf_length):

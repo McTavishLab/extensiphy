@@ -1,4 +1,6 @@
 #! /usr/bin/python
+# Program that dropes duplicate position entries from a VCF file.
+# 
 
 import os
 import argparse

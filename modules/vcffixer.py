@@ -119,9 +119,9 @@ def main():
     # replace the nucleotide in the list at that position
     # with the nucleotide from the dictionary
     for key, value in replace_nuc_dict.items():
-        print(ref_sequence_list[int(key)])
-        # print(key)
-        # print(value)
+        print(ref_sequence_list[int(key) - 1])
+        print(key)
+        print(value)
         # print("~~~~~~~~~~~~~~~~~~~~~~~")
 
     #########################################################

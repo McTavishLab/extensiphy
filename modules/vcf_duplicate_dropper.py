@@ -35,7 +35,7 @@ def drop_duplicate_positions(vcf_file_, out_file_name_):
                 # ref_name = splitter[0:1]
                 ref_name = splitter[0]
                 # pos = splitter[1:2]
-                pos = splitter[1]
+                pos = int(splitter[1])
                 if duplicate_position_check != pos:
                     duplicate_position_check = pos
                     new_vcf.append(line)
@@ -45,7 +45,8 @@ def drop_duplicate_positions(vcf_file_, out_file_name_):
                 # alt = splitter[4:5]
             elif line.startswith("#"):
                 new_vcf.append(line)
-    new_vcf_file = open(out_file_name_, 'a+')
+    # new_vcf_file = open(out_file_name_, 'a+')
+    new_vcf_file = open(out_file_name_, 'w')
     for line in new_vcf:
         new_vcf_file.write(line)
 

@@ -6,8 +6,11 @@ import subprocess
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='vcffixer test', \
-        description='Automate downloading of high-throughput sequence data and updating of alignments using Extensiphy.')
-    parser.add_argument('--ep_path')
+        description='This program tests the vcffixer.py module of Extensiphy. \
+        Testing currently ensures that the length of the sequence output by vcffixer.py \
+        matches the length stated in the vcf used by Extensiphy. \
+        EXAMPLE COMMAND: vcffixer_test.py --ep_path [path to extensiphy]')
+    parser.add_argument('--ep_path', help='Absolute path to your Extensiphy directory.')
     return parser.parse_args()
 
 def main():

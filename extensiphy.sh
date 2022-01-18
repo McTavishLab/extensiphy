@@ -221,7 +221,7 @@ if [ ! -d $read_dir ]; then
 fi
 
 #test vcffixer module
-$PHYCORDER/tests/misc/module_tests/vcffixer_test.py --ep_path ${PHYCORDER}
+# $PHYCORDER/tests/misc/module_tests/vcffixer_test.py --ep_path ${PHYCORDER}
 
 tmp_align=$(realpath $align)
 tmp_tree=$(realpath $tree)

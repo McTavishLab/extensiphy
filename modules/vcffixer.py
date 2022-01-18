@@ -119,29 +119,16 @@ def main():
     # replace the nucleotide in the list at that position
     # with the nucleotide from the dictionary
     for key, value in replace_nuc_dict.items():
-        print(ref_sequence_list[int(key) - 1])
-        print(key)
-        print(value)
-        # print("~~~~~~~~~~~~~~~~~~~~~~~")
-
-    #########################################################
-    #original code
         ref_sequence_list[int(key) - 1] = value
-        # print(ref_sequence_list[int(key)])
 
+    # turn the list into a string
+    fixed_seq = ''.join(ref_sequence_list)
 
-
-    #########################################################
-    #Original output file code
-    #
-    # # turn the list into a string
-    # fixed_seq = ''.join(ref_sequence_list)
-    #
-    # # write the taxon name, a new line character and the fixed sequence to file
-    # new_file = open(args.out_file,'w')
-    # new_file.write(str_tax_name)
-    # new_file.write('\n')
-    # new_file.write(fixed_seq)
+    # write the taxon name, a new line character and the fixed sequence to file
+    new_file = open(args.out_file,'w')
+    new_file.write(str_tax_name)
+    new_file.write('\n')
+    new_file.write(fixed_seq)
 
 if __name__ == '__main__':
     main()

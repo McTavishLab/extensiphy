@@ -220,6 +220,9 @@ if [ ! -d $read_dir ]; then
         exit
 fi
 
+#test vcffixer module
+# $PHYCORDER/tests/misc/module_tests/vcffixer_test.py --ep_path ${PHYCORDER}
+
 tmp_align=$(realpath $align)
 tmp_tree=$(realpath $tree)
 tmp_read_dir=$(realpath $read_dir)
@@ -641,7 +644,7 @@ elif [ $use == "PHYLO" ]; then
         raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
 
         printf "\nML tree, bootstrap replicates in $outdir/RESULTS.\n"
-        
+
       elif [ $tree != "NONE" ]; then
 
        raxmlHPC-PTHREADS -m GTRGAMMA -T $threads -s $INFER/extended.aln -t $tree -p 12345 -n consensusFULL >> $workd/ep_dev_log.txt 2>&1
@@ -655,7 +658,7 @@ elif [ $use == "PHYLO" ]; then
        raxmlHPC-PTHREADS -z RAxML_bootstrap.consensusFULL_bootstrap -t RAxML_bestTree.consensusFULL -f b -T $threads -m GTRGAMMA -n majority_rule_bootstrap_consensus >> $workd/ep_dev_log.txt 2>&1
 
        printf "\nML tree, bootstrap replicates in $outdir/RESULTS.\n"
-        
+
 
      fi
 

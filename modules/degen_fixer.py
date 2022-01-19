@@ -20,13 +20,13 @@ def broken_seq_handler(seq_list):
         joined_seq = ''.join(seq_list[1:])
 
         gapless_joined_seq = remove_gaps(joined_seq)
-        
+
         #Test to make sure we removed all new lines from the sequence
         assert '\n' not in gapless_joined_seq
-        
+
         # Test to make sure we've removed gap characters
         assert '-' not in gapless_joined_seq
-        
+
         returned_seq.append(seq_id)
         returned_seq.append(gapless_joined_seq)
 
@@ -43,9 +43,9 @@ def main():
     args = parse_args()
 
     degen_nucs = {'-'}
-    
+
     output_data = []
-    
+
     data = args.align_file
 
     read_data = open(data,'r').read()
@@ -66,22 +66,22 @@ def main():
     output_file = open(args.output, 'w')
     # print(len(output_data))
     for name_and_seq in output_data:
-        seq_id = name_and_seq[0]
-        seq = name_and_seq[1]
-        # print(seq_id)
-        # print(seq)
+        if name_and_seq != None:
+            seq_id = name_and_seq[0]
+            seq = name_and_seq[1]
+            # print(seq_id)
+            # print(seq)
 
-        output_file.write('>')
-        output_file.write(seq_id)
-        output_file.write('\n')
-        output_file.write(seq)
-        output_file.write('\n')
-    
+            output_file.write('>')
+            output_file.write(seq_id)
+            output_file.write('\n')
+            output_file.write(seq)
+            output_file.write('\n')
+
     output_file.close()
-        
+
 
 
 
 if __name__ == '__main__':
     main()
-

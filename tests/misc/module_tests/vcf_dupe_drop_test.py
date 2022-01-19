@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess
+import time
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='vcf_duplicate_dropper test', \
@@ -35,6 +36,8 @@ def test_dupe_dropper(path_, vcf_file_, output_):
     # print(vfix.communicate())
     print("Test vcf produced.")
 
+    #line helps prevent race condition
+    time.sleep(5)
     assert os.path.exists(output_)
 
 def check_output(output_):

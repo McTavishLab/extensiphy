@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess
+import time
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='vcffixer test', \
@@ -34,6 +35,10 @@ def test_vcffixer(vcf_, align_, output_, path):
     vfix = subprocess.Popen([path + "/modules/vcffixer.py", "--vcf_file", vcf_, "--align_file", align_, "--out_file", output_], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # print(vfix.communicate())
 
+    print("vcffixer.py run complete. Checkout output.")
+
+    # This sleep line helps to avoice Race Conditions of the output file
+    time.sleep(5)
     assert os.path.exists(output_)
 
 def check_test_output(in_align_, out_align_):
@@ -50,7 +55,7 @@ def check_test_output(in_align_, out_align_):
     print(len(o_split[1]))
     assert (len(i_split[1]) + 2) == len(o_split[1])
 
-
+    print("vcffixer.py test: PASSED.")
 
 
 if __name__ == '__main__':

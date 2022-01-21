@@ -59,7 +59,11 @@ def main():
     #Write output sequence
     fasta_output_file = open(args.out_file, 'w')
     fasta_output_file.write(tax_name+"\n")
-    fasta_output_file.write(''.join(output_list))
+    for i, pos in enumerate(output_list):
+        i+=1
+        fasta_output_file.write(pos)
+        if i%140 == 0:
+            fasta_output_file.write('\n')            
     fasta_output_file.write(length_fix)
     fasta_output_file.close()
 

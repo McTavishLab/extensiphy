@@ -44,25 +44,28 @@ def main():
     # initialize reference name variable. this may not be necessary later
     ref_str = ''
 
+    print("VCFFIXER process alignment. <><><>")
     proc_seq = process_alignment(args.align_file, ref_sequence_list, nuc_count, ref_str)
 
     last_line = subprocess.check_output(['tail', '-1', args.vcf_file]).decode('UTF-8')
     split_last_line = last_line.split()
     vcf_length = split_last_line[1]
-    print(vcf_length)
+    print("VCFFIXER LENGTH CHECK: ", vcf_length)
 
     vcf_to_dict = process_vcf(args.vcf_file, replace_nuc_dict)
     # print(vcf_to_dict)
 
     # check_contiguity(vcf_to_dict, vcf_length)
+    print("VCFFIXER process VCF complete <><><>")
 
     fixed_unchecked_length_seq = compare_and_fix(vcf_to_dict, ref_sequence_list, output_list, ref_str, nuc_set)
 
     # assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
-    print("Sequence length after processing: ", len(ref_sequence_list))
+    print("VCFFIXER Sequence length after processing: ", len(ref_sequence_list))
 
     length_fix = ensure_seq_length(ref_sequence_list, vcf_length)
 
+    print("VCFFIXER Writing to file. <><><>")
     #Write output sequence
     fasta_output_file = open(args.out_file, 'w')
     fasta_output_file.write(proc_seq)

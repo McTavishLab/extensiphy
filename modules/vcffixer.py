@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Program handles an issue found in VCF files that use the reference nucleotide
 # in the flattened consensus sequence when the reference is an 'N'
 # instead of the nucleotide found in the reads

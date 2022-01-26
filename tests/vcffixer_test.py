@@ -59,13 +59,13 @@ def test_output():
     split_path_and_name = os.path.realpath(__file__).rsplit('/',1)
     absolute_path = split_path_and_name[0]
     align = absolute_path + '/example_vcffixer.fa' #and here
-    output_ = absolute_path + '/TEST_OUTPUT_vcffixer.fa'
+    output = absolute_path + '/TEST_OUTPUT_vcffixer.fa'
 
     input = open(align, 'r')
     read_input = input.read()
     i_split = read_input.split("\n")
 
-    output = open(output_, 'r')
+    output = open(output, 'r')
     read_output = output.read()
     o_split = read_output.split("\n")
 

@@ -4,44 +4,55 @@ import os
 import argparse
 import subprocess
 import time
+import pytest
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='vcf_duplicate_dropper test', \
         description='This program tests the vcf_duplicate_dropper.py module of Extensiphy. \
         Testing currently ensures that the length of the sequence output by vcffixer.py \
         matches the length stated in the vcf used by Extensiphy. \
-        EXAMPLE COMMAND: vcf_duplicate_dropper.py --ep_path [path to extensiphy]')
-    parser.add_argument('--ep_path', help='Absolute path to your Extensiphy directory.')
+        EXAMPLE COMMAND: vcf_duplicate_dropper.py ')
+    # parser.add_argument('--ep_path', help='Absolute path to your Extensiphy directory.')
     return parser.parse_args()
 
 def main():
     args = parse_args()
 
-    ep_path = args.ep_path
-    split_path_and_name = os.path.realpath(__file__).rsplit('/',1)
-    absolute_path = split_path_and_name[0]
-    hand_checked_vcf = absolute_path + '/example_dupe_drop.vcf' #can use full path here
-    output_file = absolute_path + '/vcf_drop_test_output.vcf' #and here
+    # ep_path = args.ep_path
+    # split_path_and_name = os.path.realpath(__file__).rsplit('/',1)
+    # absolute_path = split_path_and_name[0]
+    # hand_checked_vcf = absolute_path + '/example_dupe_drop.vcf' #can use full path here
+    # output_file = absolute_path + '/vcf_drop_test_output.vcf' #and here
 
-    test_dupe_dropper(ep_path, hand_checked_vcf, output_file)
+    # test_dupe_dropper(ep_path, hand_checked_vcf, output_file)
+    test_dupe_dropper()
 
     check_output(output_file)
 
     print("vcf_duplicate_dropper.py functioning normally.")
 
-def test_dupe_dropper(path_, vcf_file_, output_):
+def test_dupe_dropper():
     """Runs a test of vcf_duplicate_dropper to ensure the output is as expected."""
 
-    vfix = subprocess.Popen([path_ + "/modules/vcf_duplicate_dropper.py", "--vcf_file", vcf_file_, "--out_file", output_], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    split_path_and_name = os.path.realpath(__file__).rsplit('/',1)
+    absolute_path = split_path_and_name[0]
+    path = '/' + absolute_path.strip('/tests')
+    vcf = absolute_path + '/example_dupe_drop.vcf' #can use full path here
+    output = absolute_path + '/TEST_OUTPUT_vcf_dupe_dropper.vcf' #and here
+
+    vfix = subprocess.Popen([path + "/modules/vcf_duplicate_dropper.py", "--vcf_file", vcf, "--out_file", output], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # print(vfix.communicate())
     print("Test vcf produced.")
 
     #line helps prevent race condition
     time.sleep(5)
-    assert os.path.exists(output_)
+    assert os.path.exists(output)
 
 def check_output(output_):
     """Check the output and verify that no duplicate positions are found in the output"""
+
+    split_path_and_name = os.path.realpath(__file__).rsplit('/',1)
+    absolute_path = split_path_and_name[0]
     output_pos_list = []
     # open_vcf = open(output_,'r')
     # read_vcf = open_vcf.readlines()

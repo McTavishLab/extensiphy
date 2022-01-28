@@ -62,8 +62,6 @@ def main():
     for i, pos in enumerate(output_list):
         i+=1
         fasta_output_file.write(pos)
-        if i%140 == 0:
-            fasta_output_file.write('\n')            
     fasta_output_file.write(length_fix)
     fasta_output_file.close()
 

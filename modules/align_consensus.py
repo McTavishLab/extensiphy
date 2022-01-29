@@ -29,12 +29,17 @@ def main():
     refname = orig.readline()
     header = new.readline()
     out.write(header)
+    # nuc_count = 0
     i = 0
     refnuc = 1
     snps.write("Differences between ref: {} and {}".format(refname, header))
     while refnuc:
+        # nuc_count+=1
         refnuc = orig.read(1)
+        # print(refnuc)
+        # print(nuc_count)
         if refnuc == '-':
+            print("Gap_found")
             out.write('-')
         else:
             if refnuc.lower() in set(['a', 'c', 'g', 't', 'n', 'r', 'y', 'm', 's', 'w', 'k', 'v', 'd', 'h', 'b']):
@@ -42,6 +47,7 @@ def main():
                 if newnuc and (newnuc != '\n'):
                     i+=1
                     if refnuc.lower() != newnuc.lower():
+                        # print("position {}, ref {}, alt {}\n".format(i,refnuc,newnuc))
                         snps.write("position {}, ref {}, alt {}\n".format(i,refnuc,newnuc))
                     out.write(newnuc)
                 else:

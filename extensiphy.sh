@@ -265,7 +265,7 @@ fi
 #echo "$read_dir"
 
 if [ "${end_setting}" == "PE" ]; then
-  echo $( ls $read_dir/*$r1_tail )
+  # echo $( ls $read_dir/*$r1_tail )
 
   myarray_r1=(`find  $read_dir -maxdepth 1 -name "*$r1_tail"`)
   myarray_r2=(`find  $read_dir -maxdepth 1 -name "*$r2_tail"`)

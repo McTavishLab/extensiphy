@@ -29,6 +29,8 @@ def main():
 
     cns_list, tax_name = process_alignment(args.align_file)
     cns_seq_len = len(cns_list)
+    # print(cns_list)
+    print(cns_seq_len)
 
     last_line = subprocess.check_output(['tail', '-1', args.vcf_file]).decode('UTF-8')
     last_vcf_pos = last_line.split()[1]
@@ -36,13 +38,14 @@ def main():
 
     if int(last_vcf_pos) > int(cns_seq_len):
         assert(last_vcf_base=='N')
+        print("length difference detected")
         length_fix = ensure_seq_length(cns_list, last_vcf_pos)
     else:
         length_fix = ''
 
 
     vcf_dict = process_vcf(args.vcf_file)
-    # print(vcf_to_dict)
+    # print(vcf_dict)
 
 
     # check_contiguity(vcf_to_dict, vcf_length)
@@ -53,7 +56,7 @@ def main():
 
     # assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
     if _DEBUG:
-        print("VCFFIXER Sequence length after processing: ", len(ref_sequence_list))
+        print("VCFFIXER Sequence length after processing: ", len(output_list))
         print("VCFFIXER Writing to file. <><><>")
 
     #Write output sequence
@@ -62,8 +65,8 @@ def main():
     for i, pos in enumerate(output_list):
         i+=1
         fasta_output_file.write(pos)
-        if i%140 == 0:
-            fasta_output_file.write('\n')            
+        # if i%140 == 0:
+        #     fasta_output_file.write('\n')
     fasta_output_file.write(length_fix)
     fasta_output_file.close()
 
@@ -113,7 +116,7 @@ def compare_and_fix(vcf_dict, cns_list):
     """Reads over alignment sequence and checks if an alternative nucleotide was recorded where mpileup placed an N. \
     The N is replaced by the alternative nucleotide"""
     if _DEBUG:
-        print("align list length prior to adjustment: ", len(cnslist))
+        print("align list length prior to adjustment: ", len(cns_list))
     output_list = []
     for num, nuc in enumerate(cns_list):
         # print(nuc)
@@ -142,7 +145,7 @@ def compare_and_fix(vcf_dict, cns_list):
                             print("N replaced with {} and position {} from vcf position {}.".format(selected_alt, num, pos_in_vcf))
                     else:
                         output_list.append(nuc)
-                        ## Q. What if it's not one of those bases?? 
+                        ## Q. What if it's not one of those bases??
         else:
             output_list.append(nuc)
     assert(len(output_list) == len(cns_list)), "{},{}".format(len(output_list), len(cns_list))
@@ -178,6 +181,7 @@ def process_alignment(align_file):
     # and take the first chunk as the taxon name
     read_seq = seq_file.read()
     split_seqs = read_seq.split('\n')
+    # print(split_seqs)
     # tax_name = split_seqs[0:1]
     tax_name = split_seqs[0]
     if _DEBUG:

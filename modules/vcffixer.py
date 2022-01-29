@@ -34,7 +34,7 @@ def main():
 
     last_line = subprocess.check_output(['tail', '-1', args.vcf_file]).decode('UTF-8')
     last_vcf_pos = last_line.split()[1]
-    last_vcf_base = last_line.split()[2]
+    last_vcf_base = last_line.split()[3]
 
     if int(last_vcf_pos) > int(cns_seq_len):
         assert(last_vcf_base=='N')

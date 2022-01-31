@@ -15,7 +15,7 @@ _DEBUG = 1
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--align_1')
-    parser.add_argument('--align_2') ##consensus sequence
+    parser.add_argument('--align_2')
     parser.add_argument('--out_file')
     return parser.parse_args()
 
@@ -67,7 +67,33 @@ def process_alignment(align_file):
     # assert((set(seq.upper()))==set('ATGCN')), set(seq.upper())
 
 def make_comparison(seq_1, seq_2):
-    
+    """Compare both sequences, noting difference.
+    Return the position of the differing nucleotides and the bases themselves"""
+    output = []
+
+    # Make each seq a list
+    list_1 = list(seq_1.strip('\n'))
+    list_2 = list(seq_2.strip('\n'))
+
+    zipped_lists = list(zip(list_1, list_2))
+
+    for num, nuc_pairs in enumerate(zipped_lists):
+        position_outputs = []
+        nuc_1 = nuc_pairs[0].upper()
+        nuc_2 = nuc_pairs[1].upper()
+        if nuc_1 != nuc_2:
+            if _DEBUG:
+                print(num)
+                print(nuc_pairs)
+            position_outputs.append(num)
+            position_outputs.append(nuc_pairs)
+        if len(position_outputs) > 0:
+            output.append(position_outputs)
+
+    return output
+
+
+
 
 def compare_and_output(dict_of_seqs_1, dict_of_seqs_2):
     """Loop over each entry in the first dict of seqs, identify the taxon name
@@ -79,6 +105,7 @@ def compare_and_output(dict_of_seqs_1, dict_of_seqs_2):
             print(key)
         opposing_seq = dict_of_seqs_2[key]
         # print(opposing_seq)
+        seq_comparison = make_comparison(value, opposing_seq)
 
 if __name__ == '__main__':
     main()

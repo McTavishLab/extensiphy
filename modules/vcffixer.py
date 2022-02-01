@@ -13,7 +13,7 @@ import sys
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
 
-_DEBUG = 0
+_DEBUG = 1
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--vcf_file')
@@ -36,12 +36,13 @@ def main():
     last_vcf_pos = last_line.split()[1]
     last_vcf_base = last_line.split()[3]
 
+    length_fix = ''
     if int(last_vcf_pos) > int(cns_seq_len):
         assert(last_vcf_base=='N')
         print("length difference detected")
         length_fix = ensure_seq_length(cns_list, last_vcf_pos)
     else:
-        length_fix = ''
+        length_fix = cns_list
 
 
     vcf_dict = process_vcf(args.vcf_file)
@@ -52,7 +53,7 @@ def main():
     if _DEBUG:
         print("VCFFIXER process VCF complete <><><>")
 
-    output_list = compare_and_fix(vcf_dict, cns_list)
+    output_list = compare_and_fix(vcf_dict, length_fix)
 
     # assert len(ref_sequence_list) == len(fixed_unchecked_length_seq)
     if _DEBUG:
@@ -67,19 +68,8 @@ def main():
         fasta_output_file.write(pos)
         # if i%140 == 0:
         #     fasta_output_file.write('\n')
-    fasta_output_file.write(length_fix)
+    # fasta_output_file.write(length_fix)
     fasta_output_file.close()
-
-
-def check_contiguity(vcf_dict, seq_len):
-    """Makes sure all lines are present in the VCF"""
-    count_check = 0
-    for num in range(0, int(seq_len)):
-        count_check+=1
-        # print(num)
-        check_key = vcf_dict[num + 1]
-        assert len(check_key) > 0
-
 
 
 
@@ -152,22 +142,22 @@ def compare_and_fix(vcf_dict, cns_list):
     return output_list
 
 
-def ensure_seq_length(cns_dict, last_vcf_pos):
+def ensure_seq_length(cns_list, last_vcf_pos):
     """adds Ns at the end of the sequence to make the new, corrected sequence \
     as long as the length the VCF says it should be. Convert list to string \
     and return to be written to file."""
-    if _DEBUG:
-        print(len(processed_seq))
-        print(vcf_length)
-    if len(processed_seq) < int(last_vcf_pos):
-        diff_in_len = int(last_vcf_pos) - len(processed_seq)
+    if len(cns_list) < int(last_vcf_pos):
+        diff_in_len = int(last_vcf_pos) - len(cns_list)
         if _DEBUG:
-            print(diff_in_len)
+            print("Diff in length ", diff_in_len)
         for num in range(0, diff_in_len):
-            processed_seq.append("N")
-    print(len(processed_seq))
-    processed_seq = ''.join(processed_seq)
-    return processed_seq
+            cns_list.append("N")
+    # print(len(processed_seq))
+    cns_list = ''.join(cns_list)
+    if _DEBUG:
+        print(len(cns_list))
+        print(last_vcf_pos)
+    return cns_list
 
 
 def process_alignment(align_file):

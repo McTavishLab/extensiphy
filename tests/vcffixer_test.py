@@ -45,6 +45,7 @@ def test_vcffixer():
     align = absolute_path + '/example_vcffixer.fa' #and here
     output = absolute_path + '/TEST_OUTPUT_vcffixer.fa'
 
+    print(path + "/modules/vcffixer.py", "--vcf_file", vcf, "--align_file", align, "--out_file", output)
     vfix = subprocess.Popen([path + "/modules/vcffixer.py", "--vcf_file", vcf, "--align_file", align, "--out_file", output], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # print(vfix.communicate())
 

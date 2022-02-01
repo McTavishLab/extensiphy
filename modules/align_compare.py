@@ -6,6 +6,7 @@
 import os
 import subprocess
 import argparse
+import pandas
 
 import sys
 if sys.version_info[0] < 3:
@@ -86,19 +87,21 @@ def make_comparison(seq_1, seq_2):
                 print(num)
                 print(nuc_pairs)
             position_outputs.append(num)
-            position_outputs.append(nuc_pairs)
+            position_outputs.append(nuc_pairs[0])
+            position_outputs.append(nuc_pairs[1])
         if len(position_outputs) > 0:
             output.append(position_outputs)
 
     return output
 
-
+def format_comparisons():
+    """organizes comparson data into dataframe"""
 
 
 def compare_and_output(dict_of_seqs_1, dict_of_seqs_2):
     """Loop over each entry in the first dict of seqs, identify the taxon name
     and find the matching entry in the second dict. Compare the sequences"""
-    output = []
+    output = {}
 
     for key, value in dict_of_seqs_1.items():
         if _DEBUG:
@@ -106,6 +109,10 @@ def compare_and_output(dict_of_seqs_1, dict_of_seqs_2):
         opposing_seq = dict_of_seqs_2[key]
         # print(opposing_seq)
         seq_comparison = make_comparison(value, opposing_seq)
+        if len(seq_comparison) > 0:
+            output[key] = seq_comparison
+
+    print(output)
 
 if __name__ == '__main__':
     main()

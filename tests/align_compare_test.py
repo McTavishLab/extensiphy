@@ -8,12 +8,11 @@ import pytest
 import pandas as pd
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog='vcffixer test', \
-        description='This program tests the vcffixer.py module of Extensiphy. \
-        Testing currently ensures that the length of the sequence output by vcffixer.py \
-        matches the length stated in the vcf used by Extensiphy. \
-        EXAMPLE COMMAND: vcffixer_test.py \
-        EXAMPLE PYTEST COMMAND: pytest vcffixer_test.py')
+    parser = argparse.ArgumentParser(prog='align_compare test', \
+        description='This program tests the align_compare.py module of Extensiphy. \
+        Test currently checks that the output dataframe is exactly as expected \
+        EXAMPLE COMMAND: align_compare_test.py \
+        EXAMPLE PYTEST COMMAND: pytest align_compare_test.py')
     # parser.add_argument('--ep_path', help='Absolute path to your Extensiphy directory.')
     return parser.parse_args()
 

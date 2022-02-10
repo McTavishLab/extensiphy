@@ -57,6 +57,9 @@ def main():
                     print(refnuc)
                     assert refnuc =='\n'
                     out.write(refnuc)
+
+    out.write('\n')
+
     new.close()
     orig.close()
     snps.close()

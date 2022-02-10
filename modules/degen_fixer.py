@@ -35,9 +35,9 @@ def main():
 
         # Make sure there isn't a list of 1 empty string
         if len(split_newlines) > 1:
-            print("SPLIT FOUND")
+            # print("SPLIT FOUND")
             fixed_seq = broken_seq_handler(split_newlines)
-            print(fixed_seq)
+            # print(fixed_seq)
 
             output_data.append(fixed_seq)
 
@@ -60,6 +60,7 @@ def main():
 
 
 def broken_seq_handler(seq_list):
+    # print(seq_list)
 
     returned_seq = []
     #Make sure theres actually sequence information in the seq_list variable
@@ -69,6 +70,8 @@ def broken_seq_handler(seq_list):
         joined_seq = ''.join(seq_list[1:])
 
         gapless_joined_seq = remove_gaps(joined_seq)
+
+        gapless_joined_seq = gapless_joined_seq.replace('\n','')
 
         #Test to make sure we removed all new lines from the sequence
         assert '\n' not in gapless_joined_seq

@@ -30,9 +30,9 @@ def main():
         for num, item in enumerate(split_seqs):
             if len(item) == 0:
                 del split_seqs[num]
-        print(split_seqs)
-        print(args.align_file)
-        print("SEEEEEQ")
+        # print(split_seqs)
+        # print(args.align_file)
+        # print("SEEEEEQ")
         first_taxon = split_seqs[0]
         split_name_and_seq = first_taxon.split('\n', 1)
         name = split_name_and_seq[0]

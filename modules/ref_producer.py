@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python3
 # program produces the best reference file from the original alignment
 # currently, this program just isolates the first sequence in the file
 # this handles if there are new line breaks and the sequence isn't read as a single line (some genome files)
@@ -24,16 +24,41 @@ def main():
 
     if args.r == True:
 
-        with open(args.align_file, 'r') as raw_seqs:
+        open_align = open(args.align_file, 'r')
+        read_seq = open_align.read()
+        split_seqs = read_seq.split(">")
+        for num, item in enumerate(split_seqs):
+            if len(item) == 0:
+                del split_seqs[num]
+        print(split_seqs)
+        print(args.align_file)
+        print("SEEEEEQ")
+        first_taxon = split_seqs[0]
+        split_name_and_seq = first_taxon.split('\n', 1)
+        name = split_name_and_seq[0]
+        seq = split_name_and_seq[1]
 
-            read_seq = raw_seqs.read()
-            split_seqs = read_seq.split(">")
+        new_file = open(args.out_file,'w')
+        new_file.write(">")
+        new_file.write(name)
+        new_file.write('\n')
+        new_file.write(seq)
 
-            new_file = open(args.out_file,'w')
-            new_file.write(">")
-            new_file.write(split_seqs[1])
+        open_align.close()
+        new_file.close()
 
-        raw_seqs.close()
+        # with open(args.align_file, 'r') as raw_seqs:
+        #
+        #     read_seq = raw_seqs.read()
+        #     split_seqs = read_seq.split(">")
+        #
+        #     print(split_seqs[0])
+        #     print(len(split_seqs[1]))
+        #     new_file = open(args.out_file,'w')
+        #     new_file.write(">")
+        #     new_file.write(split_seqs[1])
+        #
+        # raw_seqs.close()
 
     elif args.s == True:
 
@@ -48,7 +73,7 @@ def main():
             ref_name = "^" + ref_name + "\n"
             # print(ref_name)
             ref_name_compile = re.compile(ref_name)
-            
+
             # Loop through sequences and identify which one has the desired reference
             for taxon in split_seqs:
                 ref_search = re.search(ref_name_compile, taxon)
@@ -71,7 +96,7 @@ def main():
             split_seqs = read_seq.split(">")
             #print(split_seqs[1])
             for name_and_seq in split_seqs:
-                if len(name_and_seq) > 2: 
+                if len(name_and_seq) > 2:
                     split_name = name_and_seq.split("\n", 1)
                     #print(split_name)
                     name = split_name[0]
@@ -82,7 +107,7 @@ def main():
                     open_file = open(full_fasta_name, "w")
                     open_file.write(">")
                     open_file.write(name_and_seq)
-            
+
             #open_file.write(">")
             #open_file.write(name)
             #open_file.write(seq)
@@ -93,7 +118,7 @@ def main():
             #    split_name_and_seq = item.split("\n")
             #    print(split_name_and_seq)
 
-            
+
             #new_file = open(args.out_file,'w')
             #new_file.write(">")
             #new_file.write(split_seqs[1])

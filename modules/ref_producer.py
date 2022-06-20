@@ -9,7 +9,7 @@ import re
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--align_file')
-    parser.add_argument('--out_file')
+    parser.add_argument('--out_file', default='selected_reference.fas')
     parser.add_argument('--ref_select')
     #parser = argparse.ArgumentParser(description = 'Produce multiple single taxon fasta files')
     parser.add_argument('-m', action='store_true', help='Turn on multi-fasta output option')
@@ -48,7 +48,7 @@ def main():
             ref_name = "^" + ref_name + "\n"
             # print(ref_name)
             ref_name_compile = re.compile(ref_name)
-            
+
             # Loop through sequences and identify which one has the desired reference
             for taxon in split_seqs:
                 ref_search = re.search(ref_name_compile, taxon)
@@ -71,7 +71,7 @@ def main():
             split_seqs = read_seq.split(">")
             #print(split_seqs[1])
             for name_and_seq in split_seqs:
-                if len(name_and_seq) > 2: 
+                if len(name_and_seq) > 2:
                     split_name = name_and_seq.split("\n", 1)
                     #print(split_name)
                     name = split_name[0]
@@ -82,7 +82,7 @@ def main():
                     open_file = open(full_fasta_name, "w")
                     open_file.write(">")
                     open_file.write(name_and_seq)
-            
+
             #open_file.write(">")
             #open_file.write(name)
             #open_file.write(seq)
@@ -93,7 +93,7 @@ def main():
             #    split_name_and_seq = item.split("\n")
             #    print(split_name_and_seq)
 
-            
+
             #new_file = open(args.out_file,'w')
             #new_file.write(">")
             #new_file.write(split_seqs[1])

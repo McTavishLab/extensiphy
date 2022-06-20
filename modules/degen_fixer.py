@@ -6,33 +6,40 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Replace degenerate nucleotides in a fasta file with Ns')
     parser.add_argument('--align_file')
-    parser.add_argument('--output')
+    parser.add_argument('--output', default='ref_nogaps.fas')
     return parser.parse_args()
 
 
 def broken_seq_handler(seq_list):
 
     returned_seq = []
+
+    # print(seq_list)
+
+    # print("waffle1")
     #Make sure theres actually sequence information in the seq_list variable
-    if len(seq_list) > 2:
-        # print(seq_list)
-        seq_id = seq_list[0]
-        joined_seq = ''.join(seq_list[1:])
+    assert len(seq_list[0]) > 0 and len(seq_list[1]) > 0
 
-        gapless_joined_seq = remove_gaps(joined_seq)
+    # if len(seq_list) > 2:
+    #     # print("waffle2")
+    #     # print(seq_list)
+    seq_id = seq_list[0]
+    joined_seq = ''.join(seq_list[1:])
 
-        #Test to make sure we removed all new lines from the sequence
-        assert '\n' not in gapless_joined_seq
+    gapless_joined_seq = remove_gaps(joined_seq)
 
-        # Test to make sure we've removed gap characters
-        assert '-' not in gapless_joined_seq
+    #Test to make sure we removed all new lines from the sequence
+    assert '\n' not in gapless_joined_seq
 
-        returned_seq.append(seq_id)
-        returned_seq.append(gapless_joined_seq)
+    # Test to make sure we've removed gap characters
+    assert '-' not in gapless_joined_seq
 
-        assert len(returned_seq) == 2
+    returned_seq.append(seq_id)
+    returned_seq.append(gapless_joined_seq)
 
-        return returned_seq
+    assert len(returned_seq) == 2
+
+    return returned_seq
 
 
 def remove_gaps(seq):
@@ -51,8 +58,6 @@ def main():
     read_data = open(data,'r').read()
 
     split_data = read_data.split('>')
-
-
 
     for chunk in split_data:
         split_newlines = chunk.split('\n')

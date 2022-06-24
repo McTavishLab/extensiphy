@@ -4,6 +4,7 @@ import os
 import argparse
 import re
 from fasta_manipulation import *
+from seq_compare_functions import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -38,15 +39,17 @@ def main():
 
     working_dir = os.path.abspath(os.getcwd())
 
+    #COMMENTED OUT WHILE WORKING ON ALIGNMENT AND BASECALL ANALYSES
     matching_seqs_dir = working_dir + '/match_outputs'
-    os.mkdir(matching_seqs_dir)
+    # os.mkdir(matching_seqs_dir)
+    #
+    # make_genomes_contiguous(working_dir, args.genome_dir, args.align_suffix)
+    #
+    # split_multiple_fastas_into_seqs(working_dir, args.align_dir, args.align_suffix)
+    #
+    # match_long_with_loci(working_dir + '/split_locus_files', working_dir + '/contiguous_genome_files', matching_seqs_dir)
 
-    make_genomes_contiguous(working_dir, args.genome_dir, args.align_suffix)
-
-    split_multiple_fastas_into_seqs(working_dir, args.align_dir, args.align_suffix)
-
-    match_long_with_loci(working_dir + '/split_locus_files', working_dir + '/contiguous_genome_files', matching_seqs_dir)
-
+    mafft_align(working_dir, matching_seqs_dir)
 
 
 

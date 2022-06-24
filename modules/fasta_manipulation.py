@@ -275,7 +275,7 @@ def find_boundaries(manipulated_seq, long_seq):
     refine_stop = refine_potential_boundaries(back_kmers, kmer_size, "stop")
 
     print(refine_start, refine_stop)
-    print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+    # print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
 
     output_kmers.append(refine_start)
     output_kmers.append(refine_stop)
@@ -283,7 +283,7 @@ def find_boundaries(manipulated_seq, long_seq):
 
 def refine_potential_boundaries(kmer_match_list, kmer_len, orientation):
     print("refine_potential_boundaries")
-    print("REFINE BOUNDARIES")
+    # print("REFINE BOUNDARIES")
     regions = {}
     region_count = 0
     kmer_count = 0

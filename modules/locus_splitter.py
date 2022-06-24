@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 
 import os
 import argparse
@@ -15,8 +15,8 @@ def parse_args():
 
 def main():
     args = parse_args()
-    
-    
+
+
     full_sequences = {}
     locus_chunk = ''
     stored_names = []
@@ -26,7 +26,7 @@ def main():
     locus_id_grabber = re.compile(locus_id, re.S)
     file_name = "##SequenceFile(.*?)\n"
     file_name_grabber = re.compile(file_name)
-    
+
     alignment = open(args.align_file, "r")
     read_align = alignment.read()
     #lines = alignment.readlines()
@@ -45,7 +45,7 @@ def main():
     #locus_file = open(args.out_file, "w")
     #locus_file.write(locus_chunk)
     #locus_file.close()
-    
+
     seq_len_count = 0
     split_taxa = locus_chunk.split(">")
     for item in split_taxa:

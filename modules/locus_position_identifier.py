@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 # this program will take in a single concatenate sequence produced by Phycorder
 # and a positional file that keeps track of the start location of each
 # locus in the concatenated Phycorder file

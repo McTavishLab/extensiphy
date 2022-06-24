@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 
 import os
 import argparse
@@ -45,7 +45,7 @@ def main():
     #msa_list = os.listdir(args.msa_folder)
     msa_list = os.listdir(dir_of_aligns)
     #print(msa_list)
-   
+
     name_list = []
     file_name_and_seq_len_dict = {}
     taxon_name_and_seqs = defaultdict(list)
@@ -92,19 +92,19 @@ def main():
     #print(tuple_name_and_seq_len_list)
     #print(file_name_and_seq_len_dict)
     #print(taxon_name_and_seqs)
-    
+
     loci_position_check(tuple_name_and_seq_len_list)
 
     myFile = open(args.position_csv_file, 'w')
     with myFile:
         writer = csv.writer(myFile)
         writer.writerows(tuple_name_and_seq_len_list)
-     
-    print("Writing complete") 
-    
-    
-    
-    
+
+    print("Writing complete")
+
+
+
+
     for num, f_name in enumerate(name_list):
         if f_name in file_name_and_seq_len_dict.keys():
             temp_dict = {}
@@ -127,9 +127,9 @@ def main():
         msa_file.write("\n")
 
     msa_file.close()
-        
-                        
-    
+
+
+
 
 
 

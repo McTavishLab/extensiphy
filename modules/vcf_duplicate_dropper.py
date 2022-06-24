@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 # Program that dropes duplicate position entries from a VCF file.
 #
 

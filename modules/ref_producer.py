@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 # program produces the best reference file from the original alignment
 # currently, this program just isolates the first sequence in the file
 # this handles if there are new line breaks and the sequence isn't read as a single line (some genome files)

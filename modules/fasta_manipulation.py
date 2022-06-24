@@ -459,9 +459,11 @@ def match_long_with_loci(manip_seq_path, long_seq_path, output_dir):
     long_seqs_folder_contents = os.listdir(long_seq_path)
     file_info_regex = r'(cluster\d+)-_(.+)$'
     file_info_compile = re.compile(file_info_regex)
-    long_name_regex = r'(\w+)\.fasta$'
+    long_name_regex = r'_(\w+)\.fasta$'
     long_name_compile = re.compile(long_name_regex)
-
+#                 long_file_count+=1
+    #                 long_seq_name = find_long_info[0]
+    #                 if long_seq_name == manip_taxon:
     num_long_files = len(long_seqs_folder_contents)
     num_short_files = len(manip_folder_contents)
     # print("number of files")
@@ -471,92 +473,95 @@ def match_long_with_loci(manip_seq_path, long_seq_path, output_dir):
     manip_file_count = 0
     long_file_count = 0
 
-    print("iterate over manip files")
+    # print("iterate over manip files")
     for manip_file in manip_folder_contents:
         # print(manip_file)
         find_info = re.findall(file_info_compile, manip_file)
         if find_info:
-            print(find_info)
-    #         manip_file_count+=1
-    #         manip_taxon = find_info[0][1]
-    #         manip_locus = find_info[0][0]
-    #         # print(manip_taxon)
-    #         # print(manip_locus)
+            # print(find_info)
+            manip_file_count+=1
+            manip_taxon = find_info[0][1]
+            manip_locus = find_info[0][0]
+            # print(manip_taxon)
+            # print(manip_locus)
     #         # print("iterate over long files")
-    #         long_file_count = 0
-    #         for long_seq in long_seqs_folder_contents:
-    #             find_long_info = re.findall(long_name_compile, long_seq)
-    #             #print("finding long seq info")
-    #             if find_long_info:
-    #                 long_file_count+=1
-    #                 long_seq_name = find_long_info[0]
-    #                 if long_seq_name == manip_taxon:
-    #                     print("taxon match")
-    #                     # print(long_seq)
-    #                     # print(manip_taxon)
-    #                     open_manip_file = open(manip_seq_path +'/'+ manip_file,'r')
-    #                     read_manip_file = open_manip_file.read()
-    #
-    #                     open_long_seq = open(long_seq_path +'/'+ long_seq, 'r')
-    #                     read_long_seq = open_long_seq.read()
-    #
-    #                     # print("files opened")
-    #                     convert_manip = seq_converter(read_manip_file)
-    #
-    #                     long_seq_split = read_long_seq.split('\n', 1)
-    #                     label = long_seq_split[0]
-    #                     seq = long_seq_split[1]
-    #
-    #                     len_seq = len(long_seq_split[1])
-    #                     long_contiguous = seq.replace('\n','')
-    #
-    #                     match_maker = find_match(long_contiguous, convert_manip)
-    #                     print(match_maker)
-    #
-    #                     find_seq_location = find_boundaries(convert_manip[match_maker], long_contiguous)
-    #
-    #                     #check_boundaries = assess_boundaries(read_manip_file, find_seq_location)
-    #
-    #                     trimmed_long = long_contiguous[find_seq_location[0]:find_seq_location[1] + 100]
-    #
-    #                     # trim_long = trim_boundaries(find_seq_location, long_contiguous, kmer_len)
-    #                     # print(trim_long)
-    #
-    #                     # produce_trimmed_seq = long_seq_trimmer(long_contiguous, len(convert_manip[match_maker]), trim_long)
-    #
-    #                     output_file_name = output_dir +'/'+ 'combined-' + manip_locus + '--' + manip_taxon
-    #                     print(output_file_name)
-    #                     output = open(output_file_name, 'w')
-    #                     output.write(label)
-    #                     output.write('\n')
-    #                     output.write(trimmed_long)
-    #                     output.write('\n')
-    #                     output.write(label)
-    #                     output.write('\n')
-    #                     output.write(convert_manip[match_maker])
-    #
-    #                     output.close()
-    #                     open_long_seq.close()
-    #                     open_manip_file.close()
-    #
-    #                 # else:
-    #                 #     #print("didnt find match between method sequences")
-    #                 #     #print(manip_taxon + '    ' + long_seq_name)
-    #                 #     long_file_count+=1
-    #                 #     if long_file_count == num_long_files:
-    #                 #         print("couldnt find match for this short file")
-    #                 #         print(manip_taxon)
-    #
-    #
-    #             else:
-    #                 print("didnt find long match")
-    #                 print(find_long_info)
-    #
-    #
-    #     else:
-    #         print("didnt find manip match")
-    #         print(file_info_compile)
-    #
-    # print("number of files identified by regex methods")
-    # print(manip_file_count)
-    # print(long_file_count)
+            long_file_count = 0
+            for long_seq in long_seqs_folder_contents:
+                find_long_info = re.findall(long_name_compile, long_seq)
+                #print("finding long seq info")
+                if find_long_info:
+                    print(find_long_info)
+                    long_file_count+=1
+                    long_seq_name = find_long_info[0]
+                    if long_seq_name == manip_taxon:
+                        # print("taxon match")
+                        # print(long_seq)
+                        # print(manip_taxon)
+                        open_manip_file = open(manip_seq_path +'/'+ manip_file,'r')
+                        read_manip_file = open_manip_file.read()
+                        # print(read_manip_file)
+
+                        open_long_seq = open(long_seq_path +'/'+ long_seq, 'r')
+                        read_long_seq = open_long_seq.read()
+                        # print(read_long_seq)
+
+                        # print("files opened")
+                        convert_manip = seq_converter(read_manip_file)
+
+                        long_seq_split = read_long_seq.split('\n', 1)
+                        label = long_seq_split[0]
+                        seq = long_seq_split[1]
+
+                        len_seq = len(long_seq_split[1])
+                        long_contiguous = seq.replace('\n','')
+
+                        match_maker = find_match(long_contiguous, convert_manip)
+                        print(match_maker)
+
+                        find_seq_location = find_boundaries(convert_manip[match_maker], long_contiguous)
+
+                        #check_boundaries = assess_boundaries(read_manip_file, find_seq_location)
+
+                        trimmed_long = long_contiguous[find_seq_location[0]:find_seq_location[1] + 100]
+
+                        # trim_long = trim_boundaries(find_seq_location, long_contiguous, kmer_len)
+                        # print(trim_long)
+
+                        # produce_trimmed_seq = long_seq_trimmer(long_contiguous, len(convert_manip[match_maker]), trim_long)
+
+                        output_file_name = output_dir +'/'+ 'combined-' + manip_locus + '--' + manip_taxon
+                        print(output_file_name)
+                        output = open(output_file_name, 'w')
+                        output.write(label)
+                        output.write('\n')
+                        output.write(trimmed_long)
+                        output.write('\n')
+                        output.write(label)
+                        output.write('\n')
+                        output.write(convert_manip[match_maker])
+
+                        output.close()
+                        open_long_seq.close()
+                        open_manip_file.close()
+
+                    # else:
+                    #     #print("didnt find match between method sequences")
+                    #     #print(manip_taxon + '    ' + long_seq_name)
+                    #     long_file_count+=1
+                    #     if long_file_count == num_long_files:
+                    #         print("couldnt find match for this short file")
+                    #         print(manip_taxon)
+
+
+                else:
+                    print("didnt find long match")
+                    print(find_long_info)
+
+
+        else:
+            print("didnt find manip match")
+            print(file_info_compile)
+
+    print("number of files identified by regex methods")
+    print(manip_file_count)
+    print(long_file_count)

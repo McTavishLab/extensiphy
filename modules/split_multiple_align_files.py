@@ -48,8 +48,21 @@ def main():
     # split_multiple_fastas_into_seqs(working_dir, args.align_dir, args.align_suffix)
     #
     # match_long_with_loci(working_dir + '/split_locus_files', working_dir + '/contiguous_genome_files', matching_seqs_dir)
+    #
+    # mafft_align(working_dir, matching_seqs_dir)
 
-    mafft_align(working_dir, matching_seqs_dir)
+    list_of_aligned_seqs = os.listdir(working_dir + '/aligned_matched_seqs')
+
+    for file in list_of_aligned_seqs:
+        path_and_file = working_dir + '/aligned_matched_seqs/' + file
+        print(path_and_file)
+        align = open(path_and_file,'r').read()
+
+        fixed_align = alignment_fixer(align)
+
+        comparison(fixed_align)
+
+
 
 
 

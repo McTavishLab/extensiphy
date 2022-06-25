@@ -53,6 +53,11 @@ def main():
 
     list_of_aligned_seqs = os.listdir(working_dir + '/aligned_matched_seqs')
 
+    alignment_comparisons = working_dir + '/analyzed_compare_results'
+
+    if os.path.isdir(alignment_comparisons) == False:
+        os.mkdir(alignment_comparisons)
+
     for file in list_of_aligned_seqs:
         path_and_file = working_dir + '/aligned_matched_seqs/' + file
         print(path_and_file)
@@ -60,8 +65,17 @@ def main():
 
         fixed_align = alignment_fixer(align)
 
-        comparison(fixed_align)
+        compare_results = comparison(fixed_align)
+        # print(compare_results)
 
+        if compare_results != "NO_NUCS_FOUND":
+            handle_comparison_outputs(working_dir, compare_results, alignment_comparisons + '/file')
+
+        else:
+            print("########################################")
+            print("NO NUCLEOTIDES FOUND IN A SEQUENCE")
+            print(file)
+            print("########################################")
 
 
 

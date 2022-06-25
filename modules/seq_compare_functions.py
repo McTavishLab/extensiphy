@@ -63,14 +63,20 @@ def alignment_fixer(read_file):
 
 
 def nuc_counter(sequence):
+    # print(sequence)
     nuc_count = 0
     for nuc in sequence[1]:
         if nuc != '-':
             nuc_count+=1
 
-    return nuc_count
+    if 'A' in sequence[1].upper() or 'C' in sequence[1].upper() or 'G' in sequence[1].upper() or 'T' in sequence[1].upper():
+        return nuc_count
+    else:
+        return "NO_NUCS_FOUND"
 
 def trim_gaps(short_seq):
+    # print(short_seq)
+    # if 'A' in short_seq.upper() or 'C' in short_seq.upper() or 'G' in short_seq.upper() or 'T' in short_seq.upper():
     output = []
     leading_gaps = 0
     trailing_gaps = 0
@@ -83,15 +89,15 @@ def trim_gaps(short_seq):
     find_trailing = re.findall(compile_trailing_match, short_seq)
 
     if compile_leading_match:
-        #print("found leading")
-        #print(find_leading)
+        print("found leading")
+        print(find_leading)
+        # if len(find_leading)
         leading_gaps = len(find_leading[0])
-
         print("leading gap size", leading_gaps)
 
     if compile_trailing_match:
-        #print("found trailing")
-        #print(find_trailing)
+        print("found trailing")
+        print(find_trailing)
         trailing_gaps = len(find_trailing[0])
         print("trailing gap size", trailing_gaps)
 
@@ -220,75 +226,80 @@ def comparison(list_of_list_of_seqs):
     count_nucs_1 = nuc_counter(seq_1)
     count_nucs_2 = nuc_counter(seq_2)
 
-    # print(count_nucs_1)
-    # print(count_nucs_2)
+    print(count_nucs_1)
+    print(count_nucs_2)
 
-    nuc_lens = [count_nucs_1, count_nucs_2]
-    small_seq = min(nuc_lens)
+    if count_nucs_1 != "NO_NUCS_FOUND" and count_nucs_2 != "NO_NUCS_FOUND":
 
-    shorter = None
-    longer = None
-    if small_seq == count_nucs_1:
-        shorter = seq_1
-        longer = seq_2
+        nuc_lens = [count_nucs_1, count_nucs_2]
+        small_seq = min(nuc_lens)
 
-    elif small_seq == count_nucs_2:
-        shorter = seq_2
-        longer = seq_1
+        shorter = None
+        longer = None
+        if small_seq == count_nucs_1:
+            shorter = seq_1
+            longer = seq_2
 
-    # print("length of longer seq", len(shorter[1]))
-    # print("length of shorter seq", len(longer[1]))
+        elif small_seq == count_nucs_2:
+            shorter = seq_2
+            longer = seq_1
 
-    shorter_seq = shorter[1]
-    longer_seq = longer[1]
+        # print("length of longer seq", len(shorter[1]))
+        # print("length of shorter seq", len(longer[1]))
 
-    len_short = nuc_counter(shorter)
-    #len_long = nuc(longer)
-    len_long = len(longer[1])
-    #print(longer)
+        shorter_seq = shorter[1]
+        longer_seq = longer[1]
 
-    get_gaps = trim_gaps(shorter_seq)
-    #print(get_gaps)
+        len_short = nuc_counter(shorter)
+        #len_long = nuc(longer)
+        len_long = len(longer[1])
+        #print(longer)
 
-    trimed_shorter = ''
-    trimmed_longer = ''
-    #print("waffle1")
-    if get_gaps[1] != 0:
+        get_gaps = trim_gaps(shorter_seq)
+        #print(get_gaps)
+
+        trimed_shorter = ''
+        trimmed_longer = ''
+        #print("waffle1")
+        if get_gaps[1] != 0:
 
         #print(shorter_seq[get_gaps:-get_gaps[1]])
-        trimmed_shorter = shorter_seq[get_gaps[0]:-get_gaps[1]]
-        trimmed_longer = longer_seq[get_gaps[0]:-get_gaps[1]]
-        #print(trimmed_shorter)
-    elif get_gaps[1] == 0:
-        #print(shorter_seq[get_gaps[0]:])
-        trimmed_shorter = shorter_seq[get_gaps[0]:]
-        trimmed_longer = longer_seq[get_gaps[0]:]
-    #print("waffle2")
+            trimmed_shorter = shorter_seq[get_gaps[0]:-get_gaps[1]]
+            trimmed_longer = longer_seq[get_gaps[0]:-get_gaps[1]]
+            #print(trimmed_shorter)
+        elif get_gaps[1] == 0:
+            #print(shorter_seq[get_gaps[0]:])
+            trimmed_shorter = shorter_seq[get_gaps[0]:]
+            trimmed_longer = longer_seq[get_gaps[0]:]
+            #print("waffle2")
 
-    gap_test = check_for_gaps(trimmed_shorter,gap_set, nuc_set)
-    print(gap_test)
-    for key, value in gap_test.items():
-        if key == 'no_anomalies':
-            print('no anomalous spread of nucleotides found.')
-        elif key == 'anomalies':
-            print('problem found')
-            #TODO: add stuff here for handling of problem
-            print(value[0])
-            print(value[1])
-            trimmed_shorter = trimmed_shorter[value[0]:value[1]]
-            trimmed_longer = trimmed_longer[value[0]:value[1]]
+        gap_test = check_for_gaps(trimmed_shorter,gap_set, nuc_set)
+        print(gap_test)
+        for key, value in gap_test.items():
+            if key == 'no_anomalies':
+                print('no anomalous spread of nucleotides found.')
+            elif key == 'anomalies':
+                print('problem found')
+                #TODO: add stuff here for handling of problem
+                print(value[0])
+                print(value[1])
+                trimmed_shorter = trimmed_shorter[value[0]:value[1]]
+                trimmed_longer = trimmed_longer[value[0]:value[1]]
 
-    split_trimmed_short = list(trimmed_shorter)
-    split_trimmed_long = list(trimmed_longer)
+        split_trimmed_short = list(trimmed_shorter)
+        split_trimmed_long = list(trimmed_longer)
 
-    combined_positions = list(map(list, zip(split_trimmed_long, split_trimmed_short)))
-    analyze_alignment = check_alignment(combined_positions)
+        combined_positions = list(map(list, zip(split_trimmed_long, split_trimmed_short)))
+        analyze_alignment = check_alignment(combined_positions)
 
-    #print(analyze_alignment)
-    analyze_alignment.append(len_short)
-    analyze_alignment.append(len_long)
+        #print(analyze_alignment)
+        analyze_alignment.append(len_short)
+        analyze_alignment.append(len_long)
 
-    return analyze_alignment
+        return analyze_alignment
+
+    else:
+        return "NO_NUCS_FOUND"
 
 
 def handle_comparison_outputs(cwd, comparison_info, output_file):

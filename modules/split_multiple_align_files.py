@@ -58,6 +58,7 @@ def main():
     if os.path.isdir(alignment_comparisons) == False:
         os.mkdir(alignment_comparisons)
 
+    output_dict = {}
     for file in list_of_aligned_seqs:
         path_and_file = working_dir + '/aligned_matched_seqs/' + file
         print(path_and_file)
@@ -68,17 +69,32 @@ def main():
         compare_results = comparison(fixed_align)
         # print(compare_results)
 
+        # output_dict[file] = [compare_results[0], compare_results[1], compare_results[1]]
         if compare_results != "NO_NUCS_FOUND":
             handle_comparison_outputs(working_dir, compare_results, alignment_comparisons + '/file')
-
+            output_dict[file] = [compare_results[0], compare_results[1], compare_results[1]]
         else:
             print("########################################")
             print("NO NUCLEOTIDES FOUND IN A SEQUENCE")
             print(file)
+            output_dict[file] = ["NO NUCS FOUND"]
             print("########################################")
 
+    issue_seqs = 0
+    non_issue_seqs = 0
+    for key, value in output_dict.items():
+        print(key)
+        print(value)
+        if value == ["NO NUCS FOUND"]:
+            issue_seqs+=1
+        else:
+            non_issue_seqs+=1
+        print("####")
 
 
+    print(len(output_dict))
+    print(non_issue_seqs)
+    print(issue_seqs)
 
 if __name__ == '__main__':
     main()

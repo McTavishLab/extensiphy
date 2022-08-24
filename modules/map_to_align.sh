@@ -192,8 +192,13 @@ refnam=$(head -n 1 $master_dir/ref_nogap.fas)
 printf ">beginning aligned consensus processing"
 #python
 
-$PHYCORDER/align_consensus.py --gapped-ref $gap_align --consensus $outdir/cns.fa --outfile $outdir/${base}_align.fas
+#$PHYCORDER/align_consensus.py --gapped-ref $gap_align --consensus $outdir/cns.fa --outfile $outdir/${base}_align.fas
 
+# $PHYCORDER/align_consensus.py --gapped-ref ${outdir}/ref_nogap.fas --consensus $outdir/cns.fa --outfile $outdir/${base}_align.fas
+
+cp ${outdir}/cns.fa $outdir/${base}_align.fas
+
+touch ${master_dir}/snps.txt
 
 
 # if [ $wre_map -eq 1 ]

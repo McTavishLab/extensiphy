@@ -69,7 +69,17 @@ def broken_seq_handler(seq_list):
         seq_id = seq_list[0]
         joined_seq = ''.join(seq_list[1:])
 
-        gapless_joined_seq = remove_gaps(joined_seq)
+        gap_list = identify_gap_positions(joined_seq)
+
+        gap_position_file = open('ref_gap_positions.txt', 'w')
+
+        for gap_pos in gap_list:
+            gap_position_file.write(str(gap_pos))
+            gap_position_file.write('\n')
+
+        gapless_joined_seq = replace_gaps(joined_seq)
+
+        # gapless_joined_seq = remove_gaps(joined_seq)
 
         gapless_joined_seq = gapless_joined_seq.replace('\n','')
 
@@ -89,6 +99,21 @@ def broken_seq_handler(seq_list):
 
 def remove_gaps(seq):
     fixed_seq = seq.replace('-','')
+    return fixed_seq
+
+
+def identify_gap_positions(seq):
+    gap_positions = []
+    for num, base in enumerate(seq):
+        if base == '-':
+            gap_positions.append(num)
+
+    return gap_positions
+
+
+
+def replace_gaps(seq):
+    fixed_seq = seq.replace('-','N')
     return fixed_seq
 
 
